@@ -1,0 +1,32 @@
+---
+layout: default
+id: post-page
+---
+
+<div class='main wrap'>
+	<ul class="sidebar">
+		<li><a class='to-index-page' href="{{ site.baseurl }}/">ALL</a></li>
+		{% for category in site.categories %}
+			<li><a class='to-{{ category[0] }}-page' href="{{ site.baseurl }}/{{ category[0] }}.html">{{ category | first | upcase }}[{{ category | last | size }}]</a></li>
+		{% endfor %}
+	</ul>
+	<div class="content post">
+		<h1 class='post-title'>{{ page.title }}</h1>
+		<p class='post-date'>{{ page.date | date_to_string | date: "%Y-%m-%d" }}</p>
+		{{ content }}
+		<!-- Duoshuo Comment BEGIN -->
+		<div class="ds-thread"></div>
+		<script type="text/javascript">
+			var duoshuoQuery = {short_name:"lxjwlt"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = 'http://static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] 
+				|| document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+		</script>
+		<!-- Duoshuo Comment END -->
+	</div>
+</div>

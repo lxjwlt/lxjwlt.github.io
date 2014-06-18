@@ -1,0 +1,214 @@
+<!DOCTYPE HTML>
+<!--[if IE 6]><html class="ie6 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 7]><html class="ie7 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 8]><html class="ie8 lte9 lte8 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 9]><html class="ie9 lte9 no-css3" lang="zh-cn"><![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8) | !(IE 9)  ]><!--><html lang="zh-cn" class='non-ie'><!--<![endif]-->
+	<head>
+		<meta charset="utf-8" />
+		<meta name="description" content="..." />
+		<meta name="keywords" content="..." />
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" /><!-- 响应式网页设计：initial-scale设定初始缩放比例 maximum-scale设定允许用户缩放到的最大比例 minimum-scale设定允许用户缩放到的最小比例 值范围从0.0到10.0 user-scalable设定是否允许用户进行手动缩放 值为yes或no -->
+		<title>并行加载与顺序执行–《高性能javascript》读书笔记</title>
+
+		<!-- page icon -->
+		<link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png" />
+
+		<!-- syntax highlighting CSS -->
+		<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+
+		<!-- Custom CSS -->
+		<link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+	</head>
+	<body class="post-page">
+		<div class="header">
+			<div class="wrap">
+				<h1 class="logo">
+					<a href="/">lxjwlt's blog</a>
+				</h1>
+				<h2 class='subname'></h2>
+			</div>
+		</div>
+
+		<div class='main wrap'>
+	<ul class="sidebar">
+		<li><a class='to-index-page' href="/">ALL</a></li>
+		
+			<li><a class='to-others-page' href="/others.html">OTHERS[2]</a></li>
+		
+			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[10]</a></li>
+		
+	</ul>
+	<div class="content post">
+		<h1 class='post-title'>并行加载与顺序执行–《高性能javascript》读书笔记</h1>
+		<p class='post-date'>2013-05-17</p>
+		<p>Javascript文件（下面简称脚本文件）需要被HTML文件引用才能在浏览器中运行。在HTML文件中可以通过不同的方式来引用脚本文件，我们需要关注的是，引用的具体实现方式和这些方式可能会带来的性能问题。</p>
+
+<p>首先，引用脚本必须用到<code>&lt;script&gt;</code>标签，所以需要了解<code>&lt;script&gt;</code>标签的特性，引述书中作者原话：</p>
+
+<blockquote>
+<p>当浏览器遇到（<strong>即内嵌</strong>）<code>&lt;script&gt;</code>标签时，当前浏览器无从获知Javascript是否会修改页面内容。因此，这时浏览器会停止处理页面，先执行Javascript代码，然后再继续解析和渲染页面。同样的情况也发生在使用 src 属性加在Javascript的过程中（即<strong>外链</strong>），浏览器必须先花时间下载外链文件中的代码，然后解析并执行它。在这个过程中，页面渲染和用户交互完全被阻塞了。</p>
+</blockquote>
+
+<p>根据上述描述，能了解到：</p>
+
+<p><strong>每当浏览器解析到<code>&lt;script&gt;</code>标签（无论内嵌还是外链）时，浏览器会优先下载、解析并执行该标签中的Javascript代码，而阻塞了其后所有页面内容的下载和渲染。</strong></p>
+
+<p>可以说，正是因为<code>&lt;script&gt;</code>标签的这一特性，所以才有了脚本文件的各种引用方式及其讨论。</p>
+
+<h2>传统做法</h2>
+
+<p>最传统的做法是在<code>&lt;head&gt;</code>标签内插入<code>&lt;script&gt;</code>标签：</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">&lt;head&gt;
+    &lt;script src=&quot;test.js&quot;&gt;&lt;/script&gt;
+    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;styles/test.css&quot; /&gt;
+&lt;/head&gt;
+</code></pre></div>
+<p>这种引用方式隐藏着严重的性能问题。由于<code>&lt;script&gt;</code>标签的特性，当浏览器解析到<code>&lt;script&gt;</code>标签时，浏览器优先下载解析脚本文件，而停止解析其后的页面内容，这意味着，其后的 test.css 样式文件和<code>&lt;body&gt;</code>标签都无法被加载，由于<code>&lt;body&gt;</code>标签无法被加载，那么页面自然就无法渲染了。因此在该javascript代码完全执行完之前，页面都是一片空白。</p>
+
+<p>下面用张动态图来说明：</p>
+
+<p><img src="http://i.minus.com/iWQjjOgCSiArr.gif" alt="传统方法"></p>
+
+<p>上图有两点是需要注意的：</p>
+
+<ul>
+<li><p><strong>页面的渲染和javascript代码的执行是一起显示出来的。</strong></p>
+
+<p>说明最开始出现的空白正是由于javascript文件阻塞特性引起的。这是因为如果脚本文件没有阻塞页面渲染的话，页面的渲染一般要先于脚本文件的加载，简来说就是页面先显示出来，过一小会儿，才有动态效果（一般来说页面所需要的的css样式文件和html文件的体积会远远小于脚本文件，如果没有被阻塞，它们会先于脚本文件下载好，然后立即被浏览器解析出来）。</p></li>
+<li><p><strong>图片的加载是在javascript执行之后才开始的</strong></p>
+
+<p>说明javascript阻塞了图片的加载。</p></li>
+</ul>
+
+<h2>推荐做法</h2>
+
+<p>既然<code>&lt;script&gt;</code>标签会阻塞其后内容的加载，那么将<code>&lt;script&gt;</code>标签<strong>放到所有页面内容之后</strong>不就可以避免这种糟糕的状况了吗？如下：</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">&lt;body&gt;
+
+    &lt;!-- 页面其他内容 --&gt;
+
+    &lt;!-- 推荐的脚本放置位置 --&gt;    
+    &lt;script type=&quot;text/javascript&quot; src=&quot;file1.js&quot;&gt;  
+    &lt;script type=&quot;text/javascript&quot; src=&quot;file2.js&quot;&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;file3.js&quot;&gt;
+&lt;/body&gt;
+</code></pre></div>
+<p>将所有的<code>&lt;script&gt;</code>标签尽可能地放到<code>&lt;body&gt;</code>标签底部，尽量避免对页面其余部分下载及渲染的影响，效果图如下：</p>
+
+<p><img src="http://i.minus.com/iTKTughz0Xzl7.gif" alt="推荐做法"></p>
+
+<p>对比上一张动态图，可以发现，<strong>页面渲染要先于脚本文件的执行</strong>，说明脚本文件不再阻塞页面渲染了（包括css文件和img等文件的下载）。 </p>
+
+<p>然而这种做法在一些老旧的浏览器中依旧有些弊端，先选取书中作者的原话：</p>
+
+<blockquote>
+<p>(将脚本放到<code>&lt;body&gt;</code>标签底部时)尽管脚本下载会阻塞另一个脚本，但是页面的大部分内容已经下载完成并显示给用户…</p>
+</blockquote>
+
+<p>也就是说，尽管在<strong>IE8+浏览器</strong>上已经实现了脚本并行下载，但在更老旧浏览器中，页面中脚本仍是一个接着一个加载的。就上面的示例代码而言，浏览器先加载完file1脚本文件，再去加载file2脚本文件，最后才轮到file3脚本文件。虽然此时脚本已经不阻塞其他页面内容，但<strong>脚本之间却是相互阻塞加载</strong>，于是有了动态加载脚本这一方法。</p>
+
+<h3>动态加载</h3>
+
+<p>动态加载脚本文件，即通过文档对象模型（DOM），在页面任意地方创建并插入<code>&lt;script&gt;</code>标签：</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">var script=document.createElement(&#39;script&#39;); 
+script.type=&#39;text/javascript&#39;; 
+script.src=&#39;file1.js&#39;; 
+document.getElementsByTagName(&#39;head&#39;)[0].appendChild(script);
+</code></pre></div>
+<p>上述代码动态创建了一个链接file1脚本文件的<code>&lt;script&gt;</code>标签，并将其添加到<code>&lt;head&gt;</code>标签内。</p>
+
+<p>这种方法的<strong>优点</strong>在于：</p>
+
+<blockquote>
+<p>无论在何时启动下载，文件的下载和执行过程不会阻塞页面其他进程（包括脚本加载）。</p>
+</blockquote>
+
+<p>然而这种方法也是有<strong>缺陷</strong>的：</p>
+
+<blockquote>
+<p>脚本会在下载完成后立即执行，那么意味着多个脚本之间的运行顺序是无法保证的（除了Firefox和Opera）。</p>
+</blockquote>
+
+<p>当某个脚本对另一个脚本有依赖关系时，就很可能发生错误了。比如，写一个jQuery代码，需要引入jQuery库，然而你写的jQuery代码文件很可能会先完成下载并立即执行，这时浏览器会报错——‘jQuery未定义’之类的，因为此时jQuery库还未下载完成。针对这种情况，有了以下改进：</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text"> function loadScript(url,callback){ 
+    var script=document.createElement(&#39;script&#39;); 
+    script.type=&quot;text/javascript&quot;; 
+    if(script.readyState){
+        //IE 
+        script.onreadystatechange=function(){ 
+            if(script.readyState==&quot;loaded&quot;||script.readyState==&quot;complete&quot;){
+                script.onreadystatechange=null; 
+                callback(); 
+            } 
+        }; 
+    }else{
+        //其他浏览器 
+        script.onload=function(){ 
+            callback(); 
+        }; 
+    } 
+    script.src=url; 
+    document.getElementsByTagName(&#39;head&#39;)[0].appendChild(script); 
+}
+</code></pre></div>
+<p>上述代码改进的地方就是增加了一个回调函数，该函数会在相应脚本文件加载完成后被调用。这样便可以实现顺序加载了，写法如下（假设file2依赖file1，file1和file3相互独立）：</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">loadScript(&#39;file1.js&#39;,function(){
+    loadScript(&#39;file2.js&#39;,function(){}); 
+});
+loadScript(&#39;file3.js&#39;,function(){});
+</code></pre></div>
+<p>file2会在file1加载完后才开始加载，保证了在file2执行前file1已经准备妥当。而file1和file3是并行下载的，互不影响。 </p>
+
+<p>虽然loadScript函数已经足够好，但还是有些不尽人意的地方——loadScript函数中的<strong>顺序加载是以脚本的阻塞加载</strong>来实现的。而我们真正想实现的是——脚本同时下载并按相应顺序执行，即并行加载并顺序执行。</p>
+
+<h3>LABjs库</h3>
+
+<p><a href="http://labjs.com/">LABjs库</a>能帮我们真正地实现<strong>并行加载与顺序执行</strong>，推荐写法如下：</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">&lt;body&gt;
+
+    &lt;!-- 页面其余内容 --&gt;
+
+    &lt;!-- 推荐的脚本放置位置 --&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;LABjs.js&quot;&gt;&lt;/script&gt;
+    &lt;script type=&quot;text/javascript&quot;&gt;
+        $LAB
+            .script(&#39;file1.js&#39;)         
+            .script(&#39;file2.js&#39;)
+            .script(&#39;file3.js&#39;);
+    &lt;/script&gt;
+&lt;/body&gt;
+</code></pre></div>
+<p>上述代码会并行加载三个脚本文件，更赞的是，它会按脚本的顺序来执行这些脚本。</p>
+
+<h2>参考</h2>
+
+<ul>
+<li><a href="http://book.douban.com/subject/5362856/">《高性能javascript》</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2011/10/javascript_loading.html">Javascript文件加载：LABjs和RequireJS</a></li>
+</ul>
+
+		<!-- Duoshuo Comment BEGIN -->
+		<div class="ds-thread"></div>
+		<script type="text/javascript">
+			var duoshuoQuery = {short_name:"lxjwlt"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = 'http://static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] 
+				|| document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+		</script>
+		<!-- Duoshuo Comment END -->
+	</div>
+</div>
+
+		<div class="footer">
+			
+		</div>
+		
+	</body>
+</html>

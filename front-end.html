@@ -1,0 +1,24 @@
+---
+layout: default
+title: lxjwlt's blog
+id: front-end-page
+---
+<div class="main wrap clearfix">
+	<ul class="sidebar">
+		<li><a class='to-index-page' href="{{ site.baseurl }}/">ALL</a></li>
+		{% for category in site.categories %}
+			<li><a class='to-{{ category[0] }}-page' href="{{ site.baseurl }}/{{ category[0] }}.html">{{ category | first | upcase }}[{{ category | last | size }}]</a></li>
+		{% endfor %}
+	</ul>
+	<ul class="content">
+		{% for post in site.posts %}{% if post.category == 'front-end' %}
+			<li>
+				<h2>
+					<a href="{{ site.baseurl }}{{ post.url }}" class='post-title'>{{ post.title }}</a>
+				</h2>
+				<p class='post-date'>{{ post.date | date_to_string | date: "%Y-%m-%d" }}</p>
+				<p class='post-excerpt'>{{ post.excerpt }}</p>
+			</li>
+		{% endif %}{% endfor %}
+	</ul>
+</div>

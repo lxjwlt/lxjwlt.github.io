@@ -1,0 +1,219 @@
+<!DOCTYPE HTML>
+<!--[if IE 6]><html class="ie6 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 7]><html class="ie7 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 8]><html class="ie8 lte9 lte8 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 9]><html class="ie9 lte9 no-css3" lang="zh-cn"><![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8) | !(IE 9)  ]><!--><html lang="zh-cn" class='non-ie'><!--<![endif]-->
+	<head>
+		<meta charset="utf-8" />
+		<meta name="description" content="..." />
+		<meta name="keywords" content="..." />
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" /><!-- 响应式网页设计：initial-scale设定初始缩放比例 maximum-scale设定允许用户缩放到的最大比例 minimum-scale设定允许用户缩放到的最小比例 值范围从0.0到10.0 user-scalable设定是否允许用户进行手动缩放 值为yes或no -->
+		<title>sublime快捷键及常用插件——工欲善其事，必先利其器</title>
+
+		<!-- page icon -->
+		<link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png" />
+
+		<!-- syntax highlighting CSS -->
+		<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+
+		<!-- Custom CSS -->
+		<link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+	</head>
+	<body class="post-page">
+		<div class="header">
+			<div class="wrap">
+				<h1 class="logo">
+					<a href="/">lxjwlt's blog</a>
+				</h1>
+				<h2 class='subname'></h2>
+			</div>
+		</div>
+
+		<div class='main wrap'>
+	<ul class="sidebar">
+		<li><a class='to-index-page' href="/">ALL</a></li>
+		
+			<li><a class='to-others-page' href="/others.html">OTHERS[2]</a></li>
+		
+			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[10]</a></li>
+		
+	</ul>
+	<div class="content post">
+		<h1 class='post-title'>sublime快捷键及常用插件——工欲善其事，必先利其器</h1>
+		<p class='post-date'>2013-05-02</p>
+		<h2>快捷键</h2>
+
+<h3>默认快捷键：</h3>
+
+<ul>
+<li><p>查找当前选中文本的<strong>下一个</strong>相同的文本，并将其选中——鼠标选中文本，反复按 <code>CTRL+D</code></p></li>
+<li><p>查找当前选中文本的<strong>所有</strong>相同的文本，并将其选中——鼠标选中文本，按下 <code>Alt+F3</code></p></li>
+<li><p>为当前选中文本中的<strong>每行行末</strong>创建光标——鼠标选中多行，按下 <code>Ctrl+Shift+L</code> </p></li>
+<li><p>在<strong>每行同一个位置</strong>创建多个光标——<code>Shift+鼠标右键</code> 或 按住鼠标中键并上下拖动</p></li>
+<li><p>在<strong>任意位置</strong>创建多个光标——<code>Ctrl+鼠标左键</code></p></li>
+<li><p>选中整行——<code>ctrl+L</code></p></li>
+<li><p>删除从光标至行末的所有文本——<code>ctrl+kk</code></p></li>
+<li><p>合并多行——选中多行，按下 <code>ctrl+j</code></p></li>
+<li><p>注释当前行——<code>ctrl+/</code></p></li>
+<li><p>于当前行<strong>前</strong>插入新的一行——<code>ctrl+shift+enter</code></p></li>
+<li><p>与当前行<strong>后</strong>插入新的一行——<code>ctrl+enter</code></p></li>
+<li><p>将选中的文本上下移动——<code>shift+ctrl+上下键</code></p></li>
+</ul>
+
+<h3>常用Emmet快捷键：</h3>
+
+<ul>
+<li><p>选中整个HTML标签——<code>ctrl+,</code></p></li>
+<li><p>删除整个HTML标签——<code>shift+ctrl+;</code></p></li>
+<li><p>于当前选择器下，同步所有相同的CSS属性下的属性值(css3属性不再需要每个不同前缀都去修改，非常好用)——选中其中一个CSS属性，按下 <code>ctrl+shift+r</code></p></li>
+<li><p>CSS属性数值增减1——选中某个CSS属性的属性数值，按下 <code>ctrl+上下键</code></p></li>
+</ul>
+
+<h2>推荐插件</h2>
+
+<h3><a href="https://github.com/sergeche/emmet-sublime">Emmet（原名Zen Coding）</a></h3>
+
+<p>用法：</p>
+
+<ul>
+<li><a href="https://github.com/sergeche/emmet-sublime#available-actions">怎么用Emmet &amp; 相关快捷键</a></li>
+<li><a href="http://docs.emmet.io/cheat-sheet/">Emmet 的 cheat-sheet</a></li>
+</ul>
+
+<p>演示：</p>
+
+<p><img src="http://i.minus.com/ib1KcOZid7qaRD.gif" alt="zen coding"></p>
+
+<p><img src="http://i.minus.com/id2EGlHI6PjCD.gif" alt="数值增减1"></p>
+
+<p>Emmet是一款用于HTML、CSS和XSL的高效编程插件，原先zen coding需要按快捷键 ctrl+alt+enter才能运行，现在更新了另一种方式——直接在文本中输入zen coding的语句，然后按tag键就可以实现同样功能，非常棒。</p>
+
+<h3><a href="https://github.com/aaronpowell/sublime-jquery-snippets">jQuery-snippets</a></h3>
+
+<p>用法：按<code>ctrl+shift+p</code>查找jQuery代码，充当字典功能</p>
+
+<p>演示：
+<img src="http://i.minus.com/itoTuAIBmd4zz.gif" alt="jQuery-snippets"></p>
+
+<p>这个插件提供jQuery的提示功能，不过每次提示都需要快捷键ctrl+shift+p上查找，不过如果和CodeIntel插件（下面说到）配合使用能互补不足，因为两个插件都有些jQuery代码缺少。</p>
+
+<h3><a href="https://github.com/wbond/sublime_alignment">Alignment</a></h3>
+
+<p>用法：选定要对齐的行，按<code>ctrl+alt+a</code></p>
+
+<p>演示：
+<img src="http://i.minus.com/iTfyxnYEF4gsu.gif" alt="Alignment"></p>
+
+<p>等号对齐插件，使代码更美观</p>
+
+<h3><a href="https://github.com/facelessuser/BracketHighlighter">BracketHighlighter</a></h3>
+
+<p>演示：
+<img src="http://i.minus.com/ibfRUoeoflEuN8.gif" alt="brackerhightlighter"></p>
+
+<p>高亮显示光标所在的括号和引号，类似于代码匹配，可以匹配括号，引号等符号内的范围</p>
+
+<h3><a href="https://github.com/kemayo/sublime-text-2-clipboard-history">Clipboard History</a></h3>
+
+<p>用法：按<code>ctrl+shift+v</code>
+演示：
+<img src="http://i.minus.com/ixXpoR85SY7Tv.gif" alt="clipboard history"></p>
+
+<p>粘贴板历史记录，方便使用复制/剪切的内容，快捷键ctrl+shift+v可调出该历史记录面板</p>
+
+<h3><a href="https://github.com/Kronuz/SublimeCodeIntel">CodeIntel</a></h3>
+
+<p>演示：
+<img src="http://i.minus.com/izNM5ohTBvVS1.gif" alt="codeIntel"></p>
+
+<p>代码自动提示，支持大多数语言，能很好地提示大部分jQuery API</p>
+
+<h3><a href="https://github.com/titoBouzout/SideBarEnhancements">SideBarEnhancements</a></h3>
+
+<p>用法：<code>F12</code>
+演示：</p>
+
+<p><img src="http://i.minus.com/i3Us4Fx9hUTWv.gif" alt="SideBarEnhancements"></p>
+
+<p>这个插件能实现很多功能，比如改变菜单栏的选项，加入一些文件的打开方式，可以直接在sublime菜单中选择用photoshop打开图片什么的，但我看中它的功能是，按F12可用默认浏览器打开当前html页面，还可以通过修改来实现用其他浏览器打开当前页面</p>
+
+<h3><a href="https://github.com/SublimeLinter/SublimeLinter">sublimeLinter</a></h3>
+
+<p>前提：<a href="http://www.infoq.com/cn/articles/nodejs-npm-install-config">安装Node.js和npm</a>
+演示：</p>
+
+<p><img src="http://i.minus.com/iVDWsMtw62ack.gif" alt="sublimeLinter"></p>
+
+<p>插件原文件中只定义了一些基础的js检查机制，你可以通过修改自由的定制它，是它更严格些（js检查机制是基于jshint，相关选项可以参照<a href="http://www.jshint.com/docs/#directives">此处</a>添加）
+该插件可以高亮显示发生了js错误或css错误的行，这两种检查机制均可自由定制</p>
+
+<h3><a href="https://github.com/akira-cn/sublime-v8">sublime-v8</a></h3>
+
+<p>用法：</p>
+
+<ul>
+<li>按<code>ctrl+alt+j</code>调出js简易控制台（与chrome那个类似，但貌似很多功能都无法实现）</li>
+<li>按 <code>ctrl+alt+H</code> 调出js调试界面</li>
+</ul>
+
+<p>演示：</p>
+
+<p><img src="http://i.minus.com/il58Vxax648bC.gif" alt="sublime-v8"></p>
+
+<p>和sublimeLinter一样都是基于jshint的，不同是这插件会显示出错原因，而且没有精力去折腾node.js的同学，可以直接用这个插件，这插件不需要Node.js</p>
+
+<h3><a href="https://github.com/daylerees/colour-schemes">daylerees-schemes</a></h3>
+
+<p>用法：菜单 preferences –&gt; color schemes –&gt; daylerees schemes</p>
+
+<p>演示：以上演示图的代码颜色均为该插件中的snappy主题
+超多漂亮的代码颜色标记，相信一定有你喜欢的</p>
+
+<p><strong>以上插件均可在此处<a href="http://s.yunio.com/gQXB4j">打包</a>下载</strong></p>
+
+<h2>小技巧</h2>
+
+<h3>取消自动输出双括号</h3>
+
+<p>默认状态下，输入左括号时sublime会自动将右括号打出来了，如果不习惯这种，可以打开菜单栏 <code>Preferences-&gt;Setting-user</code> 设置 <code>auto_match_enabled</code> 为 <code>false</code> 即可。</p>
+
+<h3>自定义快捷键的设置和插件的设置</h3>
+
+<p>插件的快捷键和自定义设置一般在 <code>菜单 —&gt;preferences —&gt;package settings</code> 中设置，其中快捷键的设置选项一般包含 <code>key</code> 字样，而插件本身的设置一般包含 <code>setting</code> 字样。</p>
+
+<p>如果通过上述方式打开的文件中为空，则需要前去<strong>插件文件</strong>中找到真正的设置文件 <code>菜单 —&gt; preferences —&gt; browse packages</code>，在打开的文件夹中找到你的插件文件，进入再通过 <code>key</code> 、 <code>setting</code> 字样来一个个找到设置文件，然后打开自行定制，一般设置选项都为 <code>true</code> 或 <code>false</code>，比如：</p>
+
+<ul>
+<li><p>设置 sublime-v8 插件的js检查规则：</p>
+
+<p><code>菜单 —&gt; preferences —&gt; browse packages</code>，找到插件文件夹，进去后打开文件 <code>JSHINT.sublime-settings</code>，里面可设置jshint规则</p></li>
+<li><p>设置 sublimeLinter 插件的js检查规则：</p>
+
+<p><code>菜单 —&gt;preferences —&gt;package settings —&gt; sublimeLinter —&gt; setting–Default</code> ，其中 <code>sublimelinter</code> 选项可以设置插件的启动条件， <code>jshint option</code> 可添加/删除js检查规则</p></li>
+</ul>
+
+		<!-- Duoshuo Comment BEGIN -->
+		<div class="ds-thread"></div>
+		<script type="text/javascript">
+			var duoshuoQuery = {short_name:"lxjwlt"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = 'http://static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] 
+				|| document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+		</script>
+		<!-- Duoshuo Comment END -->
+	</div>
+</div>
+
+		<div class="footer">
+			
+		</div>
+		
+	</body>
+</html>
