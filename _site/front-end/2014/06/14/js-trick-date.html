@@ -6,8 +6,12 @@
 <!--[if !(IE 6) | !(IE 7) | !(IE 8) | !(IE 9)  ]><!--><html lang="zh-cn" class='non-ie'><!--<![endif]-->
 	<head>
 		<meta charset="utf-8" />
-		<meta name="description" content="..." />
-		<meta name="keywords" content="..." />
+
+		
+			<meta name="description" content="本文主要介绍Date对象的常用方法和一些在开发过程中会用到的小技巧，比如如何控制时间输入格式，如何获取一个月的总天数。" />
+		
+
+		<meta name="keywords" content="css,javascript,前端,页面制作" />
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" /><!-- 响应式网页设计：initial-scale设定初始缩放比例 maximum-scale设定允许用户缩放到的最大比例 minimum-scale设定允许用户缩放到的最小比例 值范围从0.0到10.0 user-scalable设定是否允许用户进行手动缩放 值为yes或no -->
 		<title>JavaScript小小技巧——Date篇</title>
 
@@ -81,7 +85,7 @@
 <p>还记得上面介绍“创建Date对象”吗？如果我们想创建 2014年1月1日 的Date对象，可以这样写：</p>
 <div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="k">new</span>  <span class="nb">Date</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
 </code></pre></div>
-<p>我们知道，Date构造函数中传入了三个参数，分别是年、月、日。但是，如果“日”的参数为0会怎么样呢？由于0在1之前，所以意味着2014年1月1日的<strong>前一天</strong>，即2013年12月的最后一天：</p>
+<p>我们知道，Date构造函数中传入了三个参数，分别是年、月、日。但是，如果“日”的参数为0会怎么样呢？由于0在1之前，所以意味着2014年1月1日的<strong>前一天</strong>，即2013年12月的<strong>最后一天</strong>：</p>
 <div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 2013年12月的最后一天</span>
 <span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
 
@@ -89,13 +93,7 @@
 <span class="c1">// 2013年12月的最后一天是31日，说明2013年12月份有31天</span>
 <span class="nx">time</span><span class="p">.</span><span class="nx">getDate</span><span class="p">();</span>
 </code></pre></div>
-<h2>那又如何？</h2>
-
-<p>了解了这些Date的常见用法，我们可以制作出类似Windows系统日历的效果：</p>
-
-<iframe width="100%" height="300" src="http://jsfiddle.net/lxjwlt/drS62/embedded/result,js/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
-
-<p>上述代码主要的工作就是：向<strong>6行乘7列</strong>的格子中填入日期。这过程中，我们需要知道上个月的最后一天的日期和这个月的总天数。前面提到的小技巧正好能派上用场。</p>
+<p>oh~yeah！现在我们知道，2013年12月有31天。同理，通过这个小小的trick，我们能够获取任意月份的总天数了！</p>
 
 <h2>格式化</h2>
 
@@ -124,6 +122,14 @@
 <span class="nx">time</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s1">&#39;y-m-d&#39;</span><span class="p">);</span>    <span class="c1">// &quot;2014-7-3 &quot;</span>
 <span class="nx">time</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s1">&#39;m y&#39;</span><span class="p">);</span>      <span class="c1">// &quot;July 2014&quot;</span>
 </code></pre></div>
+<h2>那又如何？</h2>
+
+<p>了解了这些Date的常见用法，我们可以制作出类似Windows系统日历的效果：</p>
+
+<iframe width="100%" height="300" src="http://jsfiddle.net/lxjwlt/drS62/embedded/result,js/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+<p>上述代码主要的工作就是：向<strong>6行乘7列</strong>的格子中填入日期。这过程中，我们需要知道上个月的最后一天的日期和这个月的总天数。前面提到的小技巧正好能派上用场。</p>
+
 <h2>参考</h2>
 
 <ul>
