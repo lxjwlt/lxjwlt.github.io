@@ -2,4 +2,4 @@ name: lxjwlt's blog
 subname: ''
 markdown: redcarpet
 pygments: true
-baseurl: /blog
+baseurl: /
