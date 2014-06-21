@@ -21,7 +21,7 @@ excerpt: '用户可能会不断上传头像图片来查看头像呈现出来的�
 
 我们试着考虑一下，用户可能会不断上传头像图片来查看头像呈现出来的效果，而在这过程中，用户的页面不断地被刷新，这是一种极其不友善的交互方式。所以在这种情况下，我们希望不刷新页面的同时能够将图片上传至服务器，即异步上传图片。
 
-说到异步上传，我们立马想到Ajax，然而Ajax只能传输纯文本的数据，没法传输图片数据，所以我们需要另寻他径。
+说到异步上传，我们立马想到Ajax，然而Ajax只能传输纯文本的数据，<del>没法传输图片数据，所以我们需要另寻他径。</del>在HTML5之前，Ajax是无法实现图片上传的，所以下面先介绍兼容性良好的方案。
 
 ##iframe模拟异步上传
 我们都听说过iframe，iframe是一种内联框架，在该框架内可以访问（加载）其他页面。
@@ -55,13 +55,13 @@ iframe模拟异步上传的关键在于——使用iframe打开表单的action U
 
     <?php
         // 获取上传文件的文件名
-        $filename = $_FILES['figure-file']['name'];
+        $filename = $_FILES['file']['name'];
         
         // 定义存储地址
         $target = 'images/' . $filename;
         
         // 将临时图片 拷贝到 存储地址
-        move_uploaded_file($_FILES['figure-file']['tmp_name'], $target);
+        move_uploaded_file($_FILES['file']['tmp_name'], $target);
     ?>
     
     <!-- 
@@ -88,6 +88,63 @@ src = doc.images[0].src;
 $('.avatar').prop('src', src);
 ```
 
+##Ajax实现图片上传
+XMLHttpRequest level 2新增了对FormData对象接口的支持，FormData对象是什么东东？FormData对象能够将上传文件转换为表单数据，如此一来，XMLHttpRequest 的 send 方法便能将这些数据传送到后台，从而实现文件上传。
+
+首先创建FormData对象，并通过`append`方法将数据以键值对的形式添加到FormData对象中：
+
+```javascript
+var formData = new FormData(),
+
+    // 获取上传文件的File对象
+    theFile = $('input[type=file]')[0].files[0];
+
+// 将上传文件添加到FormData对象中
+formData.append('file', theFile);
+```
+
+然后，将FormData对象作为Ajax的数据传送到后台，以下是原生方法：
+
+```javascript
+var xhr = new XMLHttpRequest();
+
+xhr.open('post', 'upload.php', true);
+xhr.send(formData);
+
+xhr.onreadystatechange = function() {
+    if (this.readyState === 4 && this.status === 200) {
+    
+        // 获取xhr.responseText 并 更新用户头像
+        // ...
+        
+    }
+};
+```
+
+当然，我们也能通过jQuery库提供的`jQuery.ajax`方法来实现，但有几点我们是必须注意的：
+
+```javascript
+$.ajax({
+    type: 'POST',
+    url: 'upload.php',
+    
+    // contentType必须为false！避免jQuery添加Content-Type头部信息
+    contentType: false,
+    
+    // processData必须为false！不然jQuery会将formData转换为字符串
+    processData: false,
+    
+    data: formData,
+    dataType: 'text',
+    success: function(data) {
+        // 更新 用户头像
+        $('.avatar').prop('src', data.trim());
+    }
+});
+```
+
+由于FormData是HTML5新增的构造方法，所以上述通过FormData来实现Ajax上传文件的方法只适用于IE10+。
+
 ##有没有其他方法？
 相信我们都会这么考虑：其实完全没必要上传图片，用户不就是想看看图片的实际效果吗？直接将上次图片显示出来就行了。
 
@@ -104,6 +161,17 @@ var theFile = $('input[type=file]')[0].files[0],
 $('.avatar').prop('src', src);
 ```
 
-非常可惜的是，该方法只支持IE10+，所以还不太实用。
+用`createObjectURL`生成的URL是会占用内存空间的，所以当我们不再需要图片显示时，我们必须释放它的内存空间：
+
+```javascript
+window.URL.revokeObjectURL(theFile);
+```
+
+尽管`window.URL.createObjectURL`方法非常简洁实用，但遗憾的是，该方法只支持IE10+。
 
 另外，异步上传图片也能通过flash来实现，有兴趣的同学可以去了解了解。
+
+##参考
+* [Using files from web applications](https://developer.mozilla.org/en-US/docs/Using_files_from_web_applications#Example.3a_Using_object_URLs_to_display_images)
+* [Using FormData Object](https://developer.mozilla.org/en-US/docs/Web/Guide/Using_FormData_Objects)
+* [Sending multipart/formdata with jQuery.ajax](http://stackoverflow.com/questions/5392344/sending-multipart-formdata-with-jquery-ajax)
