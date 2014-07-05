@@ -226,3 +226,64 @@ blockquote{
 .post pre{
 	margin: 1.2em 0;
 }
+
+
+/*****************************************************************************/
+/*
+/* directory
+/*
+/*****************************************************************************/
+.directory {
+    width: 300px;
+    height: 100%;
+    position: fixed;
+    left: -300px;
+    top: 0;
+    background-color: #263248;
+    font-size: 16px;
+    box-shadow: 0 0 16px 8px rgba(0,0,0,.5);
+    -webkit-transition: left .4s;
+    -moz-transition: left .4s;
+    transition: left .4s;
+}
+
+.directory.active {
+    left: 0;
+}
+
+.directory__container {
+    min-height: 100%;
+    padding: 0 10px;
+    background-color: #263248;
+}
+
+.directory__container ul  ul {
+    padding-left: 2em;
+}
+
+.directory__container li {
+    padding-top: 10px;
+}
+
+.directory__container a {
+    color: white;
+}
+
+.directory__button {
+    width: 1em;
+    height: 3em;
+    padding: 10px;
+    color: white;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    bottom: 0;
+    margin: auto 0;
+    z-index: -1;
+    background: #263248;
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 0 10px 4px rgba(0,0,0,.5);
+}
+.directory__button:hover {
+	text-decoration: none;
+}

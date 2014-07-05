@@ -35,7 +35,11 @@
 			</div>
 		</div>
 
-		<div class='main wrap'>
+		<div class="directory" id="directory">
+    <div class="directory__container" id="directory__container"></div>
+    <a href="#" class="directory__button" id='expand-button'>目录</a>
+</div>
+<div class='main wrap'>
 	<ul class="sidebar">
 		<li><a class='to-index-page' href="/">ALL</a></li>
 		
@@ -44,7 +48,7 @@
 			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[11]</a></li>
 		
 	</ul>
-	<div class="content post">
+	<div class="content post" id="post">
 		<h1 class='post-title'>SASS用法</h1>
 		<p class='post-date'>2013-11-26</p>
 		<p>Sass是CSS预编译器，提供一些便捷的写法——嵌套、变量、函数等——来生成常规的CSS。</p>
@@ -527,6 +531,7 @@ ie-hex-str(rgba(#000, .5)) =&gt; #80000000
 		<!-- Duoshuo Comment END -->
 	</div>
 </div>
+<script src="/scripts/post.js"></script>
 
 		<div class="footer">
 			

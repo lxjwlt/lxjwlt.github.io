@@ -35,7 +35,11 @@
 			</div>
 		</div>
 
-		<div class='main wrap'>
+		<div class="directory" id="directory">
+    <div class="directory__container" id="directory__container"></div>
+    <a href="#" class="directory__button" id='expand-button'>目录</a>
+</div>
+<div class='main wrap'>
 	<ul class="sidebar">
 		<li><a class='to-index-page' href="/">ALL</a></li>
 		
@@ -44,7 +48,7 @@
 			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[11]</a></li>
 		
 	</ul>
-	<div class="content post">
+	<div class="content post" id="post">
 		<h1 class='post-title'>段落溢出处理——jQuery插件</h1>
 		<p class='post-date'>2013-05-04</p>
 		<p>‘段落溢出’（这名字是我杜撰的）是指段落高度超过了父元素的高度了。为了解决这种情况，我们希望做到的是——截除多出来的那部分，并在末尾加上省略号或跳转详细页的链接。</p>
@@ -281,6 +285,7 @@ $(&#39;p&#39;).paraOverflow();
 		<!-- Duoshuo Comment END -->
 	</div>
 </div>
+<script src="/scripts/post.js"></script>
 
 		<div class="footer">
 			

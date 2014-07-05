@@ -35,7 +35,11 @@
 			</div>
 		</div>
 
-		<div class='main wrap'>
+		<div class="directory" id="directory">
+    <div class="directory__container" id="directory__container"></div>
+    <a href="#" class="directory__button" id='expand-button'>目录</a>
+</div>
+<div class='main wrap'>
 	<ul class="sidebar">
 		<li><a class='to-index-page' href="/">ALL</a></li>
 		
@@ -44,7 +48,7 @@
 			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[11]</a></li>
 		
 	</ul>
-	<div class="content post">
+	<div class="content post" id="post">
 		<h1 class='post-title'>论变量即是引用</h1>
 		<p class='post-date'>2013-09-21</p>
 		<p>其实Javascript 中<strong>变量即是引用</strong>，有点像C++中的指针，它们不是直接存储数据，而是存储<strong>指向数据的地址</strong>。</p>
@@ -110,6 +114,7 @@
 		<!-- Duoshuo Comment END -->
 	</div>
 </div>
+<script src="/scripts/post.js"></script>
 
 		<div class="footer">
 			

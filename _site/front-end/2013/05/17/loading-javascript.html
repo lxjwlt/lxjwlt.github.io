@@ -35,7 +35,11 @@
 			</div>
 		</div>
 
-		<div class='main wrap'>
+		<div class="directory" id="directory">
+    <div class="directory__container" id="directory__container"></div>
+    <a href="#" class="directory__button" id='expand-button'>目录</a>
+</div>
+<div class='main wrap'>
 	<ul class="sidebar">
 		<li><a class='to-index-page' href="/">ALL</a></li>
 		
@@ -44,7 +48,7 @@
 			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[11]</a></li>
 		
 	</ul>
-	<div class="content post">
+	<div class="content post" id="post">
 		<h1 class='post-title'>并行加载与顺序执行–《高性能javascript》读书笔记</h1>
 		<p class='post-date'>2013-05-17</p>
 		<p>Javascript文件（下面简称脚本文件）需要被HTML文件引用才能在浏览器中运行。在HTML文件中可以通过不同的方式来引用脚本文件，我们需要关注的是，引用的具体实现方式和这些方式可能会带来的性能问题。</p>
@@ -209,6 +213,7 @@ loadScript(&#39;file3.js&#39;,function(){});
 		<!-- Duoshuo Comment END -->
 	</div>
 </div>
+<script src="/scripts/post.js"></script>
 
 		<div class="footer">
 			
