@@ -1,0 +1,303 @@
+<!DOCTYPE HTML>
+<!--[if IE 6]><html class="ie6 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 7]><html class="ie7 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 8]><html class="ie8 lte9 lte8 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 9]><html class="ie9 lte9 no-css3" lang="zh-cn"><![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8) | !(IE 9)  ]><!--><html lang="zh-cn" class='non-ie'><!--<![endif]-->
+	<head>
+		<meta charset="utf-8" />
+
+		
+			<meta name="description" content="本文主要介绍介绍的是如何通过JavaScript获取一篇文章的标题并生成目录。对于一篇文章来说，目录起到很重要的作用，读者通过目录能大致地掌握文章的主体内容和内容分布，大致了解当前阅读进度，而且目录提供了各个内容块的跳转链接。" />
+		
+
+		<meta name="keywords" content="css,javascript,前端,页面制作" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" /><!-- 响应式网页设计：initial-scale设定初始缩放比例 maximum-scale设定允许用户缩放到的最大比例 minimum-scale设定允许用户缩放到的最小比例 值范围从0.0到10.0 user-scalable设定是否允许用户进行手动缩放 值为yes或no -->
+		<title>JS生成文章目录</title>
+
+		<!-- page icon -->
+		<link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png" />
+
+		<!-- syntax highlighting CSS -->
+		<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+
+		<!-- Custom CSS -->
+		<link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+	</head>
+	<body class="post-page">
+		<div class="header">
+			<div class="wrap">
+				<h1 class="logo">
+					<a href="/">lxjwlt's blog</a>
+				</h1>
+				<h2 class='subname'></h2>
+			</div>
+		</div>
+
+		<div class="directory" id="directory">
+    <div class="directory__container" id="directory__container"></div>
+    <a href="#" class="directory__button" id='expand-button'>目录</a>
+</div>
+<div class='main wrap'>
+	<ul class="sidebar">
+		<li><a class='to-index-page' href="/">ALL</a></li>
+		
+			<li><a class='to-others-page' href="/others.html">OTHERS[2]</a></li>
+		
+			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[12]</a></li>
+		
+	</ul>
+	<div class="content post" id="post">
+		<h1 class='post-title'>JS生成文章目录</h1>
+		<p class='post-date'>2014-07-06</p>
+		<p>对于一篇文章来说，目录的作用有：</p>
+
+<ul>
+<li>大纲作用，读者通过目录能大致地掌握文章的主体内容和内容分布</li>
+<li>导读作用，读者能大致了解当前阅读进度</li>
+<li>提供各个内容块的跳转链接</li>
+</ul>
+
+<p>所以，目录能提高一篇文章的可读性。</p>
+
+<p>下面要介绍的是如何通过JavaScript获取一篇文章的标题并生成目录。我们要完成的工作有：</p>
+
+<ol>
+<li>获取标题元素</li>
+<li>计算标题的层次关系</li>
+<li>创建目录的HTML结构</li>
+</ol>
+
+<h2>获取标题元素</h2>
+
+<p>首先，我们需要将一篇文章中的标题元素全部获取出来，简要的代码如下：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;article&#39;</span><span class="p">).</span><span class="nx">childNodes</span><span class="p">,</span>
+
+    <span class="c1">// 用于存储标题元素</span>
+    <span class="nx">titleElem</span> <span class="o">=</span> <span class="p">[],</span>
+
+    <span class="c1">// 用于判断tagName是否是H1~H6</span>
+    <span class="nx">reg</span> <span class="o">=</span> <span class="sr">/^H[1-6]$/</span><span class="p">,</span>
+    <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+
+<span class="c1">// 遍历文章中的节点，挑出标题元素</span>
+<span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">nodes</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nx">reg</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">nodes</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">tagName</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nx">titleElem</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">nodes</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2>标题层次关系</h2>
+
+<p>为了构建目录结构，我们还需要知道标题的层次关系。我们可以单纯地将标题序号提取出来，用该序号作为标题的所在层次，比如<code>&lt;h1&gt;</code>的序号为1，所以它在第一层。代码大致如下：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">numArr</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="nx">elem</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">titleElem</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">elem</span> <span class="o">=</span> <span class="nx">titleElem</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+
+    <span class="c1">// 将tagName标签名中的数字提取出来，存入numArr中</span>
+    <span class="nx">numArr</span> <span class="o">=</span> <span class="nx">numArr</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="o">+</span><span class="nx">elem</span><span class="p">.</span><span class="nx">tagName</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/\d/</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>对于<strong>正常排列</strong>的标题列如：<code>&lt;h1&gt;&lt;h2&gt;&lt;h2&gt;&lt;h3&gt;</code>，通过上述代码，我们能够正确地获得标题对应的层次为：<code>[1, 2, 2, 3]</code>。</p>
+
+<p>但是，也存在<strong>异常</strong>的标题列：<code>&lt;h1&gt;&lt;h4&gt;&lt;h2&gt;</code>。在这个标题列中，h1直接跳到了h4，最后再跳回h2，此时，请问h4和h2是什么关系呢？实际上，<strong>因为h4和h2的父标题都是h1，所以两者位于同一层，是平级的关系</strong>。所以该标题列对应的层次应该是：<code>[1, 2, 2]</code>，显然上述代码是无法得到正确结果的。</p>
+
+<p>下面介绍如何通过判断标题之间的关系，计算出正确的层次关系。</p>
+
+<h3>判断标题之间的关系</h3>
+
+<p>我们只需要判断<strong>前后两个</strong>标题之间的关系，即当前标题和前一个标题的关系，两者之间的前后关系只有三种：</p>
+
+<p>（父标题, 子标题） （同级标题，同级标题） （子标题，父级标题）</p>
+
+<p>前后标题关系的判断方法如下：</p>
+
+<ul>
+<li>（父标题，子标题）：当前标题的序号 &gt; 前一个标题的序号</li>
+<li>（同级标题，同级标题）：
+
+<ul>
+<li>当前标题的序号 === 前一个标题的层次</li>
+<li>当前标题的序号 &gt; 前一个标题的层次 &amp;&amp; 当前标题的序号 &lt;= 前一个标题的序号</li>
+</ul></li>
+<li>（子标题，父级标题）：当前标题的序号 &lt; 前一个标题的层次</li>
+</ul>
+
+<p>上述判断方法的代码形式如下：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="cm">/*</span>
+<span class="cm"> num: 当前标题序号</span>
+<span class="cm"> lastNum: 前一个标题的序号</span>
+<span class="cm"> lastRevNum: 前一个标题的层次</span>
+<span class="cm">*/</span>
+<span class="kd">var</span> <span class="nx">num</span><span class="p">,</span> <span class="nx">lastNum</span><span class="p">,</span> <span class="nx">lastRevNum</span><span class="p">;</span>
+
+<span class="c1">// （父标题，子标题）</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">num</span> <span class="o">&gt;</span> <span class="nx">lastNum</span><span class="p">)</span> <span class="p">{</span>
+
+<span class="c1">// （同级标题，同级标题）</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">num</span> <span class="o">===</span> <span class="nx">lastRevNum</span> <span class="o">||</span> <span class="nx">num</span> <span class="o">&gt;</span> <span class="nx">lastRevNum</span> <span class="o">&amp;&amp;</span> <span class="nx">num</span> <span class="o">&lt;=</span> <span class="nx">lastNum</span><span class="p">)</span> <span class="p">{</span>
+
+<span class="c1">// （子标题，父级标题）</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">num</span> <span class="o">&lt;</span> <span class="nx">lastRevNum</span><span class="p">)</span> <span class="p">{</span>
+
+<span class="p">}</span>
+
+<span class="nx">lastNum</span> <span class="o">=</span> <span class="nx">num</span><span class="p">;</span>
+</code></pre></div>
+<h3>层次计算法则</h3>
+
+<p>知道前后标题之间的关系，我们能够计算出当前标题的正确层次，计算方法如下：</p>
+
+<ul>
+<li>（父标题, 子标题）：当前层次 = 前一个标题的层次 + 1</li>
+<li>（同级标题, 同级标题）： 当前层次 = 前一个标题的层次</li>
+<li>（子标题, 父级标题）： 当前层次 = 当前标题的序号</li>
+</ul>
+
+<p>比如我们有标题列：<code>&lt;h1&gt;&lt;h4&gt;&lt;h3&gt;&lt;h1&gt;</code>，我们的计算过程如下：</p>
+
+<ol>
+<li>第一个标题为<code>&lt;h1&gt;</code>，其层次为1</li>
+<li>第二个标题为<code>&lt;h4&gt;</code>，由于其父标题的层次为1，所以其层次 =  1 + 1 = 2</li>
+<li>第三个标题为<code>&lt;h3&gt;</code>，由于它与前一个标题<code>&lt;h4&gt;</code>同级，所以其层次 = 前一个标题的层次 = 2</li>
+<li>第四个标题为<code>&lt;h1&gt;</code>，这个标题不是第一个标题的子标题，所以其层次 = 序号 = 1</li>
+</ol>
+
+<p>我们得到了标题编号为：<code>[1, 2, 2, 1]</code>。</p>
+
+<p>所以，在判断前后标题关系的基础上，我们添加计算标题层次的代码：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="cm">/*</span>
+<span class="cm"> num: 当前标题序号</span>
+<span class="cm"> lastNum: 前一个标题的序号</span>
+<span class="cm"> lastRevNum: 前一个标题的层次</span>
+<span class="cm">*/</span>
+<span class="kd">var</span> <span class="nx">num</span><span class="p">,</span> <span class="nx">lastNum</span><span class="p">,</span> <span class="nx">lastRevNum</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">num</span> <span class="o">&gt;</span> <span class="nx">lastNum</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">lastRevNum</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// &lt;-- !!!</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">num</span> <span class="o">===</span> <span class="nx">lastRevNum</span> <span class="o">||</span> <span class="nx">num</span> <span class="o">&gt;</span> <span class="nx">lastRevNum</span> <span class="o">&amp;&amp;</span> <span class="nx">num</span> <span class="o">&lt;=</span> <span class="nx">lastNum</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">lastRevNum</span> <span class="o">=</span> <span class="nx">lastRevNum</span><span class="p">;</span> <span class="c1">// &lt;-- !!!</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">num</span> <span class="o">&lt;</span> <span class="nx">lastRevNum</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">lastRevNum</span> <span class="o">=</span> <span class="nx">num</span><span class="p">;</span> <span class="c1">// &lt;-- !!!</span>
+<span class="p">}</span>
+
+<span class="nx">lastNum</span> <span class="o">=</span> <span class="nx">num</span><span class="p">;</span>
+</code></pre></div>
+<h3>相对层次关系</h3>
+
+<p>在上述获得的层次关系的基础上，我们可以计算出标题之间的<strong>相对层次关系</strong>了。相对层次关系是指当前标题相对于前一个标题的层次位置。我们用<code>1, 0, -n</code>这三个数字表示标题层次的相对关系：</p>
+
+<ul>
+<li><code>1</code>表示下一层</li>
+<li><code>0</code>表示同一层</li>
+<li><code>-n</code>表示上n层</li>
+</ul>
+
+<p>我们可以在对比标题之间关系的同时，开始处理相对层次关系：</p>
+
+<ul>
+<li>（父标题, 子标题）：当前相对关系 = 1</li>
+<li>（同级标题, 同级标题）： 当前相对关系 = 0</li>
+<li>（子标题, 父级标题）： 当前相对关系 = 当前标题序号 - 前一个标题的层次</li>
+</ul>
+
+<p>同样，在判断标题关系和计算层次关系的同时，记录标题的相对关系：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// levelArr保存相对关系</span>
+<span class="kd">var</span> <span class="nx">levelArr</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="nx">num</span><span class="p">,</span> <span class="nx">lastNum</span><span class="p">,</span> <span class="nx">lastRevNum</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">num</span> <span class="o">&gt;</span> <span class="nx">lastNum</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">lastRevNum</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="nx">levelArr</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="c1">// &lt;-- !!!</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">num</span> <span class="o">===</span> <span class="nx">lastRevNum</span> <span class="o">||</span> <span class="nx">num</span> <span class="o">&gt;</span> <span class="nx">lastRevNum</span> <span class="o">&amp;&amp;</span> <span class="nx">num</span> <span class="o">&lt;=</span> <span class="nx">lastNum</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">lastRevNum</span> <span class="o">=</span> <span class="nx">lastRevNum</span><span class="p">;</span>
+    <span class="nx">levelArr</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="c1">// &lt;-- !!!</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">num</span> <span class="o">&lt;</span> <span class="nx">lastRevNum</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">lastRevNum</span> <span class="o">=</span> <span class="nx">num</span><span class="p">;</span>
+    <span class="nx">levelArr</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">num</span> <span class="o">-</span> <span class="nx">lastRevNum</span><span class="p">);</span> <span class="c1">// &lt;-- !!!</span>
+<span class="p">}</span>
+
+<span class="nx">lastNum</span> <span class="o">=</span> <span class="nx">num</span><span class="p">;</span>
+</code></pre></div>
+<h2>构建目录</h2>
+
+<p>知道了标题之间的相对层次关系，我们可以通过生成HTML元素来构建目录，HTML形式如下：</p>
+<div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="nt">&lt;ul&gt;</span>
+    <span class="nt">&lt;li&gt;</span>标题内容1<span class="nt">&lt;/li&gt;</span>
+    <span class="nt">&lt;li&gt;</span>标题内容2
+        <span class="nt">&lt;ul&gt;</span>
+            <span class="nt">&lt;li&gt;</span>标题内容3<span class="nt">&lt;/li&gt;</span>
+        <span class="nt">&lt;ul&gt;</span>
+    <span class="nt">&lt;/li&gt;</span>
+<span class="nt">&lt;/ul&gt;</span>
+</code></pre></div>
+<p>首先我们需要一个根目录：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="cm">/*</span>
+<span class="cm"> root: 根目录</span>
+<span class="cm"> currentList: 当前目录</span>
+<span class="cm">*/</span>
+<span class="kd">var</span> <span class="nx">root</span><span class="p">,</span> <span class="nx">currentList</span><span class="p">;</span>
+
+<span class="c1">// 创建根目录，当前目录就是根目录</span>
+<span class="nx">currentList</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;ul&#39;</span><span class="p">);</span>
+</code></pre></div>
+<p>接下来，我们循环遍历标题的相对关系。当相对关系为<strong>1</strong>时，意味着当前标题的层次比前一个标题的低，所以当前标题要存储在子目录中。代码如下：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// ... </span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">level</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 创建一个新的目录</span>
+    <span class="kd">var</span> <span class="nx">list</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;ul&#39;</span><span class="p">);</span>
+    <span class="nx">currentList</span><span class="p">.</span><span class="nx">lastElementChild</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">list</span><span class="p">);</span>
+
+    <span class="c1">// currentList指向当前目录</span>
+    <span class="nx">currentList</span> <span class="o">=</span> <span class="nx">list</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>当相对关系为<strong>-n</strong>（即负数）时，意味着当前标题的层次比前一个标题高n个层次，也意味着当前标题应该存放在当前目录的第n个父级目录，代码如下：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="k">if</span> <span class="p">(</span><span class="nx">level</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 由于子目录是保存在li元素中的，所以向上查找</span>
+    <span class="c1">// 第n个父级ul元素的时候，需要遍历2n次</span>
+    <span class="nx">level</span> <span class="o">*=</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nx">level</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">currentList</span> <span class="o">=</span> <span class="nx">currentList</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>ok！通过上述代码，我们能找到存放标题的对应目录，最后我们要做的就是，将标题存进该目录中：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">li</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;li&#39;</span><span class="p">);</span>
+<span class="nx">li</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">content</span><span class="p">;</span> <span class="c1">// content中存储了标题内容</span>
+<span class="nx">currentList</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">li</span><span class="p">);</span>
+</code></pre></div>
+<h2>详细代码</h2>
+
+<p>以下是详细代码及其实际效果：</p>
+
+<iframe width="100%" height="300" src="http://jsfiddle.net/lxjwlt/fRfD5/embedded/result,html,js/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+		<!-- Duoshuo Comment BEGIN -->
+		<div class="ds-thread"></div>
+		<script type="text/javascript">
+			var duoshuoQuery = {short_name:"lxjwlt"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = 'http://static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] 
+				|| document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+		</script>
+		<!-- Duoshuo Comment END -->
+	</div>
+</div>
+<script src="/scripts/post.js"></script>
+
+		<div class="footer">
+			
+		</div>
+		
+	</body>
+</html>

@@ -25,17 +25,19 @@
     createDirectory = function(article, directory, isDirNum) {
         var contentArr = [],
             titleId = [],
-            revNumArr, levelArr, root, level,
+            levelArr, root, level,
             currentList, list, li, link, i, len;
 
         // 获取标题编号 标题内容
-        revNumArr = (function(article, contentArr, titleId) {
+        levelArr = (function(article, contentArr, titleId) {
             var titleElem = children(article.childNodes, /^h\d$/),
-                revNumArr = [],
+                levelArr = [],
                 lastNum = 1,
+                lastRevNum = 1,
+                count = 0,
                 guid = 1,
                 id = 'directory' + (Math.random() + '').replace(/\D/, ''),
-                lastRevNum, num, dnum, elem;
+                lastRevNum, num, elem;
 
             while (titleElem.length) {
                 elem = titleElem.shift();
@@ -46,19 +48,20 @@
                 // 当前的标题编号
                 num = +elem.tagName.match(/\d/)[0];
 
-                // 获取前一个标题的修正编号
-                lastRevNum = revNumArr[revNumArr.length - 1] || 1;
-
                 // 修正
                 if (num > lastNum) {
-                    revNumArr.push(lastRevNum + 1);
+                    levelArr.push(1);
+                    lastRevNum += 1;
                 } else if (num === lastRevNum ||
                     num > lastRevNum && num <= lastNum) {
-                    revNumArr.push(lastRevNum);
+                    levelArr.push(0);
+                    lastRevNum = lastRevNum;
                 } else if (num < lastRevNum) {
-                    revNumArr.push(num);
+                    levelArr.push(num - lastRevNum);
+                    lastRevNum = num;
                 }
 
+                count += levelArr[levelArr.length - 1];
                 lastNum = num;
 
                 // 添加标识符
@@ -66,30 +69,11 @@
                 titleId.push(elem.id);
             }
 
-            if (revNumArr.indexOf(1) === -1) {
-                dNum = revNumArr.slice()
-                    .sort(function(a, b) { return a - b; }).shift() - 1;
-                revNumArr = revNumArr.map(function(val, i) {
-                    return val - dNum;
-                });
-            }
-            return revNumArr;
-        })(article, contentArr, titleId);
+            // 避免一开始就进入下一层
+            if (count !== 0 && levelArr[0] === 1) levelArr[0] = 0;
 
-        // 计算层次关系
-        levelArr = (function(revNumArr) {
-            var levelArr = [],
-                level = 1;
-
-            while (revNumArr.length) {
-                num = revNumArr.shift();
-                
-                levelArr.push(num - level > 0 ? 1 : num - level);
-
-                level = num;
-            }
             return levelArr;
-        })(revNumArr.slice());
+        })(article, contentArr, titleId);
 
         // 构造目录
         currentList = root = document.createElement('ul');
