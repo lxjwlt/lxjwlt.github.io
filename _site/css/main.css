@@ -241,14 +241,18 @@ blockquote{
     top: 0;
     background-color: #263248;
     font-size: 16px;
-    box-shadow: 0 0 16px 8px rgba(0,0,0,.5);
-    -webkit-transition: left .4s;
-    -moz-transition: left .4s;
-    transition: left .4s;
+    box-shadow: 0 0 16px 8px rgba(0,0,0,.3);
+    -webkit-transition: left .4s, box-shadow .4s;
+    -moz-transition: left .4s, box-shadow .4s;
+    transition: left .4s, box-shadow .4s;
 }
 
 .directory.active {
     left: 0;
+}
+
+.directory:hover {
+	box-shadow: 0 0 16px 8px rgba(0,0,0,.5);
 }
 
 .directory__container {
@@ -282,8 +286,17 @@ blockquote{
     z-index: -1;
     background: #263248;
     border-radius: 0 4px 4px 0;
-    box-shadow: 0 0 10px 4px rgba(0,0,0,.5);
+    /*box-shadow: 0 0 10px 4px rgba(0,0,0,.5);*/
+    box-shadow: 0 0 10px 4px rgba(0,0,0,.3);
+    -webkit-transition: box-shadow .4s;
+    -moz-transition: box-shadow .4s;
+    transition: box-shadow .4s;
 }
+
 .directory__button:hover {
 	text-decoration: none;
+}
+
+.directory:hover .directory__button {
+	box-shadow: 0 0 10px 4px rgba(0,0,0,.5);
 }
