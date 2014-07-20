@@ -273,7 +273,39 @@ blockquote{
     color: white;
 }
 
+.directory__button-list {
+    overflow: hidden;
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    z-index: -1;
+    background: #263248;
+    border-radius: 0 4px 4px 0;
+    /*box-shadow: 0 0 10px 4px rgba(0,0,0,.5);*/
+    box-shadow: 0 0 10px 4px rgba(0,0,0,.3);
+    -webkit-transition: box-shadow .4s;
+    -moz-transition: box-shadow .4s;
+    transition: box-shadow .4s;
+    -webkit-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
 .directory__button {
+    display: block;
+    padding: 10px;
+    color: white;
+    text-align: center;
+}
+
+.directory__button--top {
+    text-transform: uppercase;
+    box-shadow: inset 2px 2px 4px rgba(0,0,0,.2);
+    background-color: rgba(0,0,0,.2);
+    font-size: 13px;
+}
+
+/*.directory__button {
     width: 1em;
     height: 3em;
     padding: 10px;
@@ -285,18 +317,13 @@ blockquote{
     margin: auto 0;
     z-index: -1;
     background: #263248;
-    border-radius: 0 4px 4px 0;
-    /*box-shadow: 0 0 10px 4px rgba(0,0,0,.5);*/
-    box-shadow: 0 0 10px 4px rgba(0,0,0,.3);
-    -webkit-transition: box-shadow .4s;
-    -moz-transition: box-shadow .4s;
-    transition: box-shadow .4s;
-}
+
+}*/
 
 .directory__button:hover {
 	text-decoration: none;
 }
 
-.directory:hover .directory__button {
+.directory:hover .directory__button-list {
 	box-shadow: 0 0 10px 4px rgba(0,0,0,.5);
 }

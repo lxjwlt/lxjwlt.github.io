@@ -149,3 +149,12 @@
         e.stopPropagation(); 
     });
 })(window);
+
+(function(global) {
+    var topButton = document.getElementById('top-button');
+    topButton.addEventListener('click', function(e) {
+        global.scroll(0, 0);
+        e.stopPropagation();
+        e.preventDefault();
+    });
+})(window);
