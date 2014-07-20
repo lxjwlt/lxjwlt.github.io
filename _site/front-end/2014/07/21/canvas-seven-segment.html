@@ -1,0 +1,314 @@
+<!DOCTYPE HTML>
+<!--[if IE 6]><html class="ie6 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 7]><html class="ie7 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 8]><html class="ie8 lte9 lte8 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 9]><html class="ie9 lte9 no-css3" lang="zh-cn"><![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8) | !(IE 9)  ]><!--><html lang="zh-cn" class='non-ie'><!--<![endif]-->
+	<head>
+		<meta charset="utf-8" />
+
+		
+			<meta name="description" content="本文主要介绍介绍的是如何通过绘制七段数码管显示器，用来显示时钟效果" />
+		
+
+		<meta name="keywords" content="css,javascript,前端,页面制作" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" /><!-- 响应式网页设计：initial-scale设定初始缩放比例 maximum-scale设定允许用户缩放到的最大比例 minimum-scale设定允许用户缩放到的最小比例 值范围从0.0到10.0 user-scalable设定是否允许用户进行手动缩放 值为yes或no -->
+		<title>canvas实现七段数码管时间显示器</title>
+
+		<!-- page icon -->
+		<link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png" />
+
+		<!-- syntax highlighting CSS -->
+		<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+
+		<!-- Custom CSS -->
+		<link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+	</head>
+	<body class="post-page">
+		<div class="header">
+			<div class="wrap">
+				<h1 class="logo">
+					<a href="/">lxjwlt's blog</a>
+				</h1>
+				<h2 class='subname'></h2>
+			</div>
+		</div>
+
+		<div class="directory" id="directory">
+    <div class="directory__container" id="directory__container"></div>
+    <!-- <a href="#" class="directory__button" id='expand-button'>目录</a> -->
+    <ul class="directory__button-list">
+        <li><a href="#" class="directory__button directory__button--expand" id='expand-button'>目录</a></li>
+        <li><a href="#" class="directory__button directory__button--top" id='top-button'>top</a></li>
+    </ul>
+</div>
+<div class='main wrap'>
+	<ul class="sidebar">
+		<li><a class='to-index-page' href="/">ALL</a></li>
+		
+			<li><a class='to-others-page' href="/others.html">OTHERS[2]</a></li>
+		
+			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[13]</a></li>
+		
+	</ul>
+	<div class="content post" id="post">
+		<h1 class='post-title'>canvas实现七段数码管时间显示器</h1>
+		<p class='post-date'>2014-07-21</p>
+		<p>用canvas实现七段显示器的完整效果如下：</p>
+
+<iframe width="100%" height="300" src="http://jsfiddle.net/lxjwlt/DVAVY/4/embedded/result,js,html,css/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+<h2>简易实现</h2>
+
+<p>先用最简易的方法实现时钟效果，无非就是用冒号连接“时分针”三个数字，然后直接显示出来:</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">showTime</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">showTime</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">dateObj</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(),</span>
+        <span class="nx">arr</span><span class="o">=</span> <span class="p">[];</span>
+
+    <span class="nx">arr</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">dateObj</span><span class="p">.</span><span class="nx">getHours</span><span class="p">());</span>
+    <span class="nx">arr</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">dateObj</span><span class="p">.</span><span class="nx">getMinutes</span><span class="p">());</span>
+    <span class="nx">arr</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">dateObj</span><span class="p">.</span><span class="nx">getSeconds</span><span class="p">());</span>
+
+    <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">);</span>
+    <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">showTime</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+<span class="p">};</span>
+<span class="nx">showTime</span><span class="p">();</span>
+</code></pre></div>
+<p>效果：</p>
+
+<iframe width="100%" height="300" src="http://jsfiddle.net/lxjwlt/DVAVY/1/embedded/result,js,html/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+<h2>canvas实现七段显示器</h2>
+
+<p>首先，在我们开始绘制七段显示器之前，我们先弄清七段显示器构造。</p>
+
+<h3>七段数码管的编码</h3>
+
+<p>七段数码管分为七段，这七块数码管我们按1 - 7来编号：</p>
+
+<p><img src="http://i1273.photobucket.com/albums/y401/lxjwlt/canvas-seven-segment/B103C065-190C-4957-8D36-0102BE31D99E_zps3aa32a95.jpg" alt="七段数码管编码"></p>
+
+<p>按照上图编号，我们能找到数字与七段数码管编号之间的显示关系，比如要显示数字1，应该点亮编号为2和3的数码管：</p>
+
+<p><img src="http://i1273.photobucket.com/albums/y401/lxjwlt/canvas-seven-segment/28FA922F-492E-4E4C-A519-7E3508021D8B_zps3e0c8c7d.jpg" alt="数字1"></p>
+
+<p>所以，我们能写出数字0-9与数码管编号之间的关系：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 数字0 - 1对应的编码</span>
+<span class="kd">var</span> <span class="nx">numMap</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> 
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
+<span class="p">];</span>
+</code></pre></div>
+<h3>计算坐标</h3>
+
+<p>绘制七段显示器上的数码管，我们只需要知道每一段数码管对应的坐标，比如第一段数码管，只需要知道它对应的四个坐标点：</p>
+
+<p><img src="http://i1273.photobucket.com/albums/y401/lxjwlt/canvas-seven-segment/91E3B920-4467-40B7-A543-5F82D577CB34_zps0bc4d28a.jpg" alt="坐标集"></p>
+
+<p>我们观察能发现，七段数码管是上下左右对称的——比如第6段和第2段数码管就是以Y轴对称——所以我们只需要计算出一段数码管的坐标，通过计算其对称点就能得到所有的坐标，：</p>
+
+<p><img src="http://i1273.photobucket.com/albums/y401/lxjwlt/canvas-seven-segment/EAD34033-40B9-4C20-B1EB-AF29A7F8A951_zps3ed5ec2b.jpg" alt="对称"></p>
+
+<p>首先，为了计算对称点，我们需要一个函数来处理：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// axisX参数为true，则对称轴是X轴，否则为Y轴</span>
+<span class="kd">var</span> <span class="nx">getSymPoint</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">axisX</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="nx">axisX</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nx">result</span><span class="p">;</span>
+
+    <span class="nx">result</span> <span class="o">=</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">temp</span> <span class="o">=</span> <span class="nx">val</span><span class="p">.</span><span class="nx">slice</span><span class="p">();</span>
+
+        <span class="nx">temp</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="nx">temp</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
+
+        <span class="k">return</span> <span class="nx">temp</span><span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// 比如有坐标集如下：</span>
+<span class="c1">// 该坐标集以Y轴为对称轴的坐标集为：</span>
+<span class="c1">// [[-1, 2], [-3, 4]]</span>
+<span class="nx">getSymPoint</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]);</span>
+</code></pre></div>
+<p>在计算坐标之前，我们定义了以下参数：</p>
+
+<ul>
+<li>w表示数码管的宽度</li>
+<li>h表示数码管的高度</li>
+<li>thick表示数码管的粗细</li>
+</ul>
+
+<p><img src="http://i1273.photobucket.com/albums/y401/lxjwlt/canvas-seven-segment/BF949153-D191-4ECF-A52F-5C16812E9B58_zps115c7d0b.jpg" alt="三个参数"></p>
+
+<p>下面我们先计算第6段数码管的坐标集：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 用来存储各个数码管的坐标</span>
+<span class="kd">var</span> <span class="nx">pointArr</span> <span class="o">=</span> <span class="p">[[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]];</span>
+
+<span class="c1">// 计算第6段数码管的坐标集</span>
+<span class="nx">pointArr</span><span class="p">[</span><span class="mi">5</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span>
+    <span class="p">[</span><span class="o">-</span><span class="nx">w</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="nx">h</span><span class="o">/</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="nx">w</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="nx">thick</span><span class="p">,</span> <span class="o">-</span><span class="nx">h</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="nx">thick</span><span class="p">],</span>
+    <span class="p">[</span><span class="o">-</span><span class="nx">w</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="nx">thick</span><span class="p">,</span> <span class="o">-</span><span class="nx">thick</span><span class="o">/</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="nx">w</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="nx">thick</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="o">-</span><span class="nx">w</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="nx">thick</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span>
+<span class="p">);</span>
+</code></pre></div>
+<p>有了第6段的坐标集，按照Y轴对称的原则，我们能计算出第2段数码管的坐标集：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 第2段坐标集</span>
+<span class="nx">pointArr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">getSymPoint</span><span class="p">(</span><span class="nx">pointArr</span><span class="p">[</span><span class="mi">5</span><span class="p">]);</span>
+</code></pre></div>
+<p>同理我们也能计算出其余所有数码管的坐标集。</p>
+
+<h3>绘制数码管</h3>
+
+<p>下面我们实现一个drawSegment函数，只要我们提供坐标集，该函数就能绘制出对应的数码管，负责绘制单个数码管，我们先画出path路径，并描边</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="cm">/*</span>
+<span class="cm"> 参数：</span>
+<span class="cm"> - cxt: 传入canvas的context对象</span>
+<span class="cm"> - num: 要绘制的数码管的编码</span>
+<span class="cm"> - active: 控制数码管的亮灭</span>
+<span class="cm">*/</span>
+<span class="nx">drawSegment</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cxt</span><span class="p">,</span> <span class="nx">num</span><span class="p">,</span> <span class="nx">active</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">arr</span> <span class="o">=</span> <span class="nx">pointArr</span><span class="p">[</span><span class="nx">num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+
+    <span class="c1">// 遍历坐标集，将各个坐标连成路径</span>
+    <span class="nx">cxt</span><span class="p">.</span><span class="nx">beginPath</span><span class="p">();</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">cxt</span><span class="p">.</span><span class="nx">lineTo</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">cxt</span><span class="p">,</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+    <span class="nx">cxt</span><span class="p">.</span><span class="nx">closePath</span><span class="p">();</span>
+    <span class="nx">cxt</span><span class="p">.</span><span class="nx">stroke</span><span class="p">();</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>接下来，我们添加处理填充部分，如果点亮则是红色<code>#ff0000</code>，如果灭就是灰色<code>rgba(192, 192, 192, 0.1)</code>，用active参数控制亮灭：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">drawSegment</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cxt</span><span class="p">,</span> <span class="nx">num</span><span class="p">,</span> <span class="nx">active</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+    <span class="c1">// 遍历坐标集，将各个坐标连成路径</span>
+    <span class="c1">// ...</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">active</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">cxt</span><span class="p">.</span><span class="nx">fillStyle</span> <span class="o">=</span> <span class="s2">&quot;#ff0000&quot;</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">cxt</span><span class="p">.</span><span class="nx">fillStyle</span> <span class="o">=</span> <span class="s2">&quot;rgba(192, 192, 192, 0.1)&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">cxt</span><span class="p">.</span><span class="nx">fill</span><span class="p">();</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>现在我们能够绘制<strong>单个</strong>数码管，下面我们要实现一个函数统一绘制数字0 - 9。</p>
+
+<p>我们要用到数字0-9与数码管编号之间的关系numMap，按照其中的对应关系点亮数码管：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">drawNum</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cxt</span><span class="p">,</span> <span class="nx">num</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="nx">numMap</span><span class="p">[</span><span class="nx">num</span><span class="p">],</span>
+        <span class="nx">i</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">7</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">map</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// 点亮对应的数码管</span>
+            <span class="nx">drawSegment</span><span class="p">(</span><span class="nx">cxt</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="c1">// 熄灭对应的数码管</span>
+            <span class="nx">drawSegment</span><span class="p">(</span><span class="nx">cxt</span><span class="p">,</span> <span class="nx">i</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>有了以上的drawNum函数，我们就能用数码管来显示数字了：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">canvas</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;myCanvas&#39;</span><span class="p">),</span>
+    <span class="nx">cxt</span> <span class="o">=</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s1">&#39;2d&#39;</span><span class="p">);</span>
+
+<span class="c1">// 用数码管显示数字2</span>
+<span class="nx">drawNum</span><span class="p">(</span><span class="nx">cxt</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+</code></pre></div>
+<p>没有加黑色背景的效果如下： </p>
+
+<iframe width="100%" height="300" src="http://jsfiddle.net/lxjwlt/DVAVY/2/embedded/result,js,html/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+<h2>七段数码管时钟显示器</h2>
+
+<p>现在我们有了drawNum函数，能够用七段数码管显示数字，接下来，我们可以用数码管显示“时分针”。</p>
+
+<p>首先，我们适当的格式化一下各个数字，使其以两位数的形式显示，比如数字4，格式化之后就变成两个数字0和4：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">getTimeNum</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">dateObj</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(),</span>
+        <span class="nx">temp</span> <span class="o">=</span> <span class="p">[],</span> 
+        <span class="nx">result</span> <span class="o">=</span> <span class="p">[],</span>
+        <span class="nx">i</span><span class="p">;</span>
+
+    <span class="c1">// 获取时分针三个数字</span>
+    <span class="nx">temp</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span>
+        <span class="nx">dateObj</span><span class="p">.</span><span class="nx">getHours</span><span class="p">(),</span> 
+        <span class="nx">dateObj</span><span class="p">.</span><span class="nx">getMinutes</span><span class="p">(),</span> 
+        <span class="nx">dateObj</span><span class="p">.</span><span class="nx">getSeconds</span><span class="p">()</span>
+    <span class="p">);</span>
+
+    <span class="c1">// 格式化</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">temp</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">temp</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">/</span> <span class="mi">10</span><span class="p">));</span>
+        <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">temp</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">%</span> <span class="mi">10</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>格式化后我们得到了8个数字，一一将这些数字传入drawNum函数中，用数码管形式显示出来。要注意的是，在每次刷新canvas画布的时候都要用clearRect函数<strong>清屏</strong>：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">showTime</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">showTime</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">timeArr</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+
+    <span class="c1">// 获取时分针8位数</span>
+    <span class="nx">timeArr</span> <span class="o">=</span> <span class="nx">getTimeNum</span><span class="p">();</span>
+
+    <span class="c1">// 清屏</span>
+    <span class="nx">cxt</span><span class="p">.</span><span class="nx">clearRect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">);</span>
+
+    <span class="c1">// 设置原点居中，sHeight为canvas高度</span>
+    <span class="nx">cxt</span><span class="p">.</span><span class="nx">translate</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">sHeight</span><span class="o">/</span><span class="mi">2</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">timeArr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">cxt</span><span class="p">.</span><span class="nx">translate</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+        <span class="c1">// 用数码管显示</span>
+        <span class="nx">drawNum</span><span class="p">(</span><span class="nx">cxt</span><span class="p">,</span> <span class="nx">timeArr</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 0.1s刷新频率</span>
+    <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">showTime</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>原始效果如下：</p>
+
+<iframe width="100%" height="300" src="http://jsfiddle.net/lxjwlt/DVAVY/3/embedded/result,js,html" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+<h2>参考</h2>
+
+<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D#beginPath(">canvas rendering context2D</a>)</li>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/Guide/HTML/Canvas_tutorial">canvas tutorial</a></li>
+</ul>
+
+		<!-- Duoshuo Comment BEGIN -->
+		<div class="ds-thread"></div>
+		<script type="text/javascript">
+			var duoshuoQuery = {short_name:"lxjwlt"};
+			(function() {
+				var ds = document.createElement('script');
+				ds.type = 'text/javascript';ds.async = true;
+				ds.src = 'http://static.duoshuo.com/embed.js';
+				ds.charset = 'UTF-8';
+				(document.getElementsByTagName('head')[0] 
+				|| document.getElementsByTagName('body')[0]).appendChild(ds);
+			})();
+		</script>
+		<!-- Duoshuo Comment END -->
+	</div>
+</div>
+<script src="/scripts/post.js"></script>
+
+		<div class="footer">
+			
+		</div>
+		
+	</body>
+</html>
