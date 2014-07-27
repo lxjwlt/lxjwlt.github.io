@@ -118,7 +118,7 @@
 
         directory = document.getElementById('directory');
 
-    document.body.addEventListener('click', function(e) {
+    document.addEventListener('click', function(e) {
         var classList, index;
 
         if (directory.className.indexOf('active') !== -1) {

@@ -49,7 +49,7 @@
 		
 			<li><a class='to-others-page' href="/others.html">OTHERS[2]</a></li>
 		
-			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[13]</a></li>
+			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[14]</a></li>
 		
 	</ul>
 	<div class="content post" id="post">
@@ -253,17 +253,17 @@
     <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
 <span class="p">};</span>
 </code></pre></div>
-<p>格式化后我们得到了8个数字，一一将这些数字传入drawNum函数中，用数码管形式显示出来。要注意的是，在每次刷新canvas画布的时候都要用clearRect函数<strong>清屏</strong>：</p>
+<p>格式化后我们得到了8个数字，将这些数字传入drawNum函数中，用数码管形式显示出来。要注意的是，在每次刷新canvas画布的时候都要用clearRect函数<strong>清屏</strong>：</p>
 <div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">showTime</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">showTime</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">timeArr</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
 
     <span class="c1">// 获取时分针8位数</span>
     <span class="nx">timeArr</span> <span class="o">=</span> <span class="nx">getTimeNum</span><span class="p">();</span>
 
-    <span class="c1">// 清屏</span>
-    <span class="nx">cxt</span><span class="p">.</span><span class="nx">clearRect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">);</span>
+    <span class="c1">// 清屏，sWidth和sHeight为canvas宽高</span>
+    <span class="nx">cxt</span><span class="p">.</span><span class="nx">clearRect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">sWidth</span><span class="p">,</span> <span class="nx">sHeight</span><span class="p">);</span>
 
-    <span class="c1">// 设置原点居中，sHeight为canvas高度</span>
+    <span class="c1">// 设置原点居中</span>
     <span class="nx">cxt</span><span class="p">.</span><span class="nx">translate</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">sHeight</span><span class="o">/</span><span class="mi">2</span><span class="p">);</span>
 
     <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">timeArr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
