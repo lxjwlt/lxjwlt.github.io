@@ -2,7 +2,7 @@
 layout: post
 title: "JS实现简易animate动画"
 category: front-end
-excerpt: '本文主要介绍介绍的是如何实现类似jQuery.fn.animate的动画效果'
+excerpt: '本文主要介绍的是如何实现类似jQuery.fn.animate的动画效果'
 ---
 
 
