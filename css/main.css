@@ -380,6 +380,7 @@ blockquote{
 
 /* line 54, ../scss/test.scss */
 .progress-button {
+  display: block;
   overflow: hidden;
   vertical-align: middle;
   border: 1px solid #ccc;
@@ -390,6 +391,7 @@ blockquote{
   text-align: center;
   cursor: pointer;
   border-radius: 4px;
+  overflow: hidden;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -444,10 +446,16 @@ blockquote{
   position: absolute;
   left: 0;
   top: 0;
+  border-radius: 4px;
   background: #4063ec;
   -webkit-transition: width .4s;
   -o-transition: width .4s;
   transition: width .4s;
+}
+
+.progress-button__content {
+	/*position: absolute;
+	height: 100%;*/
 }
 
 /* line 118, ../scss/test.scss */
