@@ -31,7 +31,11 @@
 				<h1 class="logo">
 					<a href="/">lxjwlt's blog</a>
 				</h1>
-				<h2 class='subname'></h2>
+			<div class="search-block">
+				<input class="search-block__input is-noready" type="text" id="search" ng-model="name" placeholder="search..." />
+				<button type="button" class="search-block__load-button progress-button"><span class="progress-button__content">开启搜索控件</span><span class="progress-button__progress"></span></button>
+				<ul class="search-block__result"></ul>
+			</div>
 			</div>
 		</div>
 
@@ -49,7 +53,7 @@
 		
 			<li><a class='to-others-page' href="/others.html">OTHERS[2]</a></li>
 		
-			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[16]</a></li>
+			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[15]</a></li>
 		
 	</ul>
 	<div class="content post" id="post">
@@ -538,8 +542,12 @@ ie-hex-str(rgba(#000, .5)) =&gt; #80000000
 <script src="/scripts/post.js"></script>
 
 		<div class="footer">
-			
+
 		</div>
-		
+
+		<script src="scripts/sea.js"></script>
+		<script>
+			seajs.use('index');
+		</script>
 	</body>
 </html>

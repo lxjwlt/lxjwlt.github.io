@@ -25,7 +25,7 @@
 	background: #FF9800;
 	color: #fff;
 	text-shadow: none;
-	
+
 }
 
 /*****************************************************************************/
@@ -33,12 +33,18 @@
 /* Common
 /*
 /*****************************************************************************/
+html {
+	font-size: 100px;
+}
+
 body{
+	font-size: .12rem;
 	font-family: Helvetica,arial,'Microsoft YaHei',sans-serif;
 }
 .wrap{
 	width: 960px;
 	margin: 0 auto;
+	position: relative;
 }
 a{
 	color:#000;
@@ -326,4 +332,178 @@ blockquote{
 
 .directory:hover .directory__button-list {
 	box-shadow: 0 0 10px 4px rgba(0,0,0,.5);
+}
+
+
+
+/*****************************************************************************/
+/*
+/* search-block
+/*
+/*****************************************************************************/
+/* line 25, ../scss/test.scss */
+.search-block {
+  width: 636px;
+  position: absolute;
+  right: 0;
+  top: 32px;
+  z-index: 1;
+  font-family: Helvetica,arial,'Microsoft YaHei',sans-serif;
+}
+
+/* line 30, ../scss/test.scss */
+.search-block__input {
+  width: 100%;
+  height: 2em;
+  padding: 0 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: .14rem;
+  color: #555;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+/* line 42, ../scss/test.scss */
+.search-block__input:focus {
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+/* line 45, ../scss/test.scss */
+.search-block__input.is-noready {
+  display: none;
+}
+
+/* line 50, ../scss/test.scss */
+.search-block__load-button {
+  width: 100%;
+}
+
+/* line 54, ../scss/test.scss */
+.progress-button {
+  overflow: hidden;
+  vertical-align: middle;
+  border: 1px solid #ccc;
+  padding: 6px 12px;
+  background-color: #fff;
+  color: #333;
+  font-size: .14rem;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 4px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-transition: background .4s;
+  -o-transition: background .4s;
+  transition: background .4s;
+}
+/* line 71, ../scss/test.scss */
+.progress-button:hover, .progress-button:active {
+  border-color: #adadad;
+  background-color: #e6e6e6;
+}
+/* line 75, ../scss/test.scss */
+.progress-button:active {
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+/* line 78, ../scss/test.scss */
+.progress-button[disabled] {
+  text-indent: -9999px;
+  background: #fff;
+  border-color: #ccc;
+  cursor: not-allowed;
+  opacity: .65;
+}
+/* line 85, ../scss/test.scss */
+.progress-button[disabled]:before {
+  display: block;
+  width: 100%;
+  text-align: center;
+  content: 'loading...';
+  text-indent: 0;
+  position: absolute;
+  left: 0;
+  z-index: 2;
+  margin: auto;
+  color: #333;
+}
+/* line 97, ../scss/test.scss */
+.progress-button.is-loaded {
+  display: none;
+}
+
+/* line 102, ../scss/test.scss */
+.progress-button__progress {
+  display: block;
+  content: '';
+  width: 0;
+  max-width: 100%;
+  height: 100%;
+  z-index: 1;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: #4063ec;
+  -webkit-transition: width .4s;
+  -o-transition: width .4s;
+  transition: width .4s;
+}
+
+/* line 118, ../scss/test.scss */
+.search-block__result {
+  display: none;
+  width: 100%;
+  max-height: 400px;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  overflow-y: auto;
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+/* line 135, ../scss/test.scss */
+.search-block__result.is-active {
+  display: block;
+}
+
+.search-block__result a {
+	text-decoration: none;
+}
+
+/* line 140, ../scss/test.scss */
+.search-block__item {
+  cursor: pointer;
+  border-bottom: 1px solid #e6e6e6;
+  padding: 10px;
+  -webkit-transition: background .4s;
+  -o-transition: background .4s;
+  transition: background .4s;
+}
+/* line 148, ../scss/test.scss */
+.search-block__item:hover {
+  background: #e6e6e6;
+}
+
+/* line 153, ../scss/test.scss */
+.search-block__item-title {
+  font-size: .16rem;
+  font-weight: bold;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  -ms-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  color: #000;
+}
+
+/* line 163, ../scss/test.scss */
+.search-block__item-content {
+  color: #333;
 }
