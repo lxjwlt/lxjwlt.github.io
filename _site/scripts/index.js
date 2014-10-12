@@ -9,16 +9,13 @@ define(function(require, exports, module) {
         loadScript('scripts/activateSearchBlock.js', {
             progress: function(e) {
                 if (e.lengthComputable) {
-                    console.log(e.loaded, progressBar);
                     progressBar.style.width = e.loaded / e.total * 100 + '%';
                 }
             },
             loadend: function() {
-                setTimeout(function() {
-                    seajs.use('activateSearchBlock');
-                    searchBlock.classList.remove('is-noready');
-                    loadButton.classList.add('is-loaded');
-                }, 500);
+                seajs.use('activateSearchBlock');
+                searchBlock.classList.remove('is-noready');
+                loadButton.classList.add('is-loaded');
             }
         });
     });

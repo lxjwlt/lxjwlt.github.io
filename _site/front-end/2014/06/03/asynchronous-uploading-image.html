@@ -4,62 +4,56 @@
 <!--[if IE 8]><html class="ie8 lte9 lte8 no-css3" lang="zh-cn"><![endif]-->
 <!--[if IE 9]><html class="ie9 lte9 no-css3" lang="zh-cn"><![endif]-->
 <!--[if !(IE 6) | !(IE 7) | !(IE 8) | !(IE 9)  ]><!--><html lang="zh-cn" class='non-ie'><!--<![endif]-->
-	<head>
-		<meta charset="utf-8" />
+    <head>
+        <meta charset="utf-8" />
 
-		
-			<meta name="description" content="用户可能会不断上传头像图片来查看头像呈现出来的效果，而在这过程中，用户的页面不断地被刷新，这是一种极其不友善的交互方式。所以在这种情况下，我们希望不刷新页面的同时能够将图片上传至服务器，即异步上传图片" />
-		
+        
+            <meta name="description" content="用户可能会不断上传头像图片来查看头像呈现出来的效果，而在这过程中，用户的页面不断地被刷新，这是一种极其不友善的交互方式。所以在这种情况下，我们希望不刷新页面的同时能够将图片上传至服务器，即异步上传图片" />
+        
 
-		<meta name="keywords" content="css,javascript,前端,页面制作" />
-		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" /><!-- 响应式网页设计：initial-scale设定初始缩放比例 maximum-scale设定允许用户缩放到的最大比例 minimum-scale设定允许用户缩放到的最小比例 值范围从0.0到10.0 user-scalable设定是否允许用户进行手动缩放 值为yes或no -->
-		<title>异步上传图片</title>
+        <meta name="keywords" content="css,javascript,html5,前端,web,页面制作" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=0.5,maximum-scale=2,user-scalable=yes" /><!-- 响应式网页设计：initial-scale设定初始缩放比例 maximum-scale设定允许用户缩放到的最大比例 minimum-scale设定允许用户缩放到的最小比例 值范围从0.0到10.0 user-scalable设定是否允许用户进行手动缩放 值为yes或no -->
+        <title>异步上传图片</title>
 
-		<!-- page icon -->
-		<link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png" />
+        <!-- page icon -->
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png" />
 
-		<!-- syntax highlighting CSS -->
-		<link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/syntax.css" />
 
-		<!-- Custom CSS -->
-		<link rel="stylesheet" type="text/css" href="/css/main.css" />
+        <!-- Custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/main.css" />
 
-	</head>
-	<body class="post-page">
-		<div class="header">
-			<div class="wrap">
-				<h1 class="logo">
-					<a href="/">lxjwlt's blog</a>
-				</h1>
-			<div class="search-block">
-				<input class="search-block__input is-noready" type="text" id="search" ng-model="name" placeholder="search..." />
-				<button type="button" class="search-block__load-button progress-button"><span class="progress-button__content">开启搜索控件</span><span class="progress-button__progress"></span></button>
-				<ul class="search-block__result"></ul>
-			</div>
-			</div>
-		</div>
+    </head>
+    <body class="post-page">
+        <div class="header">
+            <div class="wrap">
+                <h1 class="logo">
+                    <a href="/">lxjwlt's blog</a>
+                </h1>
+            </div>
+        </div>
 
-		<div class="directory" id="directory">
-    <div class="directory__container" id="directory__container"></div>
-    <!-- <a href="#" class="directory__button" id='expand-button'>目录</a> -->
-    <ul class="directory__button-list">
-        <li><a href="#" class="directory__button directory__button--expand" id='expand-button'>目录</a></li>
-        <li><a href="#" class="directory__button directory__button--top" id='top-button'>top</a></li>
-    </ul>
-</div>
-<div class='main wrap'>
-	<ul class="sidebar">
-		<li><a class='to-index-page' href="/">ALL</a></li>
-		
-			<li><a class='to-others-page' href="/others.html">OTHERS[2]</a></li>
-		
-			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[15]</a></li>
-		
-	</ul>
-	<div class="content post" id="post">
-		<h1 class='post-title'>异步上传图片</h1>
-		<p class='post-date'>2014-06-03</p>
-		<p>首先，我们看看图片上传的一般做法：</p>
+        <div class="directory" id="directory">
+            <div class="directory__container" id="directory__container"></div>
+            <ul class="directory__button-list">
+                <li><a href="#" class="directory__button directory__button--expand" id='expand-button'>目录</a></li>
+                <li><a href="#" class="directory__button directory__button--top" id='top-button'>top</a></li>
+            </ul>
+        </div>
+        <div class='main wrap'>
+        	<ul class="sidebar">
+        		<li><a class='to-index-page' href="/">ALL</a></li>
+        		
+        			<li><a class='to-others-page' href="/others.html">OTHERS[2]</a></li>
+        		
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[15]</a></li>
+        		
+        	</ul>
+        	<div class="content post" id="post">
+        		<h1 class='post-title'>异步上传图片</h1>
+        		<p class='post-date'>2014-06-03</p>
+        		<p>首先，我们看看图片上传的一般做法：</p>
 <div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="c">&lt;!-- </span>
 <span class="c">    注意 enctype属性和method属性的设置</span>
 <span class="c">--&gt;</span>
@@ -209,31 +203,26 @@
 <li><a href="http://stackoverflow.com/questions/5392344/sending-multipart-formdata-with-jquery-ajax">Sending multipart/formdata with jQuery.ajax</a></li>
 </ul>
 
-		<!-- Duoshuo Comment BEGIN -->
-		<div class="ds-thread"></div>
-		<script type="text/javascript">
-			var duoshuoQuery = {short_name:"lxjwlt"};
-			(function() {
-				var ds = document.createElement('script');
-				ds.type = 'text/javascript';ds.async = true;
-				ds.src = 'http://static.duoshuo.com/embed.js';
-				ds.charset = 'UTF-8';
-				(document.getElementsByTagName('head')[0] 
-				|| document.getElementsByTagName('body')[0]).appendChild(ds);
-			})();
-		</script>
-		<!-- Duoshuo Comment END -->
-	</div>
-</div>
-<script src="/scripts/post.js"></script>
+        		<!-- Duoshuo Comment BEGIN -->
+        		<div class="ds-thread"></div>
+        		<script type="text/javascript">
+        			var duoshuoQuery = {short_name:"lxjwlt"};
+        			(function() {
+        				var ds = document.createElement('script');
+        				ds.type = 'text/javascript';ds.async = true;
+        				ds.src = 'http://static.duoshuo.com/embed.js';
+        				ds.charset = 'UTF-8';
+        				(document.getElementsByTagName('head')[0]
+        				|| document.getElementsByTagName('body')[0]).appendChild(ds);
+        			})();
+        		</script>
+        		<!-- Duoshuo Comment END -->
+        	</div>
+        </div>
 
-		<div class="footer">
-
-		</div>
-
-		<script src="scripts/sea.js"></script>
-		<script>
-			seajs.use('index');
-		</script>
-	</body>
+        <script src="/scripts/sea.js"></script>
+        <script>
+            seajs.use('post');
+        </script>
+    </body>
 </html>

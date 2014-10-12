@@ -245,6 +245,7 @@ blockquote{
     position: fixed;
     left: -300px;
     top: 0;
+	z-index: 1;
     background-color: #263248;
     font-size: 16px;
     box-shadow: 0 0 16px 8px rgba(0,0,0,.3);
@@ -262,7 +263,8 @@ blockquote{
 }
 
 .directory__container {
-    min-height: 100%;
+	overflow-y: auto;
+	height: 100%;
     padding: 0 10px;
     background-color: #263248;
 }
