@@ -5,6 +5,8 @@ category: front-end
 excerpt: '本文会简要的介绍一下jQuery自定义事件的使用场景'
 ---
 
+[更好的阅读模式](https://www.zybuluo.com/lxjwlt/note/58483)
+
 > 我：之前研究过jQuery的事件绑定
 > 
 > 面试官：不是有addEventListener吗？
