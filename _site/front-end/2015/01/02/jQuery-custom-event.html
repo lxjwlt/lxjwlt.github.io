@@ -1,0 +1,160 @@
+<!DOCTYPE HTML>
+<!--[if IE 6]><html class="ie6 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 7]><html class="ie7 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 8]><html class="ie8 lte9 lte8 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 9]><html class="ie9 lte9 no-css3" lang="zh-cn"><![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8) | !(IE 9)  ]><!--><html lang="zh-cn" class='non-ie'><!--<![endif]-->
+    <head>
+        <meta charset="utf-8" />
+
+        
+            <meta name="description" content="本文会简要的介绍一下jQuery自定义事件的使用场景" />
+        
+
+        <meta name="keywords" content="css,javascript,html5,前端,web,页面制作" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=0.5,maximum-scale=2,user-scalable=yes" /><!-- 响应式网页设计：initial-scale设定初始缩放比例 maximum-scale设定允许用户缩放到的最大比例 minimum-scale设定允许用户缩放到的最小比例 值范围从0.0到10.0 user-scalable设定是否允许用户进行手动缩放 值为yes或no -->
+        <title>jQuery自定义事件</title>
+
+        <!-- page icon -->
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png" />
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+    </head>
+    <body class="post-page">
+        <div class="header">
+            <div class="wrap">
+                <h1 class="logo">
+                    <a href="/">lxjwlt's blog</a>
+                </h1>
+            </div>
+        </div>
+
+        <div class="directory" id="directory">
+            <div class="directory__container" id="directory__container"></div>
+            <ul class="directory__button-list">
+                <li><a href="#" class="directory__button directory__button--expand" id='expand-button'>目录</a></li>
+                <li><a href="#" class="directory__button directory__button--top" id='top-button'>top</a></li>
+            </ul>
+        </div>
+        <div class='main wrap'>
+        	<ul class="sidebar">
+        		<li><a class='to-index-page' href="/">ALL</a></li>
+        		
+        			<li><a class='to-others-page' href="/others.html">OTHERS[3]</a></li>
+        		
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[16]</a></li>
+        		
+        	</ul>
+        	<div class="content post" id="post">
+        		<h1 class='post-title'>jQuery自定义事件</h1>
+        		<p class='post-date'>2015-01-02</p>
+        		<blockquote>
+<p>我：之前研究过jQuery的事件绑定</p>
+
+<p>面试官：不是有addEventListener吗？</p>
+
+<p>我： ......</p>
+</blockquote>
+
+<p>之前看过jQuery的事件绑定的源代码，惊叹是何等神人能想出这样实现方法，jQuery.on事件绑定不是原生<code>addEventListener</code>可以代替的，它解决了以下问题：</p>
+
+<ul>
+<li>兼容性地实现了<code>addEventListener</code>的全部功能，包括多事件绑定，事件函数按绑定顺序执行</li>
+<li>动态事件绑定，这不是<code>addEventListener</code>内部简单判断一下<code>event.target</code>就能够实现的</li>
+<li>自定义事件，自定义事件还能冒泡</li>
+<li>事件函数分组，方便事件函数解绑</li>
+</ul>
+
+<p>如果再有人反着白眼问我，不是有<code>addEventListener</code>吗？我只想说，jQuery团队在事件绑定上编写的几百行代码可不是白写的。</p>
+
+<p>本文会简要的介绍一下jQuery自定义事件的使用场景。</p>
+
+<h2>事件绑定</h2>
+
+<p>我们为<code>document</code>绑定两个click事件：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="nx">handler_1</span><span class="p">()</span> <span class="p">{});</span>
+<span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="nx">handler_2</span><span class="p">()</span> <span class="p">{});</span>
+</code></pre></div>
+<p>我们想一下，jQuery内部是用下面这种形式实现么？</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="nx">handler_1</span><span class="p">()</span> <span class="p">{});</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="nx">handler_2</span><span class="p">()</span> <span class="p">{});</span>
+</code></pre></div>
+<p>是也不是，因为元素的事件绑定肯定是要用到<code>addEventListener</code>的，但在jQuery内部实现中，每个元素对应的每个事件，只会调用一次<code>addEventListener</code>，用来触发<em>事件分派函数</em></p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 筛选并调用符合条件的事件函数</span>
+<span class="p">});</span>
+</code></pre></div>
+<p>handler<em>1，handler</em>2两个事件函数去哪了？实际上，jQuery是利用<code>jquery.data</code>函数将这两个函数存在<code>document</code>专属的存储空间里，当触发了click事件的同时也触发了事件分派函数，该函数会遍历<code>document</code>专属的存储空间，根据一系列的条件筛选事件函数，这些条件包括子选择符，事件组名等等，最后将筛选出来的函数一一执行。</p>
+
+<h2>自定义事件</h2>
+
+<p>由于jQuery这种实现事件绑定的机制，自定义事件变得非常简单。</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;smile&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{});</span>
+</code></pre></div>
+<p>上述代码，<code>document</code>元素绑定了一个自定义事件smile，我们可以用trigger或triggerHandler来触发这个事件：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">trigger</span><span class="p">(</span><span class="s1">&#39;smile&#39;</span><span class="p">);</span>
+<span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">triggerHandler</span><span class="p">(</span><span class="s1">&#39;smile&#39;</span><span class="p">);</span>
+</code></pre></div>
+<p>trigger和triggerHandler的区别在于，trigger方法触发的事件会顺着DOM树向上冒泡，而triggerHandler方法只是调用该元素上对应的事件函数，不会冒泡。</p>
+
+<p>自定义事件一般用于给元素绑定一系列的<strong>动作</strong>，比如，我们要实现弹框效果，我们需要一个掩层和若干窗体。</p>
+<div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;overlay&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;window window--login&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;window window--register&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+    ...
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div>
+<p>弹框需要两个动作： 关闭窗体和打开窗体。考虑到窗体可能动态增加，我们用到了动态事件绑定(动态绑定的原理在于，子元素触发的事件总会<strong>冒泡到父元素上</strong>，所以我们只需要把事件函数绑定在父元素上)</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#overlay&#39;</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;close&#39;</span><span class="p">,</span> <span class="s1">&#39;.window&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{});</span>
+<span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#overlay&#39;</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;open&#39;</span><span class="p">,</span> <span class="s1">&#39;.window&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{});</span>
+</code></pre></div>
+<p>由于动态绑定依赖冒泡来触发事件函数，所以当我们 <strong>只能使用</strong> trigger，来触发动态绑定的事件。比如我们要打开登录窗口：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.window--login&#39;</span><span class="p">).</span><span class="nx">tigger</span><span class="p">(</span><span class="s1">&#39;open&#39;</span><span class="p">);</span>
+</code></pre></div>
+<p>通过自定义事件，我们将DOM元素和其DOM操作一一对应起来。</p>
+
+<h2>事件返回值</h2>
+
+<p>如果某些情况下，我们需要知道事件函数的返回值，我们可以用<code>jQuery.Event</code>生成一个event对象，用这个对象来触发事件函数，事件函数的返回值将保存在event对象的result属性中，这样，我们就能够获取事件函数的返回值了：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;customEvent&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="s1">&#39;hello world!&#39;</span><span class="p">;</span> <span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">event</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">Event</span><span class="p">(</span><span class="s1">&#39;customEvent&#39;</span><span class="p">);</span>
+<span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">trigger</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
+
+<span class="nx">event</span><span class="p">.</span><span class="nx">result</span><span class="p">;</span> <span class="c1">// &#39;hello world&#39;</span>
+</code></pre></div>
+<h2>参考</h2>
+
+<ul>
+<li><a href="http://blog.socialcast.com/jquery-custom-events/">jquery custom events</a></li>
+<li><a href="http://jqapi.com/#p=trigger">jQuery API - trigger</a></li>
+</ul>
+
+        		<!-- Duoshuo Comment BEGIN -->
+        		<div class="ds-thread"></div>
+        		<script type="text/javascript">
+        			var duoshuoQuery = {short_name:"lxjwlt"};
+        			(function() {
+        				var ds = document.createElement('script');
+        				ds.type = 'text/javascript';ds.async = true;
+        				ds.src = 'http://static.duoshuo.com/embed.js';
+        				ds.charset = 'UTF-8';
+        				(document.getElementsByTagName('head')[0]
+        				|| document.getElementsByTagName('body')[0]).appendChild(ds);
+        			})();
+        		</script>
+        		<!-- Duoshuo Comment END -->
+        	</div>
+        </div>
+
+        <script src="/scripts/sea.js"></script>
+        <script>
+            seajs.use('post');
+        </script>
+    </body>
+</html>
