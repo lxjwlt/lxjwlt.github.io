@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Laravel简介"
-category: back-end
+category: others
 excerpt: 'Laravel是一款基于MVC设计模式的PHP框架，提供了一系列便捷的API接口，包括数据库、路由、表单验证等等，使PHP开发更为快速和优雅'
 ---
 
