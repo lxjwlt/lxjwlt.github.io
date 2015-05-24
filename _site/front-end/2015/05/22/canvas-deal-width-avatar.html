@@ -1,0 +1,285 @@
+<!DOCTYPE HTML>
+<!--[if IE 6]><html class="ie6 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 7]><html class="ie7 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 8]><html class="ie8 lte9 lte8 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 9]><html class="ie9 lte9 no-css3" lang="zh-cn"><![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8) | !(IE 9)  ]><!--><html lang="zh-cn" class='non-ie'><!--<![endif]-->
+    <head>
+        <meta charset="utf-8" />
+
+        
+            <meta name="description" content="最近社区系统需要支持移动端，其中涉及到用户头像上传，头像有大中小三种尺寸，在PC端，社区用Flash来处理头像编辑和生成，但该Flash..." />
+        
+
+        <meta name="keywords" content="css,javascript,html5,前端,web,页面制作" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=0.5,maximum-scale=2,user-scalable=yes" /><!-- 响应式网页设计：initial-scale设定初始缩放比例 maximum-scale设定允许用户缩放到的最大比例 minimum-scale设定允许用户缩放到的最小比例 值范围从0.0到10.0 user-scalable设定是否允许用户进行手动缩放 值为yes或no -->
+        <title>Canvas处理头像上传</title>
+
+        <!-- page icon -->
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png" />
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+    </head>
+    <body class="post-page">
+        <div class="header">
+            <div class="wrap">
+                <h1 class="logo">
+                    <a href="/">lxjwlt's blog</a>
+                </h1>
+            </div>
+        </div>
+
+        <div class="directory" id="directory">
+            <div class="directory__container" id="directory__container"></div>
+            <ul class="directory__button-list">
+                <li><a href="#" class="directory__button directory__button--expand" id='expand-button'>目录</a></li>
+                <li><a href="#" class="directory__button directory__button--top" id='top-button'>top</a></li>
+            </ul>
+        </div>
+        <div class='main wrap'>
+        	<ul class="sidebar">
+        		<li><a class='to-index-page' href="/">ALL</a></li>
+        		
+        			<li><a class='to-others-page' href="/others.html">OTHERS[3]</a></li>
+        		
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[17]</a></li>
+        		
+        	</ul>
+        	<div class="content post" id="post">
+        		<h1 class='post-title'>Canvas处理头像上传</h1>
+        		<p class='post-date'>2015-05-22</p>
+        		<p><a href="https://www.zybuluo.com/lxjwlt/note/101343">开启更好的阅读模式</a></p>
+
+<p>最近社区系统需要支持移动端，其中涉及到用户头像上传，头像有大中小三种尺寸，在PC端，社区用Flash来处理头像编辑和生成，但该Flash控件的界面不友好而且移动端对Flash的支持不好，考虑到这些问题，最后我们选用Canvas来完成图像尺寸缩放和图片数据获取。</p>
+
+<h2>等边处理</h2>
+
+<p>头像一般都是正方形，首先我们需要获取图片宽度和高度的最小值，用该最小值作为边长居中裁剪图片，最终得到一个正方形的图片：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">ImageEditor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 用离线canvas处理图片数据</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">canvas</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;canvas&#39;</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">context</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s1">&#39;2d&#39;</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">fn</span> <span class="o">=</span> <span class="nx">ImageEditor</span><span class="p">.</span><span class="nx">prototype</span><span class="p">;</span>
+
+<span class="nx">fn</span><span class="p">.</span><span class="nx">resizeCanvas</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">width</span><span class="p">,</span> <span class="nx">height</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="nx">width</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="nx">height</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="nx">fn</span><span class="p">.</span><span class="nx">clipSquareImage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+        <span class="nx">img</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Image</span><span class="p">();</span>
+
+    <span class="nx">img</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">url</span><span class="p">;</span>
+    <span class="nx">img</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+        <span class="c1">// 取宽高最小值作为正方形边长</span>
+        <span class="kd">var</span> <span class="nx">eLength</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nx">img</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">img</span><span class="p">.</span><span class="nx">height</span><span class="p">),</span>
+            <span class="nx">picture</span> <span class="o">=</span> <span class="nx">img</span><span class="p">;</span>
+
+        <span class="c1">// canvas不支持局部截屏，截屏前必须先调节canvas的宽高</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">resizeCanvas</span><span class="p">(</span><span class="nx">eLength</span><span class="p">,</span> <span class="nx">eLength</span><span class="p">);</span>
+
+        <span class="c1">// 将图片以居中裁剪的方式画到canvas中。</span>
+        <span class="c1">// drawImage支持9个参数：图片对象，图片上的剪切坐标XY，</span>
+        <span class="c1">// 剪切宽高，图片在canvas上的坐标XY及图片宽高</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">drawImage</span><span class="p">(</span><span class="nx">picture</span><span class="p">,</span>
+            <span class="p">(</span><span class="nx">picture</span><span class="p">.</span><span class="nx">width</span> <span class="o">-</span> <span class="nx">eLength</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="nx">picture</span><span class="p">.</span><span class="nx">height</span> <span class="o">-</span> <span class="nx">eLength</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="nx">eLength</span><span class="p">,</span> <span class="nx">eLength</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">eLength</span><span class="p">,</span> <span class="nx">eLength</span><span class="p">);</span>
+
+        <span class="c1">// 截屏，即获取base64数据</span>
+        <span class="nx">callback</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">that</span><span class="p">.</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">toDataURL</span><span class="p">(</span><span class="s1">&#39;image/png&#39;</span><span class="p">));</span>
+
+    <span class="p">};</span>
+<span class="p">};</span>
+</code></pre></div>
+<h2>Canvas元素大小限制问题</h2>
+
+<p>上述<code>clipSquareImage</code>函数中，由于<code>canvas.toDataURL</code>接口不提供宽高参数，只能够一次性把整个canvas的屏幕数据截取下来，所以在对Canvas截屏前，我们必须先设置Canvas元素的大小。然而移动端拍照的分辨率极高，宽高大多会在3000以上，当我们根据相片宽高的最小值来设置Canvas的尺寸时，Canvas元素的最小宽度也高达到3000以上。</p>
+
+<p>问题在于，每个平台对Canvas的大小都有限制，如果Canvas的宽度或高度任意一个值超过了平台限制，Canvas将无法进行渲染，<code>canvas.toDataURL</code>只能获取一张透明的图片数据。</p>
+
+<p><a href="http://stackoverflow.com/questions/6081483/maximum-size-of-a-canvas-element">Maximum size of a canvas element</a>中提到了部分平台下Canvas的尺寸限制：</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">chrome          = 32767x32767
+iPod Touch 16GB = 1448x1448
+iPad Mini       = 2290x2289
+iPhone 3        = 1448x1448
+iPhone 5        = 2290x2289
+</code></pre></div>
+<p>参考以上数据，我们先给Canvas设置一个最大的宽度：</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">var MAX_WIDTH = 1000;
+</code></pre></div>
+<p>在<code>clipSquareImage</code>函数中加入最大宽度的检测，如果超过限制，则创建一个临时的canvas进行图片缩放处理，最后对该<strong>临时的Canvas</strong>进行居中剪切：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">fn</span><span class="p">.</span><span class="nx">clipSquareImage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+        <span class="nx">img</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Image</span><span class="p">();</span>
+
+    <span class="nx">img</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">url</span><span class="p">;</span>
+    <span class="nx">img</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+         <span class="c1">// 取图片宽高和Canvas的最大宽度的最小值作为等边长</span>
+        <span class="kd">var</span> <span class="nx">eLength</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nx">img</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">img</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span> <span class="nx">MAX_WIDTH</span><span class="p">),</span>
+
+            <span class="c1">// 剪切对象</span>
+            <span class="nx">picture</span> <span class="o">=</span> <span class="nx">img</span><span class="p">,</span>
+
+            <span class="nx">tempEditor</span><span class="p">,</span>
+            <span class="nx">ratio</span><span class="p">;</span>
+
+            <span class="c1">// 如果图片尺寸超出限制</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">eLength</span> <span class="o">===</span> <span class="nx">MAX_WIDTH</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="c1">// 创建一个临时editor</span>
+                <span class="nx">tempEditor</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ImageEditor</span><span class="p">();</span>
+
+                <span class="nx">ratio</span> <span class="o">=</span> <span class="nx">img</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="nx">img</span><span class="p">.</span><span class="nx">height</span><span class="p">;</span>
+
+                <span class="c1">// 按图片比例缩放canvas</span>
+                <span class="nx">img</span><span class="p">.</span><span class="nx">width</span> <span class="o">&lt;</span> <span class="nx">img</span><span class="p">.</span><span class="nx">height</span> <span class="err">？</span>
+                    <span class="nx">tempEditor</span><span class="p">.</span><span class="nx">resizeCanvas</span><span class="p">(</span><span class="nx">MAX_WIDTH</span> <span class="o">*</span> <span class="nx">ratio</span><span class="p">,</span> <span class="nx">MAX_WIDTH</span><span class="p">)</span> <span class="err">：</span>
+                    <span class="nx">tempEditor</span><span class="p">.</span><span class="nx">resizeCanvas</span><span class="p">(</span><span class="nx">MAX_WIDTH</span><span class="p">,</span> <span class="nx">MAX_WIDTH</span> <span class="o">/</span> <span class="nx">ratio</span><span class="p">);</span>
+
+                <span class="nx">tempEditor</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">drawImage</span><span class="p">(</span><span class="nx">img</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">tempEditor</span><span class="p">.</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">tempEditor</span><span class="p">.</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span><span class="p">);</span>
+
+                <span class="c1">// 将临时Canvas作为剪切对象</span>
+                <span class="nx">picture</span> <span class="o">=</span> <span class="nx">tempEditor</span><span class="p">.</span><span class="nx">canvas</span><span class="p">;</span>
+
+                <span class="nx">eLength</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nx">tempEditor</span><span class="p">.</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">tempEditor</span><span class="p">.</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span><span class="p">);</span>
+
+            <span class="p">}</span>
+
+            <span class="c1">// 居中剪切</span>
+            <span class="c1">// ... ...</span>
+
+            <span class="c1">// 截屏操作</span>
+            <span class="c1">// ... ...</span>
+
+    <span class="p">};</span>
+<span class="p">};</span>
+</code></pre></div>
+<h2>Canvas锯齿问题</h2>
+
+<p>上面我们已经能够通过Canvas裁剪出一张正方形的图片，接下来我们还需要处理头像图片大中小三种尺寸。在Canvas中，<code>drawImage</code>接口提供非常方便的缩放功能：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">editor</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ImageEditor</span><span class="p">;</span>
+
+<span class="c1">// 将图片缩放到300x300</span>
+<span class="c1">// drawImage支持5个参数：图片对象，及图片在canvas上的坐标和宽高</span>
+<span class="nx">editor</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">drawImage</span><span class="p">(</span><span class="nx">squareImage</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">300</span><span class="p">);</span>
+</code></pre></div>
+<p>然而大尺寸图片直接用<code>drawImage</code>进行缩小处理会导致图片出现锯齿。在stack overflow上<a href="http://stackoverflow.com/questions/17861447/html5-canvas-drawimage-how-to-apply-antialiasing">HTML5 canvas drawImage: how to apply antialiasing</a>提出了一个方案：对图片进行若干次的等比例缩小，最后再放大到目标尺寸：</p>
+
+<p><img src="http://i1273.photobucket.com/albums/y401/lxjwlt/canvas%20deal%20width%20avatar/canvas%20_zpsgsfeet7n.png" alt="canvas高清缩放"></p>
+
+<p>参考这个方案，我们可以实现<code>antialiasScale</code>抗锯齿缩放函数：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">fn</span><span class="p">.</span><span class="nx">antialisScale</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">img</span><span class="p">,</span> <span class="nx">width</span><span class="p">,</span> <span class="nx">height</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">offlineCanvas</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;canvas&#39;</span><span class="p">),</span>
+        <span class="nx">offlineCtx</span> <span class="o">=</span> <span class="nx">offlineCanvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s1">&#39;2d&#39;</span><span class="p">),</span>
+        <span class="nx">sourceWidth</span> <span class="o">=</span> <span class="nx">img</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span>
+        <span class="nx">sourceHeight</span> <span class="o">=</span> <span class="nx">img</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span>
+
+        <span class="c1">// 缩小操作的次数</span>
+        <span class="nx">steps</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">ceil</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">sourceWidth</span> <span class="o">/</span> <span class="nx">width</span><span class="p">)</span> <span class="o">/</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+
+        <span class="nx">i</span><span class="p">;</span>
+
+    <span class="c1">// 渲染图片</span>
+    <span class="nx">offlineCanvas</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="nx">sourceWidth</span><span class="p">;</span>
+    <span class="nx">offlineCanvas</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="nx">sourceHeight</span><span class="p">;</span>
+    <span class="nx">offlineCtx</span><span class="p">.</span><span class="nx">drawImage</span><span class="p">(</span><span class="nx">img</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">offlineCanvas</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">offlineCanvas</span><span class="p">.</span><span class="nx">height</span><span class="p">);</span>
+
+    <span class="c1">// 缩小操作</span>
+    <span class="c1">// 进行steps次的减半缩小</span>
+    <span class="k">for</span><span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">steps</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">offlineCtx</span><span class="p">.</span><span class="nx">drawImage</span><span class="p">(</span><span class="nx">offlineCanvas</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">offlineCanvas</span><span class="p">.</span><span class="nx">width</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="nx">offlineCanvas</span><span class="p">.</span><span class="nx">height</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 放大操作</span>
+    <span class="c1">// 进行steps次的两倍放大</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">drawImage</span><span class="p">(</span><span class="nx">offlineCanvas</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nx">offlineCanvas</span><span class="p">.</span><span class="nx">width</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="nx">steps</span><span class="p">),</span> 
+        <span class="nx">offlineCanvas</span><span class="p">.</span><span class="nx">height</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="nx">steps</span><span class="p">),</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">width</span><span class="p">,</span> <span class="nx">height</span><span class="p">);</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>我们可以用这个函数代替drawImage完成缩放工作，生成头像图片的三种尺寸：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">fn</span><span class="p">.</span><span class="nx">scaleSquareImage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">sizes</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+    <span class="c1">// 先裁剪一个正方形</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">clipSquareImage</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">sizes</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">squareImage</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Image</span><span class="p">(),</span>
+            <span class="nx">result</span> <span class="o">=</span> <span class="p">[],</span>
+            <span class="nx">i</span><span class="p">;</span>
+
+        <span class="nx">squareImage</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+
+        <span class="c1">// 抗锯齿缩放</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">sizes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">antialisScale</span><span class="p">(</span><span class="nx">squareImage</span><span class="p">,</span> <span class="nx">sizes</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">size</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+            <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">toDataURL</span><span class="p">(</span><span class="s1">&#39;image/png&#39;</span><span class="p">));</span>    
+        <span class="p">}</span>
+
+        <span class="nx">callback</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">result</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">};</span>
+</code></pre></div>
+<h2>PHP存储base64图片数据</h2>
+
+<p><code>Canvas.toDataURL()</code>获取的<strong>默认</strong>图像数据格式是：<code>data:image/png;base64,</code> + base64数据：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">data</span><span class="o">:</span><span class="nx">image</span><span class="o">/</span><span class="nx">png</span><span class="p">;</span><span class="nx">base64</span><span class="p">,</span><span class="nx">iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC</span>
+</code></pre></div>
+<p>当把Canvas截屏数据传给后台时，后台需要截断开头的字段<code>data:image/png;base64,</code>，获取后面那串真正的base64数据：</p>
+<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="cp">&lt;?php</span>
+    <span class="nv">$imgData</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;imgData&#39;</span><span class="p">];</span>
+
+    <span class="c1">// 截取有用的部分</span>
+    <span class="k">list</span><span class="p">(</span><span class="nv">$type</span><span class="p">,</span> <span class="nv">$imgData</span><span class="p">)</span> <span class="o">=</span> <span class="nb">explode</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">,</span> <span class="nv">$imgData</span><span class="p">);</span>
+    <span class="k">list</span><span class="p">(,</span> <span class="nv">$imgData</span><span class="p">)</span>      <span class="o">=</span> <span class="nb">explode</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="nv">$imgData</span><span class="p">);</span>
+
+    <span class="c1">// base64 编码中使用了加号，</span>
+    <span class="c1">// 如果通过url传递base64数据，+号会转换成空格</span>
+    <span class="nv">$imgData</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="nv">$imgData</span><span class="p">);</span>
+
+    <span class="c1">// 存储文件</span>
+    <span class="nv">$success</span> <span class="o">=</span> <span class="nb">file_put_contents</span><span class="p">(</span><span class="s1">&#39;PATH/XXX.png&#39;</span><span class="p">,</span> <span class="nb">base64_decode</span><span class="p">(</span><span class="nv">$imgData</span><span class="p">));</span>
+</code></pre></div>
+<h3>参考</h3>
+
+<ul>
+<li><a href="http://j-query.blogspot.com/2011/02/save-base64-encoded-canvas-image-to-png.html">Save a Base64 Encoded Canvas image to a png file using PHP</a></li>
+<li><a href="http://stackoverflow.com/questions/17861447/html5-canvas-drawimage-how-to-apply-antialiasing">Html5 canvas drawImage: how to apply antialiasing</a></li>
+<li><a href="http://stackoverflow.com/questions/6081483/maximum-size-of-a-canvas-element">Maximum size of a canvas element</a></li>
+<li><a href="http://stackoverflow.com/questions/11511511/how-to-save-a-png-image-server-side-from-a-base64-data-string">How to save a PNG image server-side, from a base64 data string</a></li>
+<li><a href="http://stackoverflow.com/questions/6974684/how-to-send-formdata-objects-with-ajax-requests-in-jquery">How to send FormData objects with Ajax-requests in jQuery?</a></li>
+</ul>
+
+        		<!-- Duoshuo Comment BEGIN -->
+        		<div class="ds-thread"></div>
+        		<script type="text/javascript">
+        			var duoshuoQuery = {short_name:"lxjwlt"};
+        			(function() {
+        				var ds = document.createElement('script');
+        				ds.type = 'text/javascript';ds.async = true;
+        				ds.src = 'http://static.duoshuo.com/embed.js';
+        				ds.charset = 'UTF-8';
+        				(document.getElementsByTagName('head')[0]
+        				|| document.getElementsByTagName('body')[0]).appendChild(ds);
+        			})();
+        		</script>
+        		<!-- Duoshuo Comment END -->
+        	</div>
+        </div>
+
+        <script src="/scripts/sea.js"></script>
+        <script>
+            seajs.use('post');
+        </script>
+    </body>
+</html>
