@@ -1,0 +1,189 @@
+<!DOCTYPE HTML>
+<!--[if IE 6]><html class="ie6 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 7]><html class="ie7 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 8]><html class="ie8 lte9 lte8 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 9]><html class="ie9 lte9 no-css3" lang="zh-cn"><![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8) | !(IE 9)  ]><!--><html lang="zh-cn" class='non-ie'><!--<![endif]-->
+    <head>
+        <meta charset="utf-8" />
+
+        
+            <meta name="description" content="理想情况下，AngularJS处理的数据都是通过异步请求获取的，但有些情况下，由于开发环境的限制，只允许页面部分使用AngularJS。这类页面中的数据分为两种，一种是用于初始化页面的数据，一种是用于更新页面的数据。其中用于初始化的数据会决定页面初始化时的内容，如果这类数据也用异步请求获取，那么页面在呈现出来的时候可能是空白或错乱的。" />
+        
+
+        <meta name="keywords" content="css,javascript,html5,前端,web,页面制作" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=0.5,maximum-scale=2,user-scalable=yes" /><!-- 响应式网页设计：initial-scale设定初始缩放比例 maximum-scale设定允许用户缩放到的最大比例 minimum-scale设定允许用户缩放到的最小比例 值范围从0.0到10.0 user-scalable设定是否允许用户进行手动缩放 值为yes或no -->
+        <title>AngularJS接收PHP变量数据</title>
+
+        <!-- page icon -->
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png" />
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+    </head>
+    <body class="post-page">
+        <div class="header">
+            <div class="wrap">
+                <h1 class="logo">
+                    <a href="/">lxjwlt's blog</a>
+                </h1>
+            </div>
+        </div>
+
+        <div class="directory" id="directory">
+            <div class="directory__container" id="directory__container"></div>
+            <ul class="directory__button-list">
+                <li><a href="#" class="directory__button directory__button--expand" id='expand-button'>目录</a></li>
+                <li><a href="#" class="directory__button directory__button--top" id='top-button'>top</a></li>
+            </ul>
+        </div>
+        <div class='main wrap'>
+        	<ul class="sidebar">
+        		<li><a class='to-index-page' href="/">ALL</a></li>
+        		
+        			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
+        		
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[19]</a></li>
+        		
+        	</ul>
+        	<div class="content post" id="post">
+        		<h1 class='post-title'>AngularJS接收PHP变量数据</h1>
+        		<p class='post-date'>2015-06-23</p>
+        		<p>理想情况下，AngularJS处理的数据都是通过异步请求获取的，但有些情况下，由于开发环境的限制，只允许页面部分使用AngularJS。这类页面中的数据分为两种，一种是用于初始化页面的数据，一种是用于更新页面的数据。其中用于初始化的数据会决定页面初始化时的内容，如果这类数据也用异步请求获取，那么页面在呈现出来的时候可能是空白或错乱的。</p>
+
+<blockquote>
+<p>注：理想状态指全站使用AngularJS，就算这种情况下，通过异步请求初始化数据也会造成页面在一开始空白或错乱，但我们监测<code>$rootScope</code>上的加载完成事件或监测<code>$routeProvider</code>的promise状态来判断是否初始化完成，在未完成前可以通过不显示页面或者给出一个loading的画面，来掩盖错乱的页面。但这些措施在局部使用AngularJS时是不太可能有效的，所以下面要讲诉的是妥协于非理想情况的解决方法。</p>
+</blockquote>
+
+<p>通常这类页面在生成之前，后台就会初始化主要的数据，我们完全可以把这些后台数据利用起来，而不必再去发起异步请求。</p>
+
+<p>以常见的PHP后台为应用场景，PHP生成页面前便会处理用户数据，用户数据中包含了用户权限，用户名，用户关注等等数据，这些数据在页面中也会被用到，比如用来决定用户面板的显隐：</p>
+<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="x">// 假设%%为PHP模板输出语法</span>
+<span class="x">// 假设PHP的$member变量存储用户数据</span>
+
+<span class="x">% if !empty($member) %</span>
+<span class="x">&lt;ul class=&quot;user-panel&quot;&gt;</span>
+<span class="x">    &lt;li&gt;% $member.username %&lt;/li&gt;</span>
+
+<span class="x">    % if $member[authority] &gt; 1000 %</span>
+<span class="x">    &lt;li&gt;后台管理&lt;/li&gt;</span>
+<span class="x">    % /if %</span>
+
+<span class="x">    &lt;li&gt;退出&lt;/li&gt;</span>
+<span class="x">&lt;/ul&gt;</span>
+<span class="x">% /if %</span>
+</code></pre></div>
+<p>假设AngularJS中也用到用户数据，用于处理回复框的可输入状态，如果用户没有权限则不允许输入：</p>
+<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="x">// $scope.memberData此时为undefined</span>
+<span class="x">&lt;div class=&quot;reply-box&quot;&gt;</span>
+<span class="x">    &lt;textarea ng-disabled=&quot;memberData.authority &gt; 1000&quot;&gt;&lt;/textarea&gt;</span>
+<span class="x">&lt;/div&gt;</span>
+</code></pre></div>
+<p>输入框是否可输入由<code>memberData.authority</code>决定，但memberData还没有初始化，所以我们先用后台数据初始化memberData。</p>
+
+<h2>ng-init初始化后台数据</h2>
+
+<p>通过ng-init指令在行内初始化AngularJS作用域：</p>
+<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="x">&lt;div class=&quot;reply-box&quot; ng-init=&quot;memberData = % json_encode($member) %&quot;&gt;</span>
+<span class="x">    &lt;textarea ng-disabled=&quot;memberData.authority &gt; 1000&quot;&gt;&lt;/textarea&gt;</span>
+<span class="x">&lt;/div&gt;</span>
+</code></pre></div>
+<p>上述调用PHP的json_encode函数将<code>$member</code>转换为JSON格式并输出到页面中，页面渲染结束后，AngularJS对该页面进行二次解析，在这过程中将这段JSON数据解析并赋值到$scope.memberData中。</p>
+
+<p>但实际开发中，上面的写法会导致HTML的解析错误，因为JSON数据的格式是：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="p">{</span><span class="s2">&quot;username&quot;</span><span class="o">:</span> <span class="s2">&quot;lxjwlt&quot;</span><span class="p">,</span> <span class="s2">&quot;authority&quot;</span><span class="o">:</span> <span class="mi">9999</span><span class="p">}</span>
+</code></pre></div>
+<p>JSON中带有双引号，也可能包含HTML语句，所以直接在HTML中打印出这类JSON要注意将引号和HTML特殊符号都进行HEX编码，PHP中的json_encode可以传入第二个参数，用于设置特殊字符的编码方式：</p>
+<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="x">// JSON_HEX_TAG: 将 &lt; 和 &gt; 等符号编码为 \u003C 和 \u003E</span>
+<span class="x">// JSON_HEX_APOS: 将单引号转换为 \u0027</span>
+<span class="x">// JSON_HEX_QUOT: 将双引号转换为 \u0022</span>
+
+<span class="x">&lt;div class=&quot;reply-box&quot; </span>
+<span class="x">     ng-init=&quot;memberData = % json_encode($member, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT) %&quot;&gt;</span>
+<span class="x">    // ...</span>
+<span class="x">&lt;/div&gt;</span>
+</code></pre></div>
+<p>这种写法有两点不足：
+* 写在行内，要考虑引号等特殊符号的编码
+* 公共数据不通用，如果页面中多处用到用户数据，那么就要多次初始化用户数据
+* 数据初始化遍布页面各个地方，不利于管理</p>
+
+<h2>module.value全局数据存储</h2>
+
+<p>在AngularJS中，我们可以通过module.value来定义全局公用数据：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 初始化angular应用</span>
+<span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;myApp&#39;</span><span class="p">,</span> <span class="p">[]);</span>
+
+<span class="c1">// 全局数据</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">value</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">key_1</span><span class="o">:</span> <span class="s1">&#39;value_1&#39;</span><span class="p">,</span>
+    <span class="nx">key_2</span><span class="o">:</span> <span class="s1">&#39;value_2&#39;</span>
+<span class="p">});</span>
+</code></pre></div>
+<p>利用AngularJS这一特性，我们可以将后台数据存储到AngularJS中的全局变量中：</p>
+<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="x">&lt;body ng-app=&quot;myData&quot;&gt;</span>
+<span class="x">    &lt;script&gt;</span>
+<span class="x">    angular.module(&#39;myData&#39;)</span>
+<span class="x">        .value(&#39;memberData&#39;, % json_encode($member) %);</span>
+<span class="x">    &lt;/script&gt;</span>
+
+<span class="x">    // ...</span>
+<span class="x">&lt;/body&gt;</span>
+</code></pre></div>
+<p>PHP模板会执行json_encode将<code>$member</code>数据打印到script标签中，而这段JSON数据在script标签中被当作是JS对象来对待，于是在AngularJS对页面的第二次解析时，直接将这段JS对象存入到全局变量memberData中。</p>
+
+<p>于是，在我们在编写myApp模块时，可以在任意的控制器中获取这段全局数据 -- memberData：</p>
+<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;myApp&#39;</span><span class="p">)</span>
+
+    <span class="c1">// 依赖注入memberData</span>
+    <span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">&#39;MyCtrl&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">memberData</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="c1">// 要在作用域中使用memberData，先赋值给$scope</span>
+        <span class="nx">$scope</span><span class="p">.</span><span class="nx">memberData</span> <span class="o">=</span> <span class="nx">memberData</span><span class="p">;</span>
+
+    <span class="p">});</span>
+</code></pre></div>
+<p>这样我们就能够使用用户数据：</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">&lt;div class=&quot;reply-box&quot;&gt;
+    &lt;textarea ng-disabled=&quot;memberData.authority &gt; 1000&quot;&gt;&lt;/textarea&gt;
+&lt;/div&gt;
+</code></pre></div>
+<p>通过全局数据的方式，我们不再需要ng-init指令来初始化数据，也不用再考虑特殊符号的编码转换问题，而且这段数据可以全局复用。</p>
+
+<h2>总结</h2>
+
+<p>采用以上的方法，在AngularJS内部，我们能够获取任意后台数据，而我们只需花费数据解析的时间，从而节省下异步请求和第二次后台运行逻辑代码的时间。</p>
+
+<h2>参考</h2>
+
+<ul>
+<li><a href="http://codeutopia.net/blog/2013/05/27/3-ways-to-get-backend-data-to-angularjs/">3 ways to get backend data to AngularJS</a></li>
+</ul>
+
+        		<!-- Duoshuo Comment BEGIN -->
+        		<div class="ds-thread"></div>
+        		<script type="text/javascript">
+        			var duoshuoQuery = {short_name:"lxjwlt"};
+        			(function() {
+        				var ds = document.createElement('script');
+        				ds.type = 'text/javascript';ds.async = true;
+        				ds.src = 'http://static.duoshuo.com/embed.js';
+        				ds.charset = 'UTF-8';
+        				(document.getElementsByTagName('head')[0]
+        				|| document.getElementsByTagName('body')[0]).appendChild(ds);
+        			})();
+        		</script>
+        		<!-- Duoshuo Comment END -->
+        	</div>
+        </div>
+
+        <script src="/scripts/sea.js"></script>
+        <script>
+            seajs.use('post');
+        </script>
+    </body>
+</html>
