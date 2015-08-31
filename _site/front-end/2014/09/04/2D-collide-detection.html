@@ -47,7 +47,7 @@
         		
         			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
         		
-        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[19]</a></li>
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[21]</a></li>
         		
         	</ul>
         	<div class="content post" id="post">
@@ -73,7 +73,7 @@
 <h3>矩形碰撞矩形</h3>
 
 <p>判断矩形之间的碰撞不难，代码如下：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">rectB</span><span class="p">.</span><span class="nx">x</span> <span class="o">&gt;</span> <span class="nx">rectA</span><span class="p">.</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">rectB</span><span class="p">.</span><span class="nx">width</span> <span class="o">&amp;&amp;</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">rectB</span><span class="p">.</span><span class="nx">x</span> <span class="o">&gt;</span> <span class="nx">rectA</span><span class="p">.</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">rectB</span><span class="p">.</span><span class="nx">width</span> <span class="o">&amp;&amp;</span>
 <span class="nx">rectB</span><span class="p">.</span><span class="nx">x</span> <span class="o">&lt;</span> <span class="nx">rectA</span><span class="p">.</span><span class="nx">x</span> <span class="o">+</span> <span class="nx">rectA</span><span class="p">.</span><span class="nx">width</span> <span class="o">+</span> <span class="nx">rectB</span><span class="p">.</span><span class="nx">width</span> <span class="o">&amp;&amp;</span>
 <span class="nx">rectB</span><span class="p">.</span><span class="nx">y</span> <span class="o">&gt;</span> <span class="nx">rectA</span><span class="p">.</span><span class="nx">y</span> <span class="o">-</span> <span class="nx">rectB</span><span class="p">.</span><span class="nx">height</span> <span class="o">&amp;&amp;</span>
 <span class="nx">rectB</span><span class="p">.</span><span class="nx">y</span> <span class="o">&lt;</span> <span class="nx">rectA</span><span class="p">.</span><span class="nx">y</span> <span class="o">+</span> <span class="nx">rectA</span><span class="p">.</span><span class="nx">height</span> <span class="o">+</span> <span class="nx">rectB</span><span class="p">.</span><span class="nx">height</span>
@@ -81,14 +81,14 @@
 <h3>圆形碰撞圆形</h3>
 
 <p>圆形之间的碰撞就更简单了，只要两圆的圆小于两圆的半径之和就能认定两圆发生了碰撞，代码形式如下：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nb">Math</span><span class="p">.</span><span class="nx">sqrt</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">circleA</span><span class="p">.</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">circleB</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">circleA</span><span class="p">.</span><span class="nx">y</span> <span class="o">-</span> <span class="nx">circleB</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">&lt;</span> <span class="nx">circleA</span><span class="p">.</span><span class="nx">radius</span> <span class="o">+</span> <span class="nx">circleB</span><span class="p">.</span><span class="nx">radius</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nb">Math</span><span class="p">.</span><span class="nx">sqrt</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">circleA</span><span class="p">.</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">circleB</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="nx">circleA</span><span class="p">.</span><span class="nx">y</span> <span class="o">-</span> <span class="nx">circleB</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">&lt;</span> <span class="nx">circleA</span><span class="p">.</span><span class="nx">radius</span> <span class="o">+</span> <span class="nx">circleB</span><span class="p">.</span><span class="nx">radius</span>
 </code></pre></div>
 <h3>圆形和矩形的碰撞</h3>
 
 <p>当我们要检测圆形和矩形之间的碰撞，我们可以将圆形看成一个矩形，用矩形与矩形之间的那套方法来检测碰撞。</p>
 
 <p>这种检测方法不太精确，圆形越大就越不精确，比如圆形和矩形的顶角发生碰撞，但是在不需要精确判断的游戏中，这种方法是可行的，代码如下：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">circle</span><span class="p">.</span><span class="nx">x</span> <span class="o">&gt;</span> <span class="nx">rect</span><span class="p">.</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">circle</span><span class="p">.</span><span class="nx">radius</span> <span class="o">&amp;&amp;</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">circle</span><span class="p">.</span><span class="nx">x</span> <span class="o">&gt;</span> <span class="nx">rect</span><span class="p">.</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">circle</span><span class="p">.</span><span class="nx">radius</span> <span class="o">&amp;&amp;</span>
 <span class="nx">circle</span><span class="p">.</span><span class="nx">x</span> <span class="o">&lt;</span> <span class="nx">rect</span><span class="p">.</span><span class="nx">x</span> <span class="o">+</span> <span class="nx">rect</span><span class="p">.</span><span class="nx">width</span> <span class="o">+</span> <span class="nx">circle</span><span class="p">.</span><span class="nx">radius</span> <span class="o">&amp;&amp;</span>
 <span class="nx">circle</span><span class="p">.</span><span class="nx">y</span> <span class="o">&gt;</span> <span class="nx">rect</span><span class="p">.</span><span class="nx">y</span> <span class="o">-</span> <span class="nx">circle</span><span class="p">.</span><span class="nx">radius</span> <span class="o">&amp;&amp;</span>
 <span class="nx">circle</span><span class="p">.</span><span class="nx">y</span> <span class="o">&gt;</span> <span class="nx">rect</span><span class="p">.</span><span class="nx">y</span> <span class="o">+</span> <span class="nx">rect</span><span class="p">.</span><span class="nx">height</span> <span class="o">+</span> <span class="nx">circle</span><span class="p">.</span><span class="nx">radius</span>
@@ -122,7 +122,7 @@
 <p>比如上图，我们只需要6条投影轴，而且这些投影轴都垂直于多边形的某一条边。所以当我们要对两个多边形进行碰撞检测，通过求出各条边的垂直线，我们就能够找到所有投影轴。</p>
 
 <p>问题是：如何求一条边的垂直线呢？这问题用向量很容易解决。我们先给出向量的定义：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">Vector</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">Vector</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="nx">y</span><span class="p">;</span>
 <span class="p">};</span>
@@ -132,7 +132,7 @@
 <p><img src="http://i1273.photobucket.com/albums/y401/lxjwlt/collide-check/IMG_0091_zps245511d6.jpg" alt="边的向量"></p>
 
 <p>所以边为两点的向量之差：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 向量求差</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 向量求差</span>
 <span class="nx">Vector</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">subtract</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">vector</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="k">new</span> <span class="nx">Vector</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">vector</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">-</span> <span class="nx">vector</span><span class="p">.</span><span class="nx">y</span><span class="p">);</span>
 <span class="p">};</span>
@@ -154,12 +154,12 @@
 <p><img src="http://i1273.photobucket.com/albums/y401/lxjwlt/collide-check/IMG_0092_zps1d831af6.jpg" alt="垂直向量"></p>
 
 <p>根据上图，我们能够为<code>Vector</code>添加一个求垂直向量的方法：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">Vector</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">prependicular</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">Vector</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">prependicular</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="k">new</span> <span class="nx">Vector</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span> <span class="o">-</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">);</span>
 <span class="p">};</span>
 </code></pre></div>
 <p>由于投影轴不需要定义长度，所以可以说，投影轴是边向量的法向量：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 求向量长度 </span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 求向量长度 </span>
 <span class="nx">Vector</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getMagnitude</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">sqrt</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
 <span class="p">};</span>
@@ -188,7 +188,7 @@
 <p><img src="http://i1273.photobucket.com/albums/y401/lxjwlt/collide-check/IMG_0090_zpsd12ff044.jpg" alt="投射点"></p>
 
 <p>所以一个点与投影轴（<strong>单位向量</strong>）的点积就是其投射点：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 求矢量点积</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 求矢量点积</span>
 <span class="nx">Vector</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">dotProduct</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">vector</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">*</span> <span class="nx">vector</span><span class="p">.</span><span class="nx">x</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">*</span> <span class="nx">vector</span><span class="p">.</span><span class="nx">y</span><span class="p">;</span>
 <span class="p">};</span>
@@ -246,7 +246,7 @@
 <p>我们在写代码时，为了方便计算或者传递数据，我们会创建<strong>临时</strong>的数组或者对象。在一般的程序中这做法是没问题的，但是在游戏运行中，这就产生大量的临时内存空间，也就是所谓的<strong>垃圾</strong>。假设有个函数在执行过程中会创建两个临时对象，想想看，一秒60帧来算，也就是一秒运行60次，那就是120个临时对象。所以在游戏中如果处理不当，短时间内就轻易地产生大量的垃圾，造成垃圾回收机制被频繁的触发。</p>
 
 <p>改善这一问题的方法就是：事先创建好相应的对象或数组，要使用的时候直接拿来用：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">tempArr</span> <span class="o">=</span> <span class="p">[];</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">tempArr</span> <span class="o">=</span> <span class="p">[];</span>
 
 <span class="kd">function</span> <span class="nx">func</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">tempArr</span><span class="p">;</span>
@@ -266,21 +266,21 @@
 <h3>会产生垃圾哦</h3>
 
 <p>有时候我们需要清空数组，也许我们这么做：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// bad</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// bad</span>
 <span class="kd">var</span> <span class="nx">arr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">];</span>
 
 <span class="nx">arr</span> <span class="o">=</span> <span class="p">[];</span> 
 </code></pre></div>
 <p>这样，实际上是创建了另一个新的数组<code>[]</code>，而弃用了原数组<code>[1,2,3,4]</code>。所以为了真正地复用这块内存空间，我们可以这样清空数组：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// good</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// good</span>
 <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 </code></pre></div>
 <p>当然，有时候我们只需要删除数组中的某段数据，我们会使用<code>splice</code>来实现:</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 清除数组前四个元素，并以新数组的形式返回这四个元素</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 清除数组前四个元素，并以新数组的形式返回这四个元素</span>
 <span class="nx">arr</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span> 
 </code></pre></div>
 <p>然而<code>splice</code>方法在删除数组中某段元素的同时，也会将这些元素创建为新的数组。如果我们的目的只是清除元素，我们需要自定义一个新的方法：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 用于删除arr[index] ~ arr[index + num - 1]</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 用于删除arr[index] ~ arr[index + num - 1]</span>
 <span class="kd">var</span> <span class="nx">removeItem</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">num</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
     <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">index</span> <span class="o">+</span> <span class="nx">num</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
@@ -290,7 +290,7 @@
 <span class="p">};</span>
 </code></pre></div>
 <p>在绘制动画帧的过程中，要尽量避免用函数直接返回一个对象，比如获取canvas的鼠标坐标，我们会用一个函数对鼠标坐标进行转换，最后将x和y包装进一个对象中返回：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">getLoc</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">canvas</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">getLoc</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">canvas</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">locX</span><span class="p">,</span> <span class="nx">locY</span><span class="p">;</span>
 
     <span class="c1">// 一系列操作</span>
@@ -303,7 +303,7 @@
 <span class="p">};</span>
 </code></pre></div>
 <p>然而，这样的方法会产生一个临时的对象，即产生了垃圾，针对这点，我们的解决方法是分开获取x和y，避免产生垃圾：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">getLocX</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">canvas</span><span class="p">,</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">},</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">getLocX</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">canvas</span><span class="p">,</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">},</span>
     <span class="nx">getLocY</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">canvas</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">};</span>
 </code></pre></div>
 <p>总而言之，当我们着手改善垃圾回收机制的时候，除了自己写的代码我们还需要留意其中用到的js原生方法，比如数组的<code>splice</code>和<code>concat</code>。</p>

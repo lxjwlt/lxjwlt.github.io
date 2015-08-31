@@ -47,7 +47,7 @@
         		
         			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
         		
-        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[19]</a></li>
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[21]</a></li>
         		
         	</ul>
         	<div class="content post" id="post">
@@ -107,20 +107,20 @@
 <p><img src="https://camo.githubusercontent.com/85ec776a0dd4acbe687f3db6367fa56872abb87f/687474703a2f2f692e737461636b2e696d6775722e636f6d2f61544147672e706e67" alt=""></p>
 
 <p>当我们试图从子作用域中访问父作用域上定义的属性，JavaScript会先在子作用域上查询该属性，如果没有找到该属性，再访问父级作用域并查询该属性。（如果在父作用域中依旧没有找到这个属性，JavaScript会继续顺着原型链往上查找... 直到根作用域）。因此，以下均为true:</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">childScope</span><span class="p">.</span><span class="nx">aString</span> <span class="o">===</span> <span class="s1">&#39;parent string&#39;</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">childScope</span><span class="p">.</span><span class="nx">aString</span> <span class="o">===</span> <span class="s1">&#39;parent string&#39;</span>
 <span class="nx">childScope</span><span class="p">.</span><span class="nx">anArray</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="mi">20</span>
 <span class="nx">childScope</span><span class="p">.</span><span class="nx">anObject</span><span class="p">.</span><span class="nx">property1</span> <span class="o">===</span> <span class="s1">&#39;parent prop1&#39;</span>
 <span class="nx">childScope</span><span class="p">.</span><span class="nx">aFunction</span><span class="p">()</span> <span class="o">===</span> <span class="s1">&#39;parent output&#39;</span>
 </code></pre></div>
 <p>假设我们接下来进行以下操作：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">childScope</span><span class="p">.</span><span class="nx">aString</span> <span class="o">=</span> <span class="s1">&#39;child string&#39;</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">childScope</span><span class="p">.</span><span class="nx">aString</span> <span class="o">=</span> <span class="s1">&#39;child string&#39;</span><span class="p">;</span>
 </code></pre></div>
 <p>原型链并未被查询，而子作用域中新增了一个 aString 属性。<strong>这个新的属性隐藏/遮蔽了父作用域的同名属性</strong>。当我们下面讨论到ng-repeat指令和ng-include指令时，这特性会变得非常重要。</p>
 
 <p><img src="https://camo.githubusercontent.com/be4cd25951780638cf181b743b723ba6fb6ddb47/687474703a2f2f692e737461636b2e696d6775722e636f6d2f4f795650572e706e67" alt=""></p>
 
 <p>接下来假设我们执行：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">childScope.anArray[1] = &#39;22&#39;
+<div class="highlight"><pre><code class="language-text" data-lang="text">childScope.anArray[1] = &#39;22&#39;
 childScope.anObject.property1 = &#39;child prop1&#39;
 </code></pre></div>
 <p>因为在子作用域中没有找到 anArray 和 anObject 对象，所以原型链被查询了。在父作用域中被找到这两个对象，所以属性值被更新到了原始的对象上。子作用域上没有添加新的属性，也没有创建新的对象。（注意，在JavaScript中数组和函数都是对象）。</p>
@@ -128,7 +128,7 @@ childScope.anObject.property1 = &#39;child prop1&#39;
 <p><img src="https://camo.githubusercontent.com/57f1938d241122bf49583ed64ee093e45e5dd012/687474703a2f2f692e737461636b2e696d6775722e636f6d2f32516365552e706e67" alt=""></p>
 
 <p>接着，假设我们这么做：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">childScope</span><span class="p">.</span><span class="nx">anArray</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">555</span><span class="p">]</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">childScope</span><span class="p">.</span><span class="nx">anArray</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">555</span><span class="p">]</span>
 <span class="nx">childScope</span><span class="p">.</span><span class="nx">anObject</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Mark&#39;</span><span class="p">,</span> <span class="nx">country</span><span class="o">:</span> <span class="s1">&#39;USA&#39;</span> <span class="p">}</span>
 </code></pre></div>
 <p>原形链并未被访问，并且子作用域获得了两个新的对象属性，这两个属性也会遮蔽父作用域上的同名属性。</p>
@@ -143,7 +143,7 @@ childScope.anObject.property1 = &#39;child prop1&#39;
 </ul>
 
 <p>最后一种情况：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="k">delete</span> <span class="nx">childScope</span><span class="p">.</span><span class="nx">anArray</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="k">delete</span> <span class="nx">childScope</span><span class="p">.</span><span class="nx">anArray</span>
 <span class="nx">childScope</span><span class="p">.</span><span class="nx">anArray</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="mi">22</span>  <span class="c1">// true</span>
 </code></pre></div>
 <p>我们先删除子作用域的属性，然后当我们试图再次访问该属性，此时原型链会被访问。</p>
@@ -166,11 +166,11 @@ childScope.anObject.property1 = &#39;child prop1&#39;
 <h3>ng-include</h3>
 
 <p>假设我们的控制器中有：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">$scope</span><span class="p">.</span><span class="nx">myPrimitive</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">$scope</span><span class="p">.</span><span class="nx">myPrimitive</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>
 <span class="nx">$scope</span><span class="p">.</span><span class="nx">myObject</span>    <span class="o">=</span> <span class="p">{</span><span class="nx">aNumber</span><span class="o">:</span> <span class="mi">11</span><span class="p">};</span>
 </code></pre></div>
 <p>而且在我们的HTML中：</p>
-<div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/ng-template&quot;</span> <span class="na">id=</span><span class="s">&quot;/tpl1.html&quot;</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/ng-template&quot;</span> <span class="na">id=</span><span class="s">&quot;/tpl1.html&quot;</span><span class="nt">&gt;</span>
     <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">ng</span><span class="o">-</span><span class="nx">model</span><span class="o">=</span><span class="s2">&quot;myPrimitive&quot;</span><span class="o">&gt;</span>
 <span class="nt">&lt;/script&gt;</span>
 <span class="nt">&lt;div</span> <span class="na">ng-include</span> <span class="na">src=</span><span class="s">&quot;&#39;/tpl1.html&#39;&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
@@ -194,7 +194,7 @@ childScope.anObject.property1 = &#39;child prop1&#39;
 <p><img src="https://camo.githubusercontent.com/5a6ff2644b1b7a15621c2a20928abfce0a2018bb/687474703a2f2f692e696d6775722e636f6d2f6f764a6547706f2e706e67" alt=""></p>
 
 <p>如果我们不想将我们的数据从基本类型改为对象，我们可以用$parent变量重写第一个模版：</p>
-<div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="nt">&lt;input</span> <span class="na">ng-model=</span><span class="s">&quot;$parent.myPrimitive&quot;</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;input</span> <span class="na">ng-model=</span><span class="s">&quot;$parent.myPrimitive&quot;</span><span class="nt">&gt;</span>
 </code></pre></div>
 <p>在该输入框中输入22不会生成一个新的子作用域属性。现在，这个模型是绑定在父级作用域的一个属性上（因为<code>$parent</code>是子作用域上指向父作用域的属性值）。</p>
 
@@ -203,7 +203,7 @@ childScope.anObject.property1 = &#39;child prop1&#39;
 <p>对于所有的作用域（无论是否原型继承），Angular总会通过<code>$parent</code>、<code>$$childHead</code>和<code>$$childTail</code>记录下父-子关系（即一种层级关系）。以上的图表并没有展示这些属性值。</p>
 
 <p>对于一些不涉及表单元素的情况，另一种解决方法是在父级作用域中定义一个函数用来修改基本类型数值。然后保证其子作用域都调用该函数，由于原型继承，其子作用域都能够访问的该函数。比如：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// in the parent scope</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// in the parent scope</span>
 <span class="nx">$scope</span><span class="p">.</span><span class="nx">setMyPrimitive</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">$scope</span><span class="p">.</span><span class="nx">myPrimitive</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
 <span class="p">}</span>
@@ -221,11 +221,11 @@ childScope.anObject.property1 = &#39;child prop1&#39;
 <h3>ng-repeat</h3>
 
 <p>ng-repeat指令的运行原理有点不一样。假设我们控制器中有：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">$scope</span><span class="p">.</span><span class="nx">myArrayOfPrimitives</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">22</span> <span class="p">];</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">$scope</span><span class="p">.</span><span class="nx">myArrayOfPrimitives</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">22</span> <span class="p">];</span>
 <span class="nx">$scope</span><span class="p">.</span><span class="nx">myArrayOfObjects</span>    <span class="o">=</span> <span class="p">[{</span><span class="nx">num</span><span class="o">:</span> <span class="mi">101</span><span class="p">},</span> <span class="p">{</span><span class="nx">num</span><span class="o">:</span> <span class="mi">202</span><span class="p">}];</span>
 </code></pre></div>
 <p>而且我们的HMTL中：</p>
-<div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="nt">&lt;ul&gt;&lt;li</span> <span class="na">ng-repeat=</span><span class="s">&quot;num in myArrayOfPrimitives&quot;</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ul&gt;&lt;li</span> <span class="na">ng-repeat=</span><span class="s">&quot;num in myArrayOfPrimitives&quot;</span><span class="nt">&gt;</span>
        <span class="nt">&lt;input</span> <span class="na">ng-model=</span><span class="s">&quot;num&quot;</span><span class="nt">&gt;&lt;/input&gt;</span>
     <span class="nt">&lt;/li&gt;</span>
 <span class="nt">&lt;/ul&gt;</span>
@@ -235,7 +235,7 @@ childScope.anObject.property1 = &#39;child prop1&#39;
 <span class="nt">&lt;/ul&gt;</span>
 </code></pre></div>
 <p>每次迭代，ng-repeat指令都会创建一个新的作用域，该作用会原型继承于其父级作用域，<strong>但是同时该指令会给这个新作用域的一个新的属性分配本次迭代对应数值</strong>。（这个属性的名称就是循环变量的名字）。以下就Angular源码中ng-repeat具体实现：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">childScope</span> <span class="o">=</span> <span class="nx">scope</span><span class="p">.</span><span class="nx">$new</span><span class="p">();</span> <span class="c1">// child scope prototypically inherits from parent scope ...     </span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">childScope</span> <span class="o">=</span> <span class="nx">scope</span><span class="p">.</span><span class="nx">$new</span><span class="p">();</span> <span class="c1">// child scope prototypically inherits from parent scope ...     </span>
 <span class="nx">childScope</span><span class="p">[</span><span class="nx">valueIdent</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span> <span class="c1">// creates a new childScope property</span>
 </code></pre></div>
 <p>如果迭代项为基本类型，实质上把该值的拷贝分配给了子作用域新的属性。改变这个属性值（即子作用域的属性<code>num</code>）不会改变父作用域引用的数组。所以在上述第一个ng-repeat指令中，每个子作用域都获得一个独立于<code>myArrayOfPrimitives</code>数组的<code>num</code>属性：</p>

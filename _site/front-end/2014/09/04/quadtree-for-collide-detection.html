@@ -47,7 +47,7 @@
         		
         			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
         		
-        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[19]</a></li>
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[21]</a></li>
         		
         	</ul>
         	<div class="content post" id="post">
@@ -78,7 +78,7 @@
 <h2>实现四叉树</h2>
 
 <p>我们先定义四叉树的结构：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="cm">/* </span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="cm">/* </span>
 <span class="cm">  四叉树节点包含：</span>
 <span class="cm">  - objects: 用于存储物体对象</span>
 <span class="cm">  - nodes: 存储四个子节点</span>
@@ -101,7 +101,7 @@
 <span class="nx">QuadTree</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">MAX_LEVELS</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
 </code></pre></div>
 <p>接下来，我们需要判断屏幕上的物体属于哪个象限：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="cm">/* </span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="cm">/* </span>
 <span class="cm">  获取物体对应的象限序号，以屏幕中心为界限，切割屏幕:</span>
 <span class="cm">  - 右上：象限一</span>
 <span class="cm">  - 左上：象限二</span>
@@ -134,7 +134,7 @@
 <span class="p">};</span>
 </code></pre></div>
 <p>我们知道，如果某一个象限（节点）内存储的物体数量超过了<code>MAX_OBJECTS</code>最大数量，则需要对这个节点进行划分，所以我们同样需要一个划分函数，它的工作就是将一个象限看作一个屏幕，将其划分为四个子象限：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 划分</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 划分</span>
 <span class="nx">QuadTree</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">split</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">level</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">level</span><span class="p">,</span>
         <span class="nx">bounds</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">bounds</span><span class="p">,</span>
@@ -152,7 +152,7 @@
 <span class="p">};</span>
 </code></pre></div>
 <p>为了初始化四叉树，我们也需要实现四叉树的插入功能，用于将物体插入到四叉树中：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="cm">/*</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="cm">/*</span>
 <span class="cm">  插入功能：</span>
 <span class="cm">    - 如果当前节点[ 存在 ]子节点，则检查物体到底属于哪个子节点，如果能匹配到子节点，则将该物体插入到该子节点中</span>
 <span class="cm">    - 如果当前节点[ 不存在 ]子节点，将该物体存储在当前节点。随后，检查当前节点的存储数量，如果超过了最大存储数量，则对当前节点进行划分，划分完成后，将当前节点存储的物体重新分配到四个子节点中。</span>
@@ -192,7 +192,7 @@
 <h3>筛选功能</h3>
 
 <p>重头戏来啦！现在我们已经能够初始化一个四叉树了，接下来我们要解决——如何将可能发生碰撞的物体集合选取出来：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="cm">/*</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="cm">/*</span>
 <span class="cm">  检索功能：</span>
 <span class="cm">    给出一个物体对象，该函数负责将该物体可能发生碰撞的所有物体选取出来。该函数先查找物体所属的象限，该象限下的物体都是有可能发生碰撞的，然后再递归地查找子象限...</span>
 <span class="cm">*/</span>
@@ -225,7 +225,7 @@
 <p><img src="http://i1273.photobucket.com/albums/y401/lxjwlt/collide-check/IMG_0087_zps18086e27.jpg" alt="分裂递归"></p>
 
 <p>改进后的<code>retrive</code>函数：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 检索</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 检索</span>
 <span class="nx">QuadTree</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">retrieve</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">rect</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="p">[],</span>
         <span class="nx">arr</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">index</span><span class="p">;</span>
@@ -257,16 +257,16 @@
 <p>我们已经实现了四叉树全部的功能，先介绍一下四叉树的用法。</p>
 
 <p>首先创建一个四叉树：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">tree</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Quadtree</span><span class="p">(</span><span class="k">new</span> <span class="nx">Rect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">500</span><span class="p">));</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">tree</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Quadtree</span><span class="p">(</span><span class="k">new</span> <span class="nx">Rect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">500</span><span class="p">));</span>
 </code></pre></div>
 <p>接下来，我们需要初始化四叉树，我们将屏幕上的所有物体都插入到这个四叉树中：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">rectsArr</span> <span class="o">=</span> <span class="p">[</span><span class="cm">/* ... */</span><span class="p">];</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">rectsArr</span> <span class="o">=</span> <span class="p">[</span><span class="cm">/* ... */</span><span class="p">];</span>
 <span class="nx">rectsArr</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">rect</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">tree</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">rect</span><span class="p">);</span>
 <span class="p">});</span>
 </code></pre></div>
 <p>一棵四叉树已经初始化完成，我们调用<code>retrive</code>找出每个物体对应的碰撞物体集合，并进行下一步的narrow phase部分的碰撞检测了：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">rectsArr</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">rect</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">rectsArr</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">rect</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">tree</span><span class="p">.</span><span class="nx">retrive</span><span class="p">(</span><span class="nx">rect</span><span class="p">);</span>
     <span class="nx">result</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="c1">// norrow phase部分的碰撞检测...</span>
@@ -274,7 +274,7 @@
 <span class="p">})</span>
 </code></pre></div>
 <p>我们现在知道四叉树的使用方法了，但同时我们也注意到一个问题：由于屏幕的物体是运行的，前一秒在象限一的物体可能下一秒就跑到象限二了，所以<strong>每一帧都需要重新初始化四叉树</strong>。这意味着，每16ms就要初始化一次四叉树，这个代价太大，太得不偿失了：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">run</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">run</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">run</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">run</span><span class="p">()</span> <span class="p">{</span>
     <span class="c1">// 重新向四叉树中插入所有物体，重新初始化四叉树</span>
     <span class="c1">// ...</span>
 
@@ -289,7 +289,7 @@
 <p>我们想想，是不是有这样做的必要？实际上，只是<strong>部分</strong>物体从一个象限跑到另一个象限，而其他物体都是保持在原先象限中，所以我们只需要重新插入这部分物体即可，从而避免了对所有物体进行插入操作。</p>
 
 <p>我们为四叉树增添这部分的功能，其名为动态更新：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 判断矩形是否在象限范围内</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 判断矩形是否在象限范围内</span>
 <span class="kd">function</span> <span class="nx">isInner</span><span class="p">(</span><span class="nx">rect</span><span class="p">,</span> <span class="nx">bounds</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">rect</span><span class="p">.</span><span class="nx">x</span> <span class="o">&gt;=</span> <span class="nx">bounds</span><span class="p">.</span><span class="nx">x</span> <span class="o">&amp;&amp;</span>
         <span class="nx">rect</span><span class="p">.</span><span class="nx">x</span> <span class="o">+</span> <span class="nx">width</span> <span class="o">&lt;=</span> <span class="nx">bounds</span><span class="p">.</span><span class="nx">x</span> <span class="o">+</span> <span class="nx">bounds</span><span class="p">.</span><span class="nx">width</span> <span class="o">&amp;&amp;</span>
@@ -331,7 +331,7 @@
 <span class="p">};</span> 
 </code></pre></div>
 <p>现在有了动态更新功能，每一帧中只需要对该四叉树进行动态更新即可：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">run</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">run</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">run</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">run</span><span class="p">()</span> <span class="p">{</span>
     <span class="c1">// 动态更新</span>
     <span class="nx">tree</span><span class="p">.</span><span class="nx">refresh</span><span class="p">();</span>
 

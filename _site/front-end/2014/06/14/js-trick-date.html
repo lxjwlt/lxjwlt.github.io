@@ -47,7 +47,7 @@
         		
         			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
         		
-        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[19]</a></li>
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[21]</a></li>
         		
         	</ul>
         	<div class="content post" id="post">
@@ -58,7 +58,7 @@
 <h2>创建Date对象</h2>
 
 <p>Date构造函数可以创建当前时间的Date对象，也可以根据任意指定时间创建相应的Date对象：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript">    <span class="c1">// 当前时间的Date对象</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript">    <span class="c1">// 当前时间的Date对象</span>
 <span class="kd">var</span> <span class="nx">today</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(),</span>
 
     <span class="c1">// 2014年1月1日 的Date对象</span>
@@ -72,7 +72,7 @@
 <h2>常用方法</h2>
 
 <p>以下是Date对象常用方法，注意返回值的<strong>范围</strong>（特别要注意月份，月份的取值为[0 - 11]）：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
 
 <span class="nx">time</span><span class="p">.</span><span class="nx">getTime</span><span class="p">();</span> <span class="c1">// 将时间转换成数值形式，一般用于数据传输</span>
 
@@ -89,10 +89,10 @@
 <p>首先我们知道，月份的总天数可以通过一些闰年神马的法则计算出来，但这无疑将问题复杂化了。实际上，计算机本身就是一个万年历，想想看，如果我们手中有一个万年历，我们会怎么做呢？还会去做那些繁琐的计算？不，我们会<strong>先找到那个月份，接着找到该月的最后一天，这一天的日期就是该月的总天数</strong>。很好，现在问题是：如何找到某个月的最后一天？</p>
 
 <p>还记得上面介绍“创建Date对象”吗？如果我们想创建 2014年1月1日 的Date对象，可以这样写：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="k">new</span>  <span class="nb">Date</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="k">new</span>  <span class="nb">Date</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
 </code></pre></div>
 <p>我们知道，Date构造函数中传入了三个参数，分别是年、月、日。但是，如果“日”的参数为0会怎么样呢？由于0在1之前，所以意味着2014年1月1日的<strong>前一天</strong>，即2013年12月的<strong>最后一天</strong>：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 2013年12月的最后一天</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 2013年12月的最后一天</span>
 <span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
 
 <span class="c1">// 通过getDate方法获得日期</span>
@@ -104,7 +104,7 @@
 <h2>格式化</h2>
 
 <p>关于时间输出格式，Date对象没有对应方法，非常遗憾！但是我们可以自己封装一个方法来实现这一点，下面是简易代码，这真的是一个非常实用的方法：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nb">Date</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">format</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nb">Date</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">format</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">monthName</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s1">&#39;January&#39;</span><span class="p">,</span> <span class="s1">&#39;February&#39;</span><span class="p">,</span> <span class="s1">&#39;March&#39;</span><span class="p">,</span>
         <span class="s1">&#39;April&#39;</span><span class="p">,</span> <span class="s1">&#39;May&#39;</span><span class="p">,</span> <span class="s1">&#39;June&#39;</span><span class="p">,</span>

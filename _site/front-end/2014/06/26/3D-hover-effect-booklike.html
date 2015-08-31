@@ -47,7 +47,7 @@
         		
         			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
         		
-        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[19]</a></li>
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[21]</a></li>
         		
         	</ul>
         	<div class="content post" id="post">
@@ -64,7 +64,7 @@
 <h2>两位一体：封面 + 书脊</h2>
 
 <p>首先对于一本书来说，封面和书脊是一体的，不能分离，也不能重叠，所以封面元素应该包含书脊元素（即父子关系，这比同级关系更好处理两者的相对位置）：</p>
-<div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;book&quot;</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;book&quot;</span><span class="nt">&gt;</span>
     <span class="c">&lt;!-- 封面 --&gt;</span>
     <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;book__cover&quot;</span><span class="nt">&gt;</span>
         <span class="c">&lt;!-- 书脊 --&gt;</span>
@@ -76,7 +76,7 @@
 
 <ol>
 <li><p>将书脊放在封面的下面</p>
-<div class="highlight"><pre><code class="css language-css" data-lang="css"><span class="nc">.book__cover</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-css" data-lang="css"><span class="nc">.book__cover</span> <span class="p">{</span>
     <span class="k">position</span><span class="o">:</span> <span class="k">relative</span><span class="p">;</span>
 <span class="p">}</span>
 
@@ -84,11 +84,11 @@
     <span class="c">/* 将书脊放到封面的正下方 */</span>
     <span class="k">position</span><span class="o">:</span> <span class="k">absolute</span><span class="p">;</span>
     <span class="k">left</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
-    <span class="k">top</span><span class="o">:</span> <span class="m">100</span><span class="o">%</span><span class="p">;</span>
+    <span class="k">top</span><span class="o">:</span> <span class="m">100%</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></li>
 <li><p>再将书脊向后折90度</p>
-<div class="highlight"><pre><code class="css language-css" data-lang="css"><span class="nc">.book_back</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-css" data-lang="css"><span class="nc">.book_back</span> <span class="p">{</span>
     <span class="c">/* 其余代码... */</span>
 
     <span class="c">/* 以顶部为基点，将书脊向后面折叠90度 */</span>
@@ -106,7 +106,7 @@
 </ul>
 
 <p>我们添加以下代码：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">book__cover</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">book__cover</span> <span class="p">{</span>
     <span class="cm">/* 其余代码... */</span>
 
     <span class="cm">/* 以远离屏幕1000px的位置作为视点 */</span>
@@ -117,7 +117,7 @@
 <p>以上，我们完成了封面和书脊的初始状态，下面我们要实现<strong>末状态</strong>。</p>
 
 <p>我们可以这样考虑——在hover变化过程中，无非就是整个封面向后旋转了一定的度数，我们不必管书脊的变化，因为封闭元素包含着书脊元素，当封面旋转的时候，<code>preserve-3d</code>属性值保证了封面和书脊的垂直关系，书脊会随着封面旋转，所以我们只需要旋转封面：</p>
-<div class="highlight"><pre><code class="css language-css" data-lang="css"><span class="nc">.book</span><span class="nd">:hover</span> <span class="nc">.book__cover</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-css" data-lang="css"><span class="nc">.book</span><span class="nd">:hover</span> <span class="nc">.book__cover</span> <span class="p">{</span>
     <span class="c">/* 向后旋转70度 */</span>
     <span class="c">/* 为了实现远离的感觉，适当的缩小封面元素 */</span>
     <span class="n">transform</span><span class="o">:</span> <span class="n">perspective</span><span class="p">(</span><span class="m">1000px</span><span class="p">)</span> <span class="n">rotate</span><span class="p">(</span><span class="m">70</span><span class="n">deg</span><span class="p">)</span> <span class="n">scale</span><span class="p">(</span><span class="m">0</span><span class="o">.</span><span class="m">85</span><span class="p">);</span>
@@ -134,7 +134,7 @@
 <p>首先，我们选用封面的before元素<code>.book__cover:before</code>作为阴影元素，这样不必增加HTML标签。</p>
 
 <p>其次，为了让该元素更像阴影，其背景色和阴影颜色必须一致，同时为了消除背景色和阴影色之间唐突的边界，我们要增大<code>box-shadow</code>的半径（同时也要缩小<code>.book__cover:before</code>元素，更下面会看到）：</p>
-<div class="highlight"><pre><code class="css language-css" data-lang="css"><span class="c">/* 阴影元素 */</span>
+<div class="highlight"><pre><code class="language-css" data-lang="css"><span class="c">/* 阴影元素 */</span>
 <span class="nc">.book__cover</span><span class="nd">:before</span> <span class="p">{</span>
     <span class="k">background</span><span class="o">:</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="o">,</span><span class="m">0</span><span class="o">,</span><span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">.</span><span class="m">5</span><span class="p">);</span>
     <span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="o">:</span> <span class="m">0</span> <span class="m">0</span> <span class="m">40px</span> <span class="m">120px</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="o">,</span><span class="m">0</span><span class="o">,</span><span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">.</span><span class="m">5</span><span class="p">);</span>
@@ -143,7 +143,7 @@
 <span class="p">}</span>
 </code></pre></div>
 <p>接着，我们要实现阴影的初始位置——由于书本是立着的，此时阴影应该在书脊正下方，阴影的形状应该和书脊的形状一致，代码如下：</p>
-<div class="highlight"><pre><code class="css language-css" data-lang="css"><span class="nc">.book__cover</span><span class="nd">:before</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-css" data-lang="css"><span class="nc">.book__cover</span><span class="nd">:before</span> <span class="p">{</span>
     <span class="c">/* 其余代码... */</span>
 
     <span class="c">/* 注意这里要用scale缩小该元素 */</span>
@@ -159,7 +159,7 @@
 </ul>
 
 <p>最后，我们用CSS将这个状态画出来：</p>
-<div class="highlight"><pre><code class="css language-css" data-lang="css"><span class="nc">.book</span><span class="nd">:hover</span> <span class="nc">.book__cover</span><span class="nd">:before</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-css" data-lang="css"><span class="nc">.book</span><span class="nd">:hover</span> <span class="nc">.book__cover</span><span class="nd">:before</span> <span class="p">{</span>
     <span class="c">/* 颜色加深 */</span>
     <span class="k">opacity</span><span class="o">:</span> <span class="m">1</span><span class="p">;</span>
     <span class="c">/* 减小translateZ值实现贴近桌面效果 并且 旋转角度为0 */</span>

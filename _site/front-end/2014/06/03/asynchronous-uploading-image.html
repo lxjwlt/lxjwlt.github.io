@@ -47,14 +47,14 @@
         		
         			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
         		
-        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[19]</a></li>
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[21]</a></li>
         		
         	</ul>
         	<div class="content post" id="post">
         		<h1 class='post-title'>异步上传图片</h1>
         		<p class='post-date'>2014-06-03</p>
         		<p>首先，我们看看图片上传的一般做法：</p>
-<div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="c">&lt;!-- </span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="c">&lt;!-- </span>
 <span class="c">    注意 enctype属性和method属性的设置</span>
 <span class="c">--&gt;</span>
 <span class="nt">&lt;form</span> <span class="na">enctype=</span><span class="s">&quot;multipart/form-data&quot;</span> <span class="na">method=</span><span class="s">&quot;post&quot;</span> <span class="na">action=</span><span class="s">&quot;upload.php&quot;</span><span class="nt">&gt;</span>
@@ -73,7 +73,7 @@
 <p>我们都听说过iframe，iframe是一种内联框架，在该框架内可以访问（加载）其他页面。</p>
 
 <p>iframe模拟异步上传的关键在于——使用iframe打开表单的action URL：</p>
-<div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="c">&lt;!-- </span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="c">&lt;!-- </span>
 <span class="c">    注意！此时form的target属性指向 名为theIframe的iframe标签</span>
 <span class="c">--&gt;</span>
 <span class="nt">&lt;form</span> <span class="na">enctype=</span><span class="s">&quot;multipart/form-data&quot;</span> <span class="na">method=</span><span class="s">&quot;post&quot;</span> <span class="na">action=</span><span class="s">&quot;upload.php&quot;</span> <span class="na">target=</span><span class="s">&quot;theIframe&quot;</span><span class="nt">&gt;</span>
@@ -87,7 +87,7 @@
 <p>然而<strong>这是不够的</strong>，关于用户头像上传，不仅仅需要上传头像图片，我们还需要将该图片的展现出来，这才是重点。为了显示该图片，我们需要该图片在服务器上的实际地址。</p>
 
 <p>既然iframe打开了一个页面upload.php，那么就让后台的同学通过这个页面将图片实际地址传递给我们前端吧。关于后台的实现，可以参考笔者写的一个小demo：</p>
-<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="x">&lt;html&gt;</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">&lt;html&gt;</span>
 <span class="x">&lt;head&gt;</span>
 <span class="x">    &lt;meta charset=&quot;UTF-8&quot;&gt;</span>
 <span class="x">    &lt;title&gt;upload&lt;/title&gt;</span>
@@ -114,7 +114,7 @@
 <span class="x">&lt;/html&gt;</span>
 </code></pre></div>
 <p>ok！那么我们前端如何从iframe中获取这个地址呢？相信这对于各位来说不难，所以我稍微提一下：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">doc</span><span class="p">,</span> <span class="nx">src</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">doc</span><span class="p">,</span> <span class="nx">src</span><span class="p">;</span>
 
 <span class="c1">// 获取 名为theIframe的iframe的 document对象</span>
 <span class="nx">doc</span> <span class="o">=</span> <span class="nx">top</span><span class="p">.</span><span class="nx">frames</span><span class="p">[</span><span class="s1">&#39;theIframe&#39;</span><span class="p">].</span><span class="nb">document</span><span class="p">;</span>
@@ -130,7 +130,7 @@
 <p>XMLHttpRequest level 2新增了对FormData对象接口的支持，FormData对象是什么东东？FormData对象能够将上传文件转换为表单数据，如此一来，XMLHttpRequest 的 send 方法便能将这些数据传送到后台，从而实现文件上传。</p>
 
 <p>首先创建FormData对象，并通过<code>append</code>方法将数据以键值对的形式添加到FormData对象中：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">formData</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FormData</span><span class="p">(),</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">formData</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FormData</span><span class="p">(),</span>
 
     <span class="c1">// 获取上传文件的File对象</span>
     <span class="nx">theFile</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;input[type=file]&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">].</span><span class="nx">files</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
@@ -139,7 +139,7 @@
 <span class="nx">formData</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;file&#39;</span><span class="p">,</span> <span class="nx">theFile</span><span class="p">);</span>
 </code></pre></div>
 <p>然后，将FormData对象作为Ajax的数据传送到后台，以下是原生方法：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">xhr</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">();</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">xhr</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">();</span>
 
 <span class="nx">xhr</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s1">&#39;post&#39;</span><span class="p">,</span> <span class="s1">&#39;upload.php&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
 <span class="nx">xhr</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">formData</span><span class="p">);</span>
@@ -154,7 +154,7 @@
 <span class="p">};</span>
 </code></pre></div>
 <p>当然，我们也能通过jQuery库提供的<code>jQuery.ajax</code>方法来实现，但有几点我们是必须注意的：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
     <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;POST&#39;</span><span class="p">,</span>
     <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;upload.php&#39;</span><span class="p">,</span>
 
@@ -179,7 +179,7 @@
 <p>相信我们都会这么考虑：其实完全没必要上传图片，用户不就是想看看图片的实际效果吗？直接将上次图片显示出来就行了。</p>
 
 <p>然而，由于浏览器的安全策略，浏览器禁止<code>&lt;image&gt;</code>直接引用本地地址。虽然本地地址行不通，但我们可以通过HTML5获取上传文件的临时地址：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript">    <span class="c1">// 获取上传文件的File对象</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript">    <span class="c1">// 获取上传文件的File对象</span>
 <span class="kd">var</span> <span class="nx">theFile</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;input[type=file]&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">].</span><span class="nx">files</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
 
     <span class="c1">// 获取上传文件的临时地址</span>
@@ -189,7 +189,7 @@
 <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.avatar&#39;</span><span class="p">).</span><span class="nx">prop</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">,</span> <span class="nx">src</span><span class="p">);</span>
 </code></pre></div>
 <p>用<code>createObjectURL</code>生成的URL是会占用内存空间的，所以当我们不再需要图片显示时，我们必须释放它的内存空间：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nb">window</span><span class="p">.</span><span class="nx">URL</span><span class="p">.</span><span class="nx">revokeObjectURL</span><span class="p">(</span><span class="nx">theFile</span><span class="p">);</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nb">window</span><span class="p">.</span><span class="nx">URL</span><span class="p">.</span><span class="nx">revokeObjectURL</span><span class="p">(</span><span class="nx">theFile</span><span class="p">);</span>
 </code></pre></div>
 <p>尽管<code>window.URL.createObjectURL</code>方法非常简洁实用，但遗憾的是，该方法只支持IE10+。</p>
 

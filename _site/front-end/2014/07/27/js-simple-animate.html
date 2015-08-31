@@ -47,7 +47,7 @@
         		
         			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
         		
-        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[19]</a></li>
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[21]</a></li>
         		
         	</ul>
         	<div class="content post" id="post">
@@ -66,7 +66,7 @@
 <p>我们都知道，动画是有一帧一帧画面构成的，每一帧的画面都记录着物体在动画中某时刻下的状态。为了绘制出每一帧画面，我们需要用到缓动函数。</p>
 
 <p>缓动函数是决定物体状态变化方式的一种函数，只要我们给出四个数值：已过时间、初始状态、改变量、持续时间，缓动函数就能帮助我们计算出这一帧画面下物体的状态。比如<code>easeInQuad</code>缓动函数：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// t: 已过时间，已过时间 = 当前时间 - 动画开始时间，范围是[0-d]</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// t: 已过时间，已过时间 = 当前时间 - 动画开始时间，范围是[0-d]</span>
 <span class="c1">// b: 初始状态</span>
 <span class="c1">// c: 改变量，改变量 = 最终状态 - 初始状态</span>
 <span class="c1">// d: 动画持续时间</span>
@@ -75,7 +75,7 @@
 <span class="p">};</span>
 </code></pre></div>
 <p>现在假设页面中有个矩形，它的动画是：在1000毫秒内从<code>left:100px</code>变为<code>left:300px</code>，我们可以计算出500毫秒时矩形的<code>left</code>属性值：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="cm">/*</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="cm">/*</span>
 <span class="cm">    已过时间 t = 500</span>
 <span class="cm">    初始状态 b = 100</span>
 <span class="cm">    改变量   c = 300 - 100 = 200</span>
@@ -89,7 +89,7 @@
 <p>缓动函数有很多种，相同动画下不同缓动函数绘制出来的每一帧画面都各不相同。就上述矩形而言，在不同缓动函数下，矩形的移动可能是匀速的，可能是先慢后快，也可能是其他效果。所幸的是，这些缓动函数都已经写好了，我们可以参考：<a href="http://gsgd.co.uk/sandbox/jquery/easing/">jQuery.easing</a>。</p>
 
 <p>由于下面会用到，所以我们先将这些缓动函数稍微改改，并添加到代码中：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">easing</span> <span class="o">=</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">easing</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">def</span><span class="o">:</span> <span class="s1">&#39;easeOutQuad&#39;</span><span class="p">,</span>
     <span class="nx">swing</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">easing</span><span class="p">[</span><span class="nx">easing</span><span class="p">.</span><span class="nx">def</span><span class="p">](</span><span class="nx">t</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">);</span>
@@ -102,7 +102,7 @@
 <h3>绘制</h3>
 
 <p>对于网页来说，要绘制动画，就要获取和改变元素的样式，所以我们可以实现一个类似于<code>jQuery.fn.css</code>的函数：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">css</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">css</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">elem</span><span class="p">.</span><span class="nx">style</span><span class="p">[</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
@@ -121,7 +121,7 @@
 <p>其实玩过游戏的同学都知道，如果游戏运行能达到60帧，则游戏画面是流畅的，而低于60帧的画面会让我们就觉得卡顿，所以同样，我们绘制动画只要达到每秒60帧就足够了。</p>
 
 <p>结合缓动函数，我们用<code>setInterval</code>以每秒60帧来绘制动画，我们先写出代码形式：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 每秒60帧意味着每16.6666毫秒就要绘制一帧动画</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 每秒60帧意味着每16.6666毫秒就要绘制一帧动画</span>
 <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">easeInQuad</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">);</span>
     <span class="nx">css</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span>
@@ -136,10 +136,10 @@
 <p>所以，我们设想是这样的：创建一个动画池，将待执行动画都扔到这个池子中，然后用一个<code>setInterval</code>统一绘制。</p>
 
 <p>我们先创建一个动画池：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">pool</span> <span class="o">=</span> <span class="p">[];</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">pool</span> <span class="o">=</span> <span class="p">[];</span>
 </code></pre></div>
 <p>接下来，我们准备一个函数<code>animation</code>，负责获取绘制动画所需要的所有信息，并将这些信息打包成一个对象扔到动画池中，并开启动画绘制函数。（注意，为了计算已过时间，我们还需要记录下动画开始时间）：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="cm">/*</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="cm">/*</span>
 <span class="cm">    elem: 元素</span>
 <span class="cm">    attr: 要改变的样式属性，形式如：{&#39;left&#39;: 100, top: 300}</span>
 <span class="cm">    duration: 动画持续时间，默认400</span>
@@ -171,14 +171,14 @@
 <h3>扫描动画池并绘制动画</h3>
 
 <p>一旦动画池中装载了待绘制的动画，我们需要用一个函数不断地扫描动画池中的各个动画，并统一绘制这些动画。我们准备一个<code>run</code>函数来负责这部分工作：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">run</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">pool</span><span class="p">,</span> <span class="nx">easing</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">run</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">pool</span><span class="p">,</span> <span class="nx">easing</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">timeId</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="c1">// ...</span>
     <span class="p">},</span> <span class="mi">16</span><span class="p">);</span>
 <span class="p">};</span>
 </code></pre></div>
 <p>为了避免<code>run</code>函数创建多个<code>setInterval</code>，我们要采取一定的措施：如果有<code>setInterval</code>正在处理动画池，则此时动画池的状态为<code>running</code>，<code>run</code>函数不执行：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">run</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">pool</span><span class="p">,</span> <span class="nx">easing</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">run</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">pool</span><span class="p">,</span> <span class="nx">easing</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// 如果动画池正在被处理 或 为空，则不执行</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">pool</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;running&#39;</span> <span class="o">||</span> <span class="o">!</span><span class="nx">pool</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
 
@@ -191,7 +191,7 @@
 <span class="p">};</span>
 </code></pre></div>
 <p>有了以上保证，下面我们可以安心处理动画池内的动画了：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">run</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">pool</span><span class="p">,</span> <span class="nx">easing</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">run</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">pool</span><span class="p">,</span> <span class="nx">easing</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// ...</span>
 
     <span class="kd">var</span> <span class="nx">timeId</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
@@ -233,7 +233,7 @@
 <h3>实际效果</h3>
 
 <p>假设我们有如下代码：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">animation</span><span class="p">(</span><span class="nx">block</span><span class="p">,</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">animation</span><span class="p">(</span><span class="nx">block</span><span class="p">,</span> <span class="p">{</span>
     <span class="s1">&#39;left&#39;</span><span class="o">:</span> <span class="s1">&#39;200px&#39;</span>
 <span class="p">},</span> <span class="mi">800</span><span class="p">,</span> <span class="s1">&#39;easeOutBounce&#39;</span><span class="p">);</span>
 <span class="nx">animation</span><span class="p">(</span><span class="nx">block</span><span class="p">,</span> <span class="p">{</span>
@@ -249,7 +249,7 @@
 <h2>多步动画</h2>
 
 <p>多步动画的实现需要结合上述的单步动画和队列。其原理在于：多步动画有多个步骤，每个步骤就是一个单步动画，分别将这些单步动画包装成独立的函数并压入队列中，在绘制多步动画的过程中，每次从队列中拿出一个单步动画来执行，只有当<strong>前一个</strong>单步动画执行完，才去处理队列中的<strong>下一个</strong>动画，这样每个单步动画之间就有了先后的关系。代码形式如下：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">animate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">attr</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">animate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">attr</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="c1">// 将单步动画包装成一个独立的函数</span>
     <span class="kd">var</span> <span class="nx">fnc</span> <span class="o">=</span> <span class="nx">animation</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nb">window</span><span class="p">,</span> <span class="nx">elem</span><span class="p">,</span> <span class="nx">attr</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">type</span><span class="p">);</span>
@@ -263,7 +263,7 @@
 <h3>实际效果</h3>
 
 <p>结合队列的操作，动画终于能够按步骤执行了：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 同一个animate下的动画同步执行，不同animate下的动画按先后顺序执行</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 同一个animate下的动画同步执行，不同animate下的动画按先后顺序执行</span>
 <span class="nx">animate</span><span class="p">(</span><span class="nx">block</span><span class="p">,</span> <span class="p">{</span>
     <span class="s1">&#39;left&#39;</span><span class="o">:</span> <span class="s1">&#39;200px&#39;</span><span class="p">,</span>
     <span class="s1">&#39;opacity&#39;</span><span class="o">:</span> <span class="mf">0.5</span>

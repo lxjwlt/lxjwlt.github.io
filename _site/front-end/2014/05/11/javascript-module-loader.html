@@ -47,7 +47,7 @@
         		
         			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
         		
-        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[19]</a></li>
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[21]</a></li>
         		
         	</ul>
         	<div class="content post" id="post">
@@ -62,7 +62,7 @@
 <p>听朋友说，阿里爸爸有一道这样的面试题：有两个模块A和B，要求加载完A才加载B，说说你的想法。</p>
 
 <p>我第一个想法就是：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">moduleA</span><span class="p">();</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">moduleA</span><span class="p">();</span>
 <span class="nx">moduleB</span><span class="p">();</span>
 </code></pre></div>
 <p>Bingo！搞定！</p>
@@ -76,7 +76,7 @@
 <h2>如何加载js文件？</h2>
 
 <p>我用的是最简单的方法：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">loadJs</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">loadJs</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">script</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">);</span>
     <span class="nx">script</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;.js&#39;</span><span class="p">;</span>
     <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">script</span><span class="p">);</span>
@@ -89,14 +89,14 @@
 <h3>如何注册模块？</h3>
 
 <p>先准备两个函数require和define，这两个函数功能相似，以define为例子，它接受三个参数：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// define接收三个参数：</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// define接收三个参数：</span>
 <span class="c1">// - 该模块的名字</span>
 <span class="c1">// - 依赖数组，包含该模块依赖的其他模块名</span>
 <span class="c1">// - 回调函数，当模块及其依赖加载完后执行</span>
 <span class="kd">var</span> <span class="nx">define</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">depArr</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{};</span>
 </code></pre></div>
 <p>该函数接收的三个参数就是模块的相关信息，我们将这些信息记录下来：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">mixJS</span> <span class="o">=</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">mixJS</span> <span class="o">=</span> <span class="p">{</span>
 
     <span class="c1">// 存放各个模块的相关信息</span>
     <span class="nx">modules</span><span class="o">:</span> <span class="p">{}</span>
@@ -131,7 +131,7 @@
 <p>当主办方发现“待参加人数”为0时，意味着所有来宾都到齐了，此时宴会可以开始了！</p>
 
 <p>根据以上的思路，我们同样可以解决 “模块开始执行时间” 的问题了：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">mixJS</span> <span class="o">=</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">mixJS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">modules</span><span class="o">:</span> <span class="p">{},</span>
 
     <span class="c1">// 待加载模块的数量，默认值为1，即必须加载main模块</span>
@@ -171,7 +171,7 @@
 </ul>
 
 <p>依次从该栈中取出模块，依次地执行模块，就能够保证“按序加载模块”了。实现代码大致如下：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">mixJS</span> <span class="o">=</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">mixJS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">modules</span><span class="o">:</span> <span class="p">{},</span>
     <span class="nx">toLoadCount</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
 
@@ -207,7 +207,7 @@
 <h2>符合AMD规范</h2>
 
 <p>我们还需要一些修改才能使这个模块加载器更符合AMD规范，这样才能加载其他一些库，比如jQuery：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">define</span><span class="p">.</span><span class="nx">amd</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">define</span><span class="p">.</span><span class="nx">amd</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 </code></pre></div>
 <p>AMD的规范可以参考：</p>
 

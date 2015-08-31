@@ -47,7 +47,7 @@
         		
         			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
         		
-        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[19]</a></li>
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[21]</a></li>
         		
         	</ul>
         	<div class="content post" id="post">
@@ -66,42 +66,42 @@
 <p>先保证你已经安装好了PHP，接下来，你可以直接参考官网的<a href="http://v4.golaravel.com/docs/4.2/installation">安装教程</a>进行安装。</p>
 
 <p>如果遇到网络问题，上述安装教程无法成功安装，你也可以先下载PHP包管理工具<a href="http://pan.baidu.com/s/1kTsXDo7">composer.phar</a>，用PHP命令行运行安装：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">php composer.phar
+<div class="highlight"><pre><code class="language-text" data-lang="text">php composer.phar
 </code></pre></div>
 <p>安装成功后，设置composer的环境变量，以便全局命令行调用，windows下的路径应该是：<code>~\AppData\Roaming\Composer\vendor\bin;</code></p>
 
 <p>最后通过composer下载Laravel所有依赖文件，运行：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">composer create-project laravel/your_project_name --prefer-dist
+<div class="highlight"><pre><code class="language-text" data-lang="text">composer create-project laravel/your_project_name --prefer-dist
 </code></pre></div>
 <p>等待所有文件下载成功，我们能看到项目文件夹中已经有了app、public等等文件夹，主要文件都放置在<code>app/</code>文件夹下，下面会介绍到。</p>
 
 <h2>路由</h2>
 
 <p>路由的设置都写在<code>app/routers.php</code>中，路由有两种，基于get请求和基于post请求的：</p>
-<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="x">Route::get(&#39;welcome&#39;, function() { return &#39;hello world by GET&#39;; });</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">Route::get(&#39;welcome&#39;, function() { return &#39;hello world by GET&#39;; });</span>
 <span class="x">Route::post(&#39;welcome&#39;, function() { return &#39;hello world by POST&#39;; });</span>
 </code></pre></div>
 <p>当然，我们也能实现支持所有请求动作的路由，无论GET还是POST：</p>
-<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="x">Route::any(&#39;welcome&#39;, function() { return &#39;hello world&#39;; });</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">Route::any(&#39;welcome&#39;, function() { return &#39;hello world&#39;; });</span>
 </code></pre></div>
 <p>现在，我们访问<code>/welcome</code>时，页面会显示&quot;hello world&quot;。</p>
 
 <h3>路由命名</h3>
 
 <p>当路由名过长，而我们又需要频繁地获取它的路径时，我们可以为路由命名：</p>
-<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="x">Route::get(&#39;lxjwlt_home_page&#39;, array(&#39;as&#39; =&gt; &#39;home&#39;, function() { </span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">Route::get(&#39;lxjwlt_home_page&#39;, array(&#39;as&#39; =&gt; &#39;home&#39;, function() { </span>
 <span class="x">    return &#39;welcome to my home&#39;;</span>
 <span class="x">}));</span>
 </code></pre></div>
 <p>只有为路由命名后，我们<strong>才能够</strong>通过以下方式获取路由路径：</p>
-<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="x">Route::to(&#39;home&#39;);</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">Route::to(&#39;home&#39;);</span>
 </code></pre></div>
 <h2>视图</h2>
 
 <p>视图(view)提供表现层，单纯地提供界面效果，以便使视图代码和逻辑代码分离。</p>
 
 <p>视图文件均放置在<code>app/views</code>内，视图代码以HTML的形式呈现，但与HTML不同的是，我们可以通过``插入PHP语句：</p>
-<div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="c">&lt;!-- IN app/views/demo.blade.php --&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="c">&lt;!-- IN app/views/demo.blade.php --&gt;</span>
 <span class="nt">&lt;html&gt;</span>
     <span class="nt">&lt;head&gt;&lt;/head&gt;</span>
     <span class="nt">&lt;body&gt;</span>
@@ -111,7 +111,7 @@
 <span class="nt">&lt;/html&gt;</span>
 </code></pre></div>
 <p>我们可以通过路由请求可以返回该视图：</p>
-<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="x">Route::get(&#39;/&#39;, function() {</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">Route::get(&#39;/&#39;, function() {</span>
 <span class="x">    return View::make(&#39;demo&#39;);</span>
 <span class="x">});</span>
 </code></pre></div>
@@ -122,7 +122,7 @@
 <p>Laravel提供Blade模块引擎，方便我们实现模板继承和模板片段，要注意的是，所有这些模板都<strong>必须</strong>以<code>.blade.php</code>结尾。</p>
 
 <p>下面我们来实现一个页面layout模板，该模板会被应用到所有页面中：</p>
-<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="x">&lt;!-- IN app/views/layout.blade.php --&gt;</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">&lt;!-- IN app/views/layout.blade.php --&gt;</span>
 <span class="x">&lt;html&gt;</span>
 <span class="x">    &lt;body&gt;</span>
 <span class="x">        @yield(&#39;content&#39;, &#39;Default content!&#39;)</span>
@@ -132,7 +132,7 @@
 <p>上述代码中，<code>@yield</code>用于声明一个位置，用于插入内容。第一个参数是ID，第二个参数是默认内容，当该content位置为插入内容，则显示默认内容。</p>
 
 <p>接下来我们要实现home页面，该页面继承layout模板：</p>
-<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="x">&lt;!-- IN app/views/home.blade.php --&gt;</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">&lt;!-- IN app/views/home.blade.php --&gt;</span>
 <span class="x">@extends(&#39;layout&#39;)</span>
 
 <span class="x">@section(&#39;content&#39;)</span>
@@ -140,7 +140,7 @@
 <span class="x">@stop</span>
 </code></pre></div>
 <p>home页面继承layout模板，继承要用到关键字<code>@extends</code>。而<code>@section</code>则是用来定义<code>content</code>位置的内容。最终Blade引擎会将home页面渲染成：</p>
-<div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="nt">&lt;html&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;html&gt;</span>
     <span class="nt">&lt;body&gt;</span>
         <span class="nt">&lt;h1&gt;</span>welcome to lxjwlt&#39;s home<span class="nt">&lt;/h1&gt;</span>
     <span class="nt">&lt;/body&gt;</span>
@@ -154,7 +154,7 @@
 </ul>
 
 <p>下面我们就以<em>home页面引用样式文件</em>为例：</p>
-<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="x">&lt;!-- IN app/views/layout.blade.php --&gt;</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">&lt;!-- IN app/views/layout.blade.php --&gt;</span>
 <span class="x">&lt;html&gt;</span>
 <span class="x">    &lt;head&gt;</span>
 <span class="x">        @section(&#39;CSS&#39;)</span>
@@ -169,20 +169,20 @@
 <p>我们在layout模板上引用了common.css，用<code>@section</code>和<code>@show</code>括起来。注意是<code>@show</code>而不是<code>@stop</code>。</p>
 
 <p>现在，我们可以在home页面直接覆盖掉公共样式：</p>
-<div class="highlight"><pre><code class="html language-html" data-lang="html">@section(&#39;CSS&#39;)
+<div class="highlight"><pre><code class="language-html" data-lang="html">@section(&#39;CSS&#39;)
 <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;home.css&quot;</span> <span class="nt">/&gt;</span>
 @stop
 </code></pre></div>
 <p>这样，home页面就只会引用home.css，而不会引用common.css。</p>
 
 <p>当然，我们也可以采用以下写法，在不覆盖掉公共样式的同时，引用其他样式：</p>
-<div class="highlight"><pre><code class="html language-html" data-lang="html">@section(&#39;CSS&#39;)
+<div class="highlight"><pre><code class="language-html" data-lang="html">@section(&#39;CSS&#39;)
 @parent
 <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;home.css&quot;</span> <span class="nt">/&gt;</span>
 @stop
 </code></pre></div>
 <p><code>@parent</code>关键词会保留父模板中事先定义好的内容。上述代码会生成：</p>
-<div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;common.css&quot;</span> <span class="nt">/&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;common.css&quot;</span> <span class="nt">/&gt;</span>
 <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;home.css&quot;</span> <span class="nt">/&gt;</span>
 </code></pre></div>
 <h2>控制器</h2>
@@ -190,7 +190,7 @@
 <p>在Laravel中，我们能够在路由代码中处理数据，并插入到视图中，但我们不应该这么做，而是应该用到控制器，用控制器统一处理后台逻辑，比如登录注销，表单验证等等。</p>
 
 <p>Laravel的控制器代码统一放在<code>app/controllers</code>文件夹下，所有控制器都必须继承<code>BaseController</code>。下面我们实现一个HomeController控制器：</p>
-<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="x">class HomeController extends BaseController {</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">class HomeController extends BaseController {</span>
 <span class="x">    public function welcome() {</span>
 <span class="x">        $user = array(&#39;name&#39; =&gt; &#39;lxjwlt&#39;, &#39;age&#39; =&gt; &#39;22&#39;);</span>
 <span class="x">        return View::make(&#39;home&#39;, array(&#39;user&#39; =&gt; $user)); // 传入数据</span>
@@ -198,7 +198,7 @@
 <span class="x">}</span>
 </code></pre></div>
 <p>该控制器中有个welcome方法，该方法会返回一个视图。下面，我们将路由和该控制器的welcome动作绑定起来：</p>
-<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="x">Route::get(&#39;home&#39;, &#39;HomeController@welcome&#39;);</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">Route::get(&#39;home&#39;, &#39;HomeController@welcome&#39;);</span>
 </code></pre></div>
 <p>现在，当我们访问<code>/home</code>时，home页面视图将显示出来。</p>
 
@@ -207,14 +207,14 @@
 <p>数据库中的每个表都对应一个模型，模型中定义一系列API接口，以便获取对应表中的数据。</p>
 
 <p>Laravel中模型放在<code>app/modules</code>文件夹下，每个模型都必须继承<code>Eloquent</code>类。我们来实现<code>users</code>表的模型：</p>
-<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="x">class User extends Eloquent {</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">class User extends Eloquent {</span>
 <span class="x">    static public function fetch_by_username($username) {</span>
 <span class="x">        // ...</span>
 <span class="x">    }</span>
 <span class="x">}</span>
 </code></pre></div>
 <p>我们定义了一个通过用户名来获取用户数据的方法，在任何地方我们都可以这样使用：</p>
-<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="x">User::fetch_by_username(&#39;lxjwlt&#39;);</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">User::fetch_by_username(&#39;lxjwlt&#39;);</span>
 </code></pre></div>
 <h2>数据迁移及数据填充</h2>
 
@@ -223,12 +223,12 @@
 <p>可以想象一下，我们将项目文件夹复制到另一台主机上，该主机上没有项目的数据库，但我们只需要运行一条命令，整个数据库就能够重新创建出来，而且初始化数据也已经填充完成，这回非常的方便。</p>
 
 <p>我们先创建一个迁移：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">php artisan migrate:make create_users_table
+<div class="highlight"><pre><code class="language-text" data-lang="text">php artisan migrate:make create_users_table
 </code></pre></div>
 <p>所有的迁移都被存放在<code>app/database/migrations</code>文件夹下。该文件夹会自动生成<code>CreateUsersTable</code>类，其中包含了两个方法，up方法用于创建表，down方法用于删除表。</p>
 
 <p>我们需要一张users表，可以这样写：</p>
-<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="x">class CreateUsersTable extends Migration {</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">class CreateUsersTable extends Migration {</span>
 <span class="x">    public function up() {</span>
 <span class="x">        Schema::create(&#39;users&#39;, function($table)</span>
 <span class="x">        {</span>
@@ -246,10 +246,10 @@
 <span class="x">}</span>
 </code></pre></div>
 <p>有了迁移文件，我们可以运行以下命令，初始化数据库：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">php artisan migrate
+<div class="highlight"><pre><code class="language-text" data-lang="text">php artisan migrate
 </code></pre></div>
 <p>数据库初始化后，我们可能会需要事先插入一些数据，Laravel也提供了数据填充功能，设置文件统一放在<code>app/database/seeds</code>文件夹下。一个表对应一个文件，比如我们要为users表填充数据：</p>
-<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="x">class UsersTableSeeder extends Seeder {</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">class UsersTableSeeder extends Seeder {</span>
 <span class="x">    public function run()</span>
 <span class="x">    {</span>
 <span class="x">        DB::table(&#39;users&#39;)-&gt;delete();</span>
@@ -260,7 +260,7 @@
 <span class="x">}</span>
 </code></pre></div>
 <p>在填充数据前，我们要告诉Laravel，该user表的存在，所以我们要在DatabaseSeeder类声明：</p>
-<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="x">class DatabaseSeeder extends Seeder {</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">class DatabaseSeeder extends Seeder {</span>
 <span class="x">    public function run()</span>
 <span class="x">    {</span>
 <span class="x">        Eloquent::unguard();</span>
@@ -270,14 +270,15 @@
 <span class="x">}</span>
 </code></pre></div>
 <p>现在，我们可以执行以下命令填充数据：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">php artisan db:seed
+<div class="highlight"><pre><code class="language-text" data-lang="text">php artisan db:seed
 </code></pre></div>
 <p>我们也可以同时执行数据迁移和数据填充：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">php artisan migrate:refresh --seed
+<div class="highlight"><pre><code class="language-text" data-lang="text">php artisan migrate:refresh --seed
 </code></pre></div>
-<h2>资源文件引用
+<h2>资源文件引用</h2>
+
 <p>资源文件，比如JS脚本，CSS样式文件，图片资源等等，建议放在<code>public</code>文件夹下，这样，我们就可以用Laravel提供的<code>url</code>函数来获取资源的路径：</p>
-<div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="nt">&lt;link</span> <span class="na">href=</span><span class="s">&quot; @ &quot;</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="nt">/&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;link</span> <span class="na">href=</span><span class="s">&quot; @ &quot;</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="nt">/&gt;</span>
 </code></pre></div>
 <h2>参考</h2>
 

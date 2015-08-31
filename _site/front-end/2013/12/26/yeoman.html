@@ -47,7 +47,7 @@
         		
         			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
         		
-        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[19]</a></li>
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[21]</a></li>
         		
         	</ul>
         	<div class="content post" id="post">
@@ -78,7 +78,7 @@
 <p>首先，要确保你已经安装了 <a href="http://nodejs.org/">Node.js</a> 、<a href="http://git-scm.com/">Git</a>、 <a href="http://ruby-lang.org/">Ruby</a> 和 <a href="http://compass-style.org/install/">Compass</a>。</p>
 
 <p>然后，用以下命令全局安装 yo ，该命令会同时安装 grunt 和 bower：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">npm install -g yo
+<div class="highlight"><pre><code class="language-text" data-lang="text">npm install -g yo
 </code></pre></div>
 <blockquote>
 <blockquote>
@@ -91,10 +91,10 @@
 <h3>基本使用</h3>
 
 <p>首先，你需要创建一个 <code>bower.json</code> 文件到项目的根目录，该文件用于说明项目依赖哪些代码库，有了该文件，当运行<strong>安装命令</strong>时，bower就会安装该文件中所指定的代码库文件。运行以下命令生成 <code>bower.json</code> 文件：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">bower init
+<div class="highlight"><pre><code class="language-text" data-lang="text">bower init
 </code></pre></div>
 <p>输入相关信息后，可以在根目录下生成一个 <code>bower.json</code> 文件，此时 <code>bower.json</code> 文件中并未指定任何代码库，该文件内容的结构如下：</p>
-<div class="highlight"><pre><code class="json language-json" data-lang="json"><span class="p">{</span>
+<div class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
     <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;a name&quot;</span><span class="p">,</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;0.0.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -103,10 +103,10 @@
 <span class="p">}</span>
 </code></pre></div>
 <p>安装需要的代码库，比如jQuery，命令如下：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">bower install jquery --save
+<div class="highlight"><pre><code class="language-text" data-lang="text">bower install jquery --save
 </code></pre></div>
 <p>其中<code>--save</code>参数可省略。设定该参数的作用在于，当安装完jQuery代码库后，bower会自动将该依赖写入<code>bower.json</code> 文件中，此时该文件的内容如下：</p>
-<div class="highlight"><pre><code class="json language-json" data-lang="json"><span class="p">{</span>
+<div class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
     <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;a name&quot;</span><span class="p">,</span>
     <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;0.0.0&quot;</span><span class="p">,</span>
     <span class="nt">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -115,13 +115,13 @@
 <span class="p">}</span>
 </code></pre></div>
 <p>上述命令安装的是最新版本的jQuery库，如果需要下载<strong>某个版本</strong>的代码库，比如兼容IE6-8的1.10.2版本的jQuery：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">bower install jquery#1.10.2 --save
+<div class="highlight"><pre><code class="language-text" data-lang="text">bower install jquery#1.10.2 --save
 </code></pre></div>
 <p>那如何查看代码库有哪些版本呢？我们可以运行以下命令查看：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">bower info jquery
+<div class="highlight"><pre><code class="language-text" data-lang="text">bower info jquery
 </code></pre></div>
 <p>在不清楚是否存在某个代码库的时候，我们可以运行以下命令搜索，比如搜索是否有<code>normalize.css</code>：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">bower search normailize
+<div class="highlight"><pre><code class="language-text" data-lang="text">bower search normailize
 </code></pre></div>
 <p>搜索结果如下：</p>
 
@@ -133,15 +133,15 @@
 </ul>
 
 <p>这样，我们知道了，在bower中<code>normalize.css</code>的名称为<code>normalize-css</code>，知道其名称后我们就可以安装了：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">bower install normailize-css --save
+<div class="highlight"><pre><code class="language-text" data-lang="text">bower install normailize-css --save
 </code></pre></div>
 <p>此时<code>bower.json</code> 文件中已写入了一定数量的代码库依赖了，那么在下次项目中就可以直接使用这个文件来安装其中指定的代码库了，而不必再次一个一个的重复输入命令行来安装了。运行以下命令安装<code>bower.json</code>文件中的依赖：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">bower install
+<div class="highlight"><pre><code class="language-text" data-lang="text">bower install
 </code></pre></div>
 <h3>bower设置</h3>
 
 <p><code>.bowerrc</code>文件中可以配置bower的相关属性，最常见的设置是重设代码库存放的路径。默认情况下，代码库存放的路径是根目录下的<code>bower_components</code>文件夹中，如果需要更换存放路径，比如存放到<code>app/bower_components</code>目录下，<code>.bowerrc</code>文件可写成：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">{
+<div class="highlight"><pre><code class="language-text" data-lang="text">{
     &quot;directory&quot;: &quot;app/bower_components&quot;
 }
 </code></pre></div>
@@ -152,21 +152,21 @@
 <p>如果你有自己的代码库，比如自己写的jQuery插件之类的，那么你可以在bower上注册你的代码库。</p>
 
 <p>首先需要创建一个github仓库，并上传好代码文件，然后用github的标签为你的代码库添加<strong>版本号</strong>，创建版本号：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">git tag v0.0.1
+<div class="highlight"><pre><code class="language-text" data-lang="text">git tag v0.0.1
 </code></pre></div>
 <p>设定最近commit上去的代码库的版本号：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">git push origin v0.0.1
+<div class="highlight"><pre><code class="language-text" data-lang="text">git push origin v0.0.1
 </code></pre></div>
 <p>版本号的写法可以参考： <a href="http://semver.org/">semver</a></p>
 
 <p>新建了仓库，设置了版本号后，就可以在bower中注册该代码库，该命令格式为：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">bower register &lt;my-package-name&gt; &lt;git-endpoint&gt;
+<div class="highlight"><pre><code class="language-text" data-lang="text">bower register &lt;my-package-name&gt; &lt;git-endpoint&gt;
 </code></pre></div>
 <p>其中<code>&lt;git-endpoint&gt;</code>是该代码库仓库的地址，比如：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">bower register lxjwltwebapp git://github.com/lxjwlt/webapp.git
+<div class="highlight"><pre><code class="language-text" data-lang="text">bower register lxjwltwebapp git://github.com/lxjwlt/webapp.git
 </code></pre></div>
 <p>注册好后，就可以通过安装命令来安装了：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">bower install lxjwltwebapp
+<div class="highlight"><pre><code class="language-text" data-lang="text">bower install lxjwltwebapp
 </code></pre></div>
 <h2>grunt</h2>
 
@@ -175,10 +175,10 @@
 <p>首先，我们需要在项目文件的根目录中创建两个文件，一个是 <code>package.json</code> 文件，一个是 <code>Gruntfile.js</code> 文件。</p>
 
 <p>类似于上述的bower，grunt也需要下载相关的插件，但这些插件的依赖是写入 <code>package.json</code> 文件中的。可以运行以下命令，创建一个基本的  <code>package.json</code> 文件：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">npm init
+<div class="highlight"><pre><code class="language-text" data-lang="text">npm init
 </code></pre></div>
 <p><code>package.json</code> 文件基本结构如下：</p>
-<div class="highlight"><pre><code class="json language-json" data-lang="json"><span class="p">{</span>
+<div class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
   <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;a name&quot;</span><span class="p">,</span>
   <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;0.0.0&quot;</span><span class="p">,</span>
   <span class="nt">&quot;devDependencies&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -189,7 +189,7 @@
 <p>然后我们需要下载相关的插件，<strong>查询相关插件及其用法：<a href="http://gruntjs.com/plugins">grunt plugins</a></strong>，建议用ctrl+F来查询。</p>
 
 <p>从上面的网页中选择你所需要的插件，比如名为contrib-clean的插件，可以运行以下命令安装该插件：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">npm install grunt-contrib-clean --save-dev
+<div class="highlight"><pre><code class="language-text" data-lang="text">npm install grunt-contrib-clean --save-dev
 </code></pre></div>
 <p>其中 <code>--save-dev</code> 参数作用是将该依赖写入 <code>package.json</code> 文件中。注意和bower安装命令的不同。</p>
 
@@ -198,7 +198,7 @@
 <h3>插件配置</h3>
 
 <p>插件的配置需要上述提到的 <code>Gruntfile.js</code> 文件。请在根目录下手动创建该文件，其中的基本结构为：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">grunt</span><span class="p">){</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">grunt</span><span class="p">){</span>
 
     <span class="c1">// 项目配置</span>
     <span class="nx">grunt</span><span class="p">.</span><span class="nx">initConfig</span><span class="p">({</span>
@@ -229,7 +229,7 @@
 </ul>
 
 <p>配置对象中的<strong>属性名要对应插件的名字</strong>，比如<code>grunt-contrib-uglify</code>插件，它在配置对象中对应的属性名为<code>uglify</code>。每个插件又可以有多个子任务，比如上述代码中<code>clean</code>任务下有名为<code>build</code>的子任务。有了子任务，插件就能在不同的情况下完成不同的任务。子任务的名称是任意的，如：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript">    <span class="nx">grunt</span><span class="p">.</span><span class="nx">initConfig</span><span class="p">({</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript">    <span class="nx">grunt</span><span class="p">.</span><span class="nx">initConfig</span><span class="p">({</span>
         <span class="c1">// clean插件用于清除文件</span>
         <span class="nx">clean</span><span class="o">:</span> <span class="p">{</span>
             <span class="nx">allFile</span><span class="o">:</span> <span class="p">{</span>
@@ -254,14 +254,14 @@
 <h3>如何指定文件？</h3>
 
 <p>指定无映射文件，比如在<code>clean</code>插件中：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">clean</span><span class="o">:</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">clean</span><span class="o">:</span> <span class="p">{</span>
     <span class="nx">build</span><span class="o">:</span> <span class="p">{</span>
         <span class="nx">files</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;path/to/dir/one&quot;</span><span class="p">,</span> <span class="s2">&quot;path/to/dir/two&quot;</span><span class="p">]</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
 <p>映射文件，比如：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 一对一映射</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 一对一映射</span>
 <span class="nx">uglify</span><span class="o">:</span> <span class="p">{</span>
     <span class="nx">build</span><span class="o">:</span> <span class="p">{</span>
         <span class="nx">src</span><span class="o">:</span> <span class="s1">&#39;path/to/dir/index.js&#39;</span><span class="p">,</span>
@@ -290,7 +290,7 @@
 <span class="p">}</span>
 </code></pre></div>
 <p>以上均的写法均是指定固定文件的，一旦文件新添或删除，就要修改 <code>Gruntfile.js</code> 文件，所以我们需要动态地指定文件，以<code>uglify</code>插件为例：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">uglify</span><span class="o">:</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">uglify</span><span class="o">:</span> <span class="p">{</span>
     <span class="nx">build</span><span class="o">:</span> <span class="p">{</span>
         <span class="c1">// 将app/scripts目录下的所有js文件压缩</span>
         <span class="c1">// 并将压缩后的文件放入dist/scripts文件中</span>
@@ -318,7 +318,7 @@
 <h3>插件选项</h3>
 
 <p>插件会提供一定的选项，我们能通过<code>options</code>属性来定义这些选项，如uglify插件：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">uglify</span><span class="o">:</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">uglify</span><span class="o">:</span> <span class="p">{</span>
     <span class="nx">build</span><span class="o">:</span> <span class="p">{</span>
         <span class="nx">options</span><span class="o">:</span> <span class="p">{</span>
             <span class="c1">// 在每个压缩的js文件开头添加注释</span>
@@ -339,7 +339,7 @@
 <h4>connect &amp;&amp; watch</h4>
 
 <p>前端开发的过程中，在修改了文件后，比如css，我们每每都需要在浏览器按F5来查看页面效果，这样的操作非常繁琐，而connect插件和watch插件可以帮我们监控文件改动并自动刷新页面，设置如下：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">watch</span><span class="o">:</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">watch</span><span class="o">:</span> <span class="p">{</span>
     <span class="nx">livereload</span><span class="o">:</span> <span class="p">{</span>
         <span class="nx">options</span><span class="o">:</span> <span class="p">{</span>
             <span class="c1">// 配置对象中的属性值可通过以下语法获取 &#39;&lt;%= %&gt;&#39;</span>
@@ -379,7 +379,7 @@
 <p>对于图片压缩插件，官方推荐的是grunt-contrib-imagemin插件，该插件支持<strong>所有格式</strong>的图片的压缩，但在<strong>win7 64位</strong>中，该插件的部分功能无法安装，导致压缩不能最大化，平均只能压缩6-7%。</p>
 
 <p>在grunt插件库中，找到能用的就只有pngmin插件了，该插件只支持压缩png格式的图片，但前端开发中一般只用png格式的图片，而且该插件可调整图片的压缩比率，非常强大，基本用法如下：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">pngmin</span><span class="o">:</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">pngmin</span><span class="o">:</span> <span class="p">{</span>
     <span class="nx">options</span><span class="o">:</span> <span class="p">{</span>
         <span class="c1">// 设置压缩65-80%，即图片压缩后的大小为20-35%</span>
         <span class="c1">// 此为推荐值</span>
@@ -414,32 +414,32 @@
 <p>yo初始化项目需要用到yeoman特有的模板，该模板称之为generator，generator包含了项目所需要的一切文件。可以说，项目文件的初始化都是基于该模板所进行的。</p>
 
 <p>yeoman提供了很多已经定义好的generator，比如<a href="https://github.com/yeoman/generator-webapp">generator-webapp</a>，我们可以运行以下命令安装：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">npm install -g generator-webapp
+<div class="highlight"><pre><code class="language-text" data-lang="text">npm install -g generator-webapp
 </code></pre></div>
 <p>该generator生成项目文件过程中，我们可以选择是否下载HTML5 Boilerplate、 jQuery、 Modernizr、或 Bootstrap这些文件以供项目使用，运行以下命令使用generator-webapp生成项目文件：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">yo webapp
+<div class="highlight"><pre><code class="language-text" data-lang="text">yo webapp
 </code></pre></div>
 <p>虽然yeoman提供了许多这样的generator方便我们使用，但这些generator不一定符合我们项目的需求，必要时，我们需要知道如何创建自己的generator。</p>
 
 <h3>如何创建自己的generator？</h3>
 
 <p>首先我们需要下载模板的模板：generator-generator，运行以下命令安装该模板：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">npm install -g generator-generator
+<div class="highlight"><pre><code class="language-text" data-lang="text">npm install -g generator-generator
 </code></pre></div>
 <p>因为这是<strong>模板的模板</strong>，所以安装该模板会生成一个基本的模板，请创建一个新的目录，进入该目录运行：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">yo generator
+<div class="highlight"><pre><code class="language-text" data-lang="text">yo generator
 </code></pre></div>
 <p>在生成模板的过程中，yo会提示你输入该模板的名称（默认名称为当前目录的名），比如名为<code>project</code>。</p>
 
 <p>在安装<code>generator-project</code>模板前，请先运行：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">npm link
+<div class="highlight"><pre><code class="language-text" data-lang="text">npm link
 </code></pre></div>
 <p>这样你就可以通过运行<code>yo project</code>来基于该模板生成项目文件了。但由于我们还没给该模板进行配置，生成的项目文件是没有任何实用意义的。</p>
 
 <h3>配置generator</h3>
 
 <p>我们粗略地看看<code>project</code>模板中的文件结构：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">├── app
+<div class="highlight"><pre><code class="language-text" data-lang="text">├── app
 │   ├── index.js
 │   └── templates
 │       ├── _bower.json
@@ -467,7 +467,7 @@
 </ul>
 
 <p>我们将项目相关的配置文件都放置到<code>app/templates/</code>目录下，然后打开<code>app/index.js</code>文件，其中关键的是：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">util</span><span class="p">.</span><span class="nx">inherits</span><span class="p">(</span><span class="nx">ProjectGenerator</span><span class="p">,</span> <span class="nx">yeoman</span><span class="p">.</span><span class="nx">generators</span><span class="p">.</span><span class="nx">Base</span><span class="p">);</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">util</span><span class="p">.</span><span class="nx">inherits</span><span class="p">(</span><span class="nx">ProjectGenerator</span><span class="p">,</span> <span class="nx">yeoman</span><span class="p">.</span><span class="nx">generators</span><span class="p">.</span><span class="nx">Base</span><span class="p">);</span>
 <span class="nx">ProjectGenerator</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">askFor</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">askFor</span><span class="p">()</span> <span class="p">{</span>
     <span class="c1">// …… ……</span>
 <span class="p">};</span>
@@ -492,7 +492,7 @@
 </ol>
 
 <p>我们先来看askFor函数，其中有两部分最为关键：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">prompts</span> <span class="o">=</span> <span class="p">[{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">prompts</span> <span class="o">=</span> <span class="p">[{</span>
     <span class="c1">// 定义询问的类型及相关选项</span>
     <span class="c1">// …… ……</span>
 <span class="p">},</span> <span class="p">{</span>
@@ -511,7 +511,7 @@
 <p><code>prompt</code>询问的详细用法请参考：<a href="https://github.com/SBoudrias/Inquirer.js">Inquirer</a></p>
 
 <p>下面是<code>prompt</code>范例，询问用户是否添加Boorstrap、modernizr、requireJS：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">prompts</span> <span class="o">=</span> <span class="p">[{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">prompts</span> <span class="o">=</span> <span class="p">[{</span>
     <span class="c1">// 询问的类型</span>
     <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;checkbox&#39;</span><span class="p">,</span>
     <span class="c1">// 询问的名称</span>
@@ -553,12 +553,12 @@
 <p>在回调函数中，我们获取到了询问的返回值，并已经<strong>存入了<code>ProjectGenerator</code>中</strong>，那接下来我们要做的就是利用这些值来重构配置文件。</p>
 
 <p>在yeoman中，我们使用<code>template</code>方法来重构这些文件的：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="k">this</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="s1">&#39;_bower.json&#39;</span><span class="p">,</span> <span class="s1">&#39;bower.json&#39;</span><span class="p">);</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="k">this</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="s1">&#39;_bower.json&#39;</span><span class="p">,</span> <span class="s1">&#39;bower.json&#39;</span><span class="p">);</span>
 </code></pre></div>
 <p><code>template</code>方法会遍历第一个参数文件（上述例子中是<code>_bower.json</code>），并运行<a href="http://lodash.com/">Lo-Dash</a>解析该文件，解析后得到第二个参数文件，将其放入项目文件根目录。</p>
 
 <p>用<code>template</code>方法解析的文件中可以使用<code>&lt;% %&gt;</code>语句，该语句中能输入任意的javscript语句，而且<code>ProjectGenerator</code>的属性可以直接以变量的形式使用在该语句中，这意味着我们现在能用前面获取到的询问的值来重构<code>bower.json</code>文件了，将<code>_bower.json</code>文件修改为：</p>
-<div class="highlight"><pre><code class="json language-json" data-lang="json"><span class="p">{</span>
+<div class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
   <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;myProject&quot;</span><span class="p">,</span>
   <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;0.0.0&quot;</span><span class="p">,</span>
   <span class="nt">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -577,7 +577,7 @@
 <p>我们已经知道如何重构配置文件了，接下来只剩目录创建和文件拷贝了。</p>
 
 <p>目录创建用到<code>mkdir</code>方法，文件拷贝<code>copy</code>方法，<code>copy</code>方法与<code>template</code>方法的不同在于，<code>copy</code>方法是单纯的拷贝复制，不会重构该文件。下面是两种方法的范例：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">ProjectGenerator</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">app</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">app</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">ProjectGenerator</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">app</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">app</span><span class="p">()</span> <span class="p">{</span>
     <span class="c1">// 创建项目目录</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">mkdir</span><span class="p">(</span><span class="s1">&#39;app&#39;</span><span class="p">);</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">mkdir</span><span class="p">(</span><span class="s1">&#39;app/scripts&#39;</span><span class="p">);</span>
@@ -597,7 +597,7 @@
 <span class="p">};</span>
 </code></pre></div>
 <p>现在我们可以运行<code>yo project</code>来生成项目文件，当生成完成后，我们进入项目目录，我们可以发现，bower已经自动下载好了所有的代码库文件，而且grunt的所有依赖也下载完成，我们现在可以直接运行<code>grunt server</code>等等grunt命令来进行开发了。所有这一切都归功于yo配置文件开头的一句代码：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 当初始化结束时运行</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 当初始化结束时运行</span>
 <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="c1">// 安装依赖</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">installDependencies</span><span class="p">({</span> <span class="nx">skipInstall</span><span class="o">:</span> <span class="nx">options</span><span class="p">[</span><span class="s1">&#39;skip-install&#39;</span><span class="p">]</span> <span class="p">});</span>

@@ -47,21 +47,21 @@
         		
         			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
         		
-        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[19]</a></li>
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[21]</a></li>
         		
         	</ul>
         	<div class="content post" id="post">
         		<h1 class='post-title'>论变量即是引用</h1>
         		<p class='post-date'>2013-09-21</p>
         		<p>其实Javascript 中<strong>变量即是引用</strong>，有点像C++中的指针，它们不是直接存储数据，而是存储<strong>指向数据的地址</strong>。</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">b</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">b</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
 </code></pre></div>
 <p>以上语句在语法书中是这么解释的：将4赋值于b，再将b的值赋予a。</p>
 
 <p>这样的解释看似没什么问题，但仔细想来，会有疑问——“改变a的值是否会同时改变b的值呢？”</p>
 
 <p>答案是不会的：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">b</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">b</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
 <span class="nx">a</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">);</span> <span class="c1">// 5</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">b</span><span class="p">);</span> <span class="c1">// 4</span>
@@ -75,11 +75,11 @@
 <p>所谓对象克隆，也就是将一个对象复制成两份，这样就可以实现——修改“新的对象”的同时，又不会改变“原有对象”的值。</p>
 
 <p>如果你认为变量是直接存储数据的话，那么你实现对象克隆的方法可能会是：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span><span class="nx">a</span> <span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="nx">newObj</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span><span class="nx">a</span> <span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="nx">newObj</span><span class="p">;</span>
 <span class="nx">newObj</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">;</span>
 </code></pre></div>
 <p>这样其实并没有真正的实现对象克隆，因为，当修改新对象newObj的同时，也会修改原有对象obj:</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">newObj</span><span class="p">.</span><span class="nx">a</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">newObj</span><span class="p">.</span><span class="nx">a</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">obj</span><span class="p">);</span> <span class="c1">// {a:2}</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">newObj</span><span class="p">);</span> <span class="c1">// {a:2}</span>
 </code></pre></div>
@@ -88,7 +88,7 @@
 <p>正确的解释是：<strong>变量不是直接存储数据，而是存储数据的引用地址</strong>。所以js中<strong>等号</strong>只是传送了数据的引用地址，而不是数据。</p>
 
 <p>下面再给出一个佐证：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">b</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">];</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">b</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">];</span>
 <span class="c1">// 在数组第二个数后面插入3和4</span>
 <span class="nx">a</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">);</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">);</span> <span class="c1">// [1,2,3,4,5]</span>

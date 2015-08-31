@@ -47,7 +47,7 @@
         		
         			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
         		
-        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[19]</a></li>
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[21]</a></li>
         		
         	</ul>
         	<div class="content post" id="post">
@@ -60,7 +60,7 @@
 <h2>简易实现</h2>
 
 <p>先用最简易的方法实现时钟效果，无非就是用冒号连接“时分针”三个数字，然后直接显示出来:</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">showTime</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">showTime</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">showTime</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">showTime</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">dateObj</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(),</span>
         <span class="nx">arr</span><span class="o">=</span> <span class="p">[];</span>
 
@@ -92,7 +92,7 @@
 <p><img src="http://i1273.photobucket.com/albums/y401/lxjwlt/canvas-seven-segment/28FA922F-492E-4E4C-A519-7E3508021D8B_zps3e0c8c7d.jpg" alt="数字1"></p>
 
 <p>所以，我们能写出数字0-9与数码管编号之间的关系：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 数字0 - 1对应的编码</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 数字0 - 1对应的编码</span>
 <span class="kd">var</span> <span class="nx">numMap</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> 
     <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span>
@@ -111,7 +111,7 @@
 <p><img src="http://i1273.photobucket.com/albums/y401/lxjwlt/canvas-seven-segment/EAD34033-40B9-4C20-B1EB-AF29A7F8A951_zps3ed5ec2b.jpg" alt="对称"></p>
 
 <p>首先，为了计算对称点，我们需要一个函数来处理：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// axisX参数为true，则对称轴是X轴，否则为Y轴</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// axisX参数为true，则对称轴是X轴，否则为Y轴</span>
 <span class="kd">var</span> <span class="nx">getSymPoint</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">axisX</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="nx">axisX</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
         <span class="nx">result</span><span class="p">;</span>
@@ -143,7 +143,7 @@
 <p><img src="http://i1273.photobucket.com/albums/y401/lxjwlt/canvas-seven-segment/BF949153-D191-4ECF-A52F-5C16812E9B58_zps115c7d0b.jpg" alt="三个参数"></p>
 
 <p>下面我们先计算第6段数码管的坐标集：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 用来存储各个数码管的坐标</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 用来存储各个数码管的坐标</span>
 <span class="kd">var</span> <span class="nx">pointArr</span> <span class="o">=</span> <span class="p">[[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]];</span>
 
 <span class="c1">// 计算第6段数码管的坐标集</span>
@@ -154,7 +154,7 @@
 <span class="p">);</span>
 </code></pre></div>
 <p>有了第6段的坐标集，按照Y轴对称的原则，我们能计算出第2段数码管的坐标集：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 第2段坐标集</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 第2段坐标集</span>
 <span class="nx">pointArr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nx">getSymPoint</span><span class="p">(</span><span class="nx">pointArr</span><span class="p">[</span><span class="mi">5</span><span class="p">]);</span>
 </code></pre></div>
 <p>同理我们也能计算出其余所有数码管的坐标集。</p>
@@ -162,7 +162,7 @@
 <h3>绘制数码管</h3>
 
 <p>下面我们实现一个drawSegment函数，只要我们提供坐标集，该函数就能绘制出对应的数码管，负责绘制单个数码管，我们先画出path路径，并描边</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="cm">/*</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="cm">/*</span>
 <span class="cm"> 参数：</span>
 <span class="cm"> - cxt: 传入canvas的context对象</span>
 <span class="cm"> - num: 要绘制的数码管的编码</span>
@@ -182,7 +182,7 @@
 <span class="p">};</span>
 </code></pre></div>
 <p>接下来，我们添加处理填充部分，如果点亮则是红色<code>#ff0000</code>，如果灭就是灰色<code>rgba(192, 192, 192, 0.1)</code>，用active参数控制亮灭：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">drawSegment</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cxt</span><span class="p">,</span> <span class="nx">num</span><span class="p">,</span> <span class="nx">active</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">drawSegment</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cxt</span><span class="p">,</span> <span class="nx">num</span><span class="p">,</span> <span class="nx">active</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// ...</span>
     <span class="c1">// 遍历坐标集，将各个坐标连成路径</span>
     <span class="c1">// ...</span>
@@ -198,7 +198,7 @@
 <p>现在我们能够绘制<strong>单个</strong>数码管，下面我们要实现一个函数统一绘制数字0 - 9。</p>
 
 <p>我们要用到数字0-9与数码管编号之间的关系numMap，按照其中的对应关系点亮数码管：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">drawNum</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cxt</span><span class="p">,</span> <span class="nx">num</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">drawNum</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cxt</span><span class="p">,</span> <span class="nx">num</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="nx">numMap</span><span class="p">[</span><span class="nx">num</span><span class="p">],</span>
         <span class="nx">i</span><span class="p">;</span>
 
@@ -214,7 +214,7 @@
 <span class="p">};</span>
 </code></pre></div>
 <p>有了以上的drawNum函数，我们就能用数码管来显示数字了：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">canvas</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;myCanvas&#39;</span><span class="p">),</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">canvas</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;myCanvas&#39;</span><span class="p">),</span>
     <span class="nx">cxt</span> <span class="o">=</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s1">&#39;2d&#39;</span><span class="p">);</span>
 
 <span class="c1">// 用数码管显示数字2</span>
@@ -229,7 +229,7 @@
 <p>现在我们有了drawNum函数，能够用七段数码管显示数字，接下来，我们可以用数码管显示“时分针”。</p>
 
 <p>首先，我们适当的格式化一下各个数字，使其以两位数的形式显示，比如数字4，格式化之后就变成两个数字0和4：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">getTimeNum</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">getTimeNum</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">dateObj</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(),</span>
         <span class="nx">temp</span> <span class="o">=</span> <span class="p">[],</span> 
         <span class="nx">result</span> <span class="o">=</span> <span class="p">[],</span>
@@ -252,7 +252,7 @@
 <span class="p">};</span>
 </code></pre></div>
 <p>格式化后我们得到了8个数字，将这些数字传入drawNum函数中，用数码管形式显示出来。要注意的是，在每次刷新canvas画布的时候都要用clearRect函数<strong>清屏</strong>：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">showTime</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">showTime</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">showTime</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">showTime</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">timeArr</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
 
     <span class="c1">// 获取时分针8位数</span>
@@ -282,7 +282,7 @@
 <h2>参考</h2>
 
 <ul>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D#beginPath(">canvas rendering context2D</a>)</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D#beginPath()">canvas rendering context2D</a></li>
 <li><a href="https://developer.mozilla.org/zh-CN/docs/Web/Guide/HTML/Canvas_tutorial">canvas tutorial</a></li>
 </ul>
 

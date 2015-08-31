@@ -47,7 +47,7 @@
         		
         			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
         		
-        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[19]</a></li>
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[21]</a></li>
         		
         	</ul>
         	<div class="content post" id="post">
@@ -64,7 +64,7 @@
 </blockquote>
 
 <p>首先我们来回顾下jQuery.data的使用示例：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 存储 某键的数据</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 存储 某键的数据</span>
 <span class="nx">$</span><span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="s1">&#39;keyName&#39;</span><span class="p">,</span> <span class="s1">&#39;data value&#39;</span><span class="p">);</span>
 
 <span class="c1">// 获取 某键的数据</span>
@@ -78,37 +78,37 @@
 <h3>存储空间</h3>
 
 <p>为了存储数据，需要开辟一个存储空间：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">jQuery</span><span class="p">.</span><span class="nx">cache</span> <span class="o">=</span> <span class="p">{};</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">jQuery</span><span class="p">.</span><span class="nx">cache</span> <span class="o">=</span> <span class="p">{};</span>
 </code></pre></div>
 <p>在<code>jQuery.cache</code>中，jQuery会为每个DOM元素单独开辟一个的存储空间，问题是：如何区分每个DOM元素从而找到他们的数据呢？</p>
 
 <h3>标识符</h3>
 
 <p>jQuery给DOM元素分配一个标识符，DOM元素可以通过这个标识符在<code>jQuery.cache</code>中找到自身的数据。以下是jQuery的标识符生成器：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 通过不断的 自加 来生成唯一的标识符</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 通过不断的 自加 来生成唯一的标识符</span>
 <span class="c1">// 类似： 标识符 = jQuery.guid++;</span>
 <span class="nx">jQuery</span><span class="p">.</span><span class="nx">guid</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 </code></pre></div>
 <p>现在有了标识符，但是标识符该如何存放呢？</p>
 
 <p>首先，标识符应该以键值的形式存放在对应的DOM元素上，为了避免键名重复，jQuery随机生成了一个<strong>键名</strong>来存放标识符：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 产生的键名 类似于： &quot;jQuery044958585570566356&quot;</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 产生的键名 类似于： &quot;jQuery044958585570566356&quot;</span>
 <span class="nx">jQuery</span><span class="p">.</span><span class="nx">expando</span> <span class="o">=</span> <span class="s1">&#39;jQuery&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\D/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
 </code></pre></div>
 <p>于是，用这个随机生成的键名来存放标识符：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">elem</span><span class="p">[</span><span class="nx">jQuery</span><span class="p">.</span><span class="nx">expando</span><span class="p">]</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">.</span><span class="nx">guid</span><span class="o">++</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">elem</span><span class="p">[</span><span class="nx">jQuery</span><span class="p">.</span><span class="nx">expando</span><span class="p">]</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">.</span><span class="nx">guid</span><span class="o">++</span><span class="p">;</span>
 </code></pre></div>
 <p>这样，DOM元素就有了独一无二的标识符了，下面我们可以根据标识符存取数据。</p>
 
 <h3>存取数据</h3>
 
 <p>$.data方法实际上调用的是jQuery库内部的<code>internalData</code>函数：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">jQuery</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">jQuery</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
      <span class="k">return</span> <span class="nx">internalData</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
 <span class="p">};</span>
 </code></pre></div>
 <p>所以实际上，数据存取的操作是在<code>internalData</code>函数内实现的，大致如下：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">internalData</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">internalData</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">thisCache</span><span class="p">,</span>
         <span class="nx">internalKey</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">.</span><span class="nx">expando</span><span class="p">,</span>
         <span class="nx">id</span> <span class="o">=</span> <span class="nx">elem</span><span class="p">[</span><span class="nx">internalKey</span><span class="p">];</span>
@@ -142,7 +142,7 @@
 <p>jQuery库会使用jQuery.data方法存储一些内部使用的数据，比如<code>queue</code>队列，<code>on</code>事件绑定等等，这些方法都需要存储空间来存储数据。</p>
 
 <p>为了区分内部使用的数据和用户定义的数据，jQuery将<strong>内部使用的数据</strong>直接存储在<code>cache[id]</code>里面，而<strong>用户定义的数据</strong>则存储在<code>cache[id].data</code>中，形如： </p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 标识符</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 标识符</span>
 <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">elem</span><span class="p">[</span><span class="nx">jQuery</span><span class="p">.</span><span class="nx">expando</span><span class="p">];</span>
 
 <span class="c1">// jQuery.cache[id]形如：</span>
@@ -164,7 +164,7 @@
 <p>在进行数据存储之前，jQuery库会先检查传进来的对象是否支持数据存储。</p>
 
 <p>支持data方法的有：js普通对象、根节点和大部分元素节点（其中applet、embed和object元素是不支持设置expando属性的，所以不支持data方法）。代码大致如下：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">jQuery</span><span class="p">.</span><span class="nx">noData</span> <span class="o">=</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">jQuery</span><span class="p">.</span><span class="nx">noData</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;applet&#39;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="s1">&#39;embed&#39;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="s1">&#39;object&#39;</span><span class="o">:</span> <span class="kc">true</span>
@@ -178,10 +178,10 @@
     <span class="k">return</span> <span class="nx">nodeType</span> <span class="o">!==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nx">nodeType</span> <span class="o">!==</span> <span class="mi">9</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="o">!</span><span class="nx">noData</span><span class="p">;</span>
 <span class="p">};</span>
 </code></pre></div>
-js对象的数据存储</h3>
+<h3>js对象的数据存储</h3>
 
 <p>其实普通的js对象（plain object）也是可以进行数据存储，但是不同于DOM对象的数据存储方式，js对象的数据是直接存储在该对象本身之中，代码如下：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">func</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">func</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">obj</span><span class="p">[</span><span class="nx">jQuery</span><span class="p">.</span><span class="nx">expando</span><span class="p">][</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
     <span class="k">return</span> <span class="k">typeof</span> <span class="nx">key</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span> <span class="o">?</span> <span class="nx">obj</span><span class="p">[</span><span class="nx">jQuery</span><span class="p">.</span><span class="nx">expando</span><span class="p">][</span><span class="nx">key</span><span class="p">]</span> <span class="o">:</span> <span class="nx">obj</span><span class="p">[</span><span class="nx">jQuery</span><span class="p">.</span><span class="nx">expando</span><span class="p">];</span>
 <span class="p">}</span>
@@ -202,14 +202,14 @@ js对象的数据存储</h3>
 <p>当jQuery.data方法在jQuery.cache中没有找到数据时，jQuery.data会在DOM元素的<code>data-*</code>属性中查找数据。</p>
 
 <p>我们先回顾一下HTML5中data的用法：</p>
-<div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="c">&lt;!-- </span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="c">&lt;!-- </span>
 <span class="c">    键的命名要用 横线 分隔 </span>
 <span class="c">    键名中大写字母都会被转换成小写字母，所以驼峰法的命名无效</span>
 <span class="c">--&gt;</span>
 <span class="nt">&lt;div</span> <span class="na">data-node-name=</span><span class="s">&quot;div element&quot;</span><span class="nt">&gt;</span>...<span class="nt">&lt;/div&gt;</span>
 </code></pre></div>
 <p>在jQuery中，<code>dataAtrr</code>函数用于获取html5的data数据，代码大致如下：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">dataAtrr</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">dataAtrr</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">name</span><span class="p">;</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">elem</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">!==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
 
@@ -227,12 +227,12 @@ js对象的数据存储</h3>
 <h3>移除数据</h3>
 
 <p>jQuery提供了删除用户定义数据的方法 jQuery.removeData：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">jQuery</span><span class="p">.</span><span class="nx">removeData</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">key</span><span class="p">);</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">jQuery</span><span class="p">.</span><span class="nx">removeData</span><span class="p">(</span><span class="nx">elem</span><span class="p">,</span> <span class="nx">key</span><span class="p">);</span>
 </code></pre></div>
 <p>jQuery还定义了删除所有数据的方法: <code>jQuery.cleanData</code>（只在jQuery内部使用），该方法的使用的场景有：如果某个元素节点被删除，那么它存储的所有数据都没有存在的必要了，所以要清空该元素节点的所有数据。例如在<code>jQuery.fn.remove</code>方法中就使用了jQuery.cleanData方法。</p>
 
 <p>值得一提的是，节点上的标识符可以被循环利用，所以当清空了节点的存储空间，jQuery会回收标识符，以供下一个节点使用：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// 回收的标识符存储在deleteIds中</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 回收的标识符存储在deleteIds中</span>
 <span class="nx">deletedIds</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span> <span class="nx">id</span> <span class="p">);</span>
 </code></pre></div>
 <p>所以，那句老话还是有道理的：</p>

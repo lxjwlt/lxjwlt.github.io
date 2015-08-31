@@ -47,7 +47,7 @@
         		
         			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
         		
-        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[19]</a></li>
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[21]</a></li>
         		
         	</ul>
         	<div class="content post" id="post">
@@ -60,7 +60,7 @@
 <h2>等边处理</h2>
 
 <p>头像一般都是正方形，首先我们需要获取图片宽度和高度的最小值，用该最小值作为边长居中裁剪图片，最终得到一个正方形的图片：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">ImageEditor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">ImageEditor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="c1">// 用离线canvas处理图片数据</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">canvas</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;canvas&#39;</span><span class="p">);</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">context</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s1">&#39;2d&#39;</span><span class="p">);</span>
@@ -107,17 +107,17 @@
 <p>问题在于，每个平台对Canvas的大小都有限制，如果Canvas的宽度或高度任意一个值超过了平台限制，Canvas将无法进行渲染，<code>canvas.toDataURL</code>只能获取一张透明的图片数据。</p>
 
 <p><a href="http://stackoverflow.com/questions/6081483/maximum-size-of-a-canvas-element">Maximum size of a canvas element</a>中提到了部分平台下Canvas的尺寸限制：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">chrome          = 32767x32767
+<div class="highlight"><pre><code class="language-text" data-lang="text">chrome          = 32767x32767
 iPod Touch 16GB = 1448x1448
 iPad Mini       = 2290x2289
 iPhone 3        = 1448x1448
 iPhone 5        = 2290x2289
 </code></pre></div>
 <p>参考以上数据，我们先给Canvas设置一个最大的宽度：</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">var MAX_WIDTH = 1000;
+<div class="highlight"><pre><code class="language-text" data-lang="text">var MAX_WIDTH = 1000;
 </code></pre></div>
 <p>在<code>clipSquareImage</code>函数中加入最大宽度的检测，如果超过限制，则创建一个临时的canvas进行图片缩放处理，最后对该<strong>临时的Canvas</strong>进行居中剪切：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">fn</span><span class="p">.</span><span class="nx">clipSquareImage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">fn</span><span class="p">.</span><span class="nx">clipSquareImage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
         <span class="nx">img</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Image</span><span class="p">();</span>
 
@@ -166,7 +166,7 @@ iPhone 5        = 2290x2289
 <h2>Canvas锯齿问题</h2>
 
 <p>上面我们已经能够通过Canvas裁剪出一张正方形的图片，接下来我们还需要处理头像图片大中小三种尺寸。在Canvas中，<code>drawImage</code>接口提供非常方便的缩放功能：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">editor</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ImageEditor</span><span class="p">;</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">editor</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ImageEditor</span><span class="p">;</span>
 
 <span class="c1">// 将图片缩放到300x300</span>
 <span class="c1">// drawImage支持5个参数：图片对象，及图片在canvas上的坐标和宽高</span>
@@ -177,7 +177,7 @@ iPhone 5        = 2290x2289
 <p><img src="http://i1273.photobucket.com/albums/y401/lxjwlt/canvas%20deal%20width%20avatar/canvas%20_zpsgsfeet7n.png" alt="canvas高清缩放"></p>
 
 <p>参考这个方案，我们可以实现<code>antialiasScale</code>抗锯齿缩放函数：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">fn</span><span class="p">.</span><span class="nx">antialisScale</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">img</span><span class="p">,</span> <span class="nx">width</span><span class="p">,</span> <span class="nx">height</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">fn</span><span class="p">.</span><span class="nx">antialisScale</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">img</span><span class="p">,</span> <span class="nx">width</span><span class="p">,</span> <span class="nx">height</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">offlineCanvas</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;canvas&#39;</span><span class="p">),</span>
         <span class="nx">offlineCtx</span> <span class="o">=</span> <span class="nx">offlineCanvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s1">&#39;2d&#39;</span><span class="p">),</span>
         <span class="nx">sourceWidth</span> <span class="o">=</span> <span class="nx">img</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span>
@@ -209,7 +209,7 @@ iPhone 5        = 2290x2289
 <span class="p">};</span>
 </code></pre></div>
 <p>我们可以用这个函数代替drawImage完成缩放工作，生成头像图片的三种尺寸：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">fn</span><span class="p">.</span><span class="nx">scaleSquareImage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">sizes</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">fn</span><span class="p">.</span><span class="nx">scaleSquareImage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">sizes</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
 
     <span class="c1">// 先裁剪一个正方形</span>
@@ -233,10 +233,10 @@ iPhone 5        = 2290x2289
 <h2>PHP存储base64图片数据</h2>
 
 <p><code>Canvas.toDataURL()</code>获取的<strong>默认</strong>图像数据格式是：<code>data:image/png;base64,</code> + base64数据：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="nx">data</span><span class="o">:</span><span class="nx">image</span><span class="o">/</span><span class="nx">png</span><span class="p">;</span><span class="nx">base64</span><span class="p">,</span><span class="nx">iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">data</span><span class="o">:</span><span class="nx">image</span><span class="o">/</span><span class="nx">png</span><span class="p">;</span><span class="nx">base64</span><span class="p">,</span><span class="nx">iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC</span>
 </code></pre></div>
 <p>当把Canvas截屏数据传给后台时，后台需要截断开头的字段<code>data:image/png;base64,</code>，获取后面那串真正的base64数据：</p>
-<div class="highlight"><pre><code class="php language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
     <span class="nv">$imgData</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;imgData&#39;</span><span class="p">];</span>
 
     <span class="c1">// 截取有用的部分</span>

@@ -47,7 +47,7 @@
         		
         			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
         		
-        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[19]</a></li>
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[21]</a></li>
         		
         	</ul>
         	<div class="content post" id="post">
@@ -62,7 +62,7 @@
 </blockquote>
 
 <p>初始化：</p>
-<div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="nt">&lt;html&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;html&gt;</span>
     <span class="nt">&lt;head&gt;</span>
         <span class="nt">&lt;title&gt;</span>Promise fun<span class="nt">&lt;/title&gt;</span>
     <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.5/angular.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
@@ -71,7 +71,7 @@
     <span class="nt">&lt;body</span> <span class="na">ng-app=</span><span class="s">&quot;app&quot;</span><span class="nt">&gt;</span>
     <span class="nt">&lt;/body&gt;</span>
 <span class="nt">&lt;/html&gt;</span>
-</code></pre></div><div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">getData</span><span class="p">(</span><span class="nx">$timeout</span><span class="p">,</span> <span class="nx">$q</span><span class="p">)</span> <span class="p">{</span>
+</code></pre></div><div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">getData</span><span class="p">(</span><span class="nx">$timeout</span><span class="p">,</span> <span class="nx">$q</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">defer</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">.</span><span class="nx">defer</span><span class="p">()</span>
 
@@ -96,7 +96,7 @@
 <p>defer对象只是一种暴露promise对象和promise对象相关方法的对象。defer对象通过调用<code>$q.deferred()</code>方法构造出来，而且defer对象暴露了三个主要方法：resolve()，reject()，和notify()。对应的promise对象可以通过<code>.promise</code>属性访问。</p>
 
 <p>我们可以使用defer对象发送“异步函数成功完成”的信号：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">getData</span><span class="p">(</span><span class="nx">$timeout</span><span class="p">,</span> <span class="nx">$q</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">getData</span><span class="p">(</span><span class="nx">$timeout</span><span class="p">,</span> <span class="nx">$q</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">defer</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">.</span><span class="nx">defer</span><span class="p">()</span>
 
@@ -116,7 +116,7 @@
 <p>现在，我们得到了一个promise对象（通过<code>defer.promise</code>得到），接下来，让我们注册一个回调函数，该回调函数会在异步函数执行完成后被调用。</p>
 
 <p>使用<code>then()</code>方法为promise对象绑定一个回调函数，该回调函数将返回的字符串打印出来：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">getData</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">getData</span><span class="p">)</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">promise</span> <span class="o">=</span> <span class="nx">getData</span><span class="p">()</span>
     <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span>
@@ -134,7 +134,7 @@
 <p>我们已经知道如何resolve一个promise对象，但如果一个异步函数调用失败了，会怎么样呢？</p>
 
 <p>我们使用<code>Math.random()</code>函数模拟promise对象有50%的机会被reject：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">getData</span><span class="p">(</span><span class="nx">$timeout</span><span class="p">,</span> <span class="nx">$q</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">getData</span><span class="p">(</span><span class="nx">$timeout</span><span class="p">,</span> <span class="nx">$q</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">defer</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">.</span><span class="nx">defer</span><span class="p">()</span>
 
@@ -153,7 +153,7 @@
 <p><code>then()</code>方法的第二个参数可以（可选的）接受一个错误处理回调函数，当promise被reject时才会调用该回调函数。</p>
 
 <p>将错误处理函数作为第二参数传给<code>then()</code>：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">getData</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">getData</span><span class="p">)</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">promise</span> <span class="o">=</span> <span class="nx">getData</span><span class="p">()</span>
     <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span>
@@ -171,7 +171,7 @@
 <p>$q服务本身也是一个函数，它能够让你快速的将一个异步回调函数转换成一个基于Promise模式的函数。</p>
 
 <p>将这个模拟异步函数重写成一个使用<code>$q()</code>返回promise对象的函数：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">getData</span><span class="p">(</span><span class="nx">$timeout</span><span class="p">,</span> <span class="nx">$q</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">getData</span><span class="p">(</span><span class="nx">$timeout</span><span class="p">,</span> <span class="nx">$q</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
     <span class="c1">// 模拟异步函数</span>
@@ -195,7 +195,7 @@
 <p>Promise模式保证成功回调函数和错误回调函数中，其中必定有一个会被执行，但两者永远不会同时执行。如果你需要确保不论promise对象的结果如何，都执行某一个特殊的函数，那该怎么办？你可以在promise对象上注册一个<code>finally()</code>方法。对于将代码重置为可知状态下，这方法是非常有帮助的。</p>
 
 <p>使用<code>finally()</code>方法将异步函数完成时的时间戳打印出来：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">getData</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">getData</span><span class="p">)</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">promise</span> <span class="o">=</span> <span class="nx">getData</span><span class="p">()</span>
     <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span>
@@ -216,7 +216,7 @@
 <p>让我们先看一个基础例子。</p>
 
 <p>首先，我们对我们的异步函数进行修改，我们给<code>resolve</code>函数传入一个0-9之间的随机数(不再是&quot;data received&quot;字符串):</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">getData</span><span class="p">(</span><span class="nx">$timeout</span><span class="p">,</span> <span class="nx">$q</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">getData</span><span class="p">(</span><span class="nx">$timeout</span><span class="p">,</span> <span class="nx">$q</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="c1">// 模拟异步函数</span>
     <span class="k">return</span> <span class="nx">$q</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
@@ -232,7 +232,7 @@
 <p>为了链式调用，我们需要修改回调函数，使其能够返回一个值。</p>
 
 <p>修改promise回调函数，使其返回上述随机数乘以2的值：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">getData</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">getData</span><span class="p">)</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">promise</span> <span class="o">=</span> <span class="nx">getData</span><span class="p">()</span>
     <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span>
@@ -241,7 +241,7 @@
 <span class="p">})</span>
 </code></pre></div>
 <p>现在，我们可以使用<code>then()</code>函数将另一个回调函数绑定到我们的promise对象上，该函数会在第一个回调函数返回值时被调用。上述随机数两倍的值会传递到第二个回调函数中：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">getData</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">getData</span><span class="p">)</span> <span class="p">{</span>
   <span class="kd">var</span> <span class="nx">promise</span> <span class="o">=</span> <span class="nx">getData</span><span class="p">()</span>
     <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span>

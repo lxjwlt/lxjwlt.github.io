@@ -47,7 +47,7 @@
         		
         			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
         		
-        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[19]</a></li>
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[21]</a></li>
         		
         	</ul>
         	<div class="content post" id="post">
@@ -74,7 +74,7 @@
 <h2>获取标题元素</h2>
 
 <p>首先，我们需要将一篇文章中的标题元素全部获取出来，简要的代码如下：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;article&#39;</span><span class="p">).</span><span class="nx">childNodes</span><span class="p">,</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;article&#39;</span><span class="p">).</span><span class="nx">childNodes</span><span class="p">,</span>
 
     <span class="c1">// 用于存储标题元素</span>
     <span class="nx">titleElem</span> <span class="o">=</span> <span class="p">[],</span>
@@ -93,7 +93,7 @@
 <h2>标题层次关系</h2>
 
 <p>为了构建目录结构，我们还需要知道标题的层次关系。我们可以单纯地将标题序号提取出来，用该序号作为标题的所在层次，比如<code>&lt;h1&gt;</code>的序号为1，所以它在第一层。代码大致如下：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">numArr</span> <span class="o">=</span> <span class="p">[],</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">numArr</span> <span class="o">=</span> <span class="p">[],</span>
     <span class="nx">elem</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
 
 <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">titleElem</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
@@ -129,7 +129,7 @@
 </ul>
 
 <p>上述判断方法的代码形式如下：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="cm">/*</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="cm">/*</span>
 <span class="cm"> num: 当前标题序号</span>
 <span class="cm"> lastNum: 前一个标题的序号</span>
 <span class="cm"> lastRevNum: 前一个标题的层次</span>
@@ -171,7 +171,7 @@
 <p>我们得到了标题编号为：<code>[1, 2, 2, 1]</code>。</p>
 
 <p>所以，在判断前后标题关系的基础上，我们添加计算标题层次的代码：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="cm">/*</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="cm">/*</span>
 <span class="cm"> num: 当前标题序号</span>
 <span class="cm"> lastNum: 前一个标题的序号</span>
 <span class="cm"> lastRevNum: 前一个标题的层次</span>
@@ -207,7 +207,7 @@
 </ul>
 
 <p>同样，在判断标题关系和计算层次关系的同时，记录标题的相对关系：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// levelArr保存相对关系</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// levelArr保存相对关系</span>
 <span class="kd">var</span> <span class="nx">levelArr</span> <span class="o">=</span> <span class="p">[],</span>
     <span class="nx">num</span><span class="p">,</span> <span class="nx">lastNum</span><span class="p">,</span> <span class="nx">lastRevNum</span><span class="p">;</span>
 
@@ -227,7 +227,7 @@
 <h2>构建目录</h2>
 
 <p>知道了标题之间的相对层次关系，我们可以通过生成HTML元素来构建目录，HTML形式如下：</p>
-<div class="highlight"><pre><code class="html language-html" data-lang="html"><span class="nt">&lt;ul&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ul&gt;</span>
     <span class="nt">&lt;li&gt;</span>标题内容1<span class="nt">&lt;/li&gt;</span>
     <span class="nt">&lt;li&gt;</span>标题内容2
         <span class="nt">&lt;ul&gt;</span>
@@ -237,7 +237,7 @@
 <span class="nt">&lt;/ul&gt;</span>
 </code></pre></div>
 <p>首先我们需要一个根目录：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="cm">/*</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="cm">/*</span>
 <span class="cm"> root: 根目录</span>
 <span class="cm"> currentList: 当前目录</span>
 <span class="cm">*/</span>
@@ -247,7 +247,7 @@
 <span class="nx">currentList</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;ul&#39;</span><span class="p">);</span>
 </code></pre></div>
 <p>接下来，我们循环遍历标题的相对关系。当相对关系为<strong>1</strong>时，意味着当前标题的层次比前一个标题的低，所以当前标题要存储在子目录中。代码如下：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="c1">// ... </span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// ... </span>
 
 <span class="k">if</span> <span class="p">(</span><span class="nx">level</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// 创建一个新的目录</span>
@@ -259,7 +259,7 @@
 <span class="p">}</span>
 </code></pre></div>
 <p>当相对关系为<strong>-n</strong>（即负数）时，意味着当前标题的层次比前一个标题高n个层次，也意味着当前标题应该存放在当前目录的第n个父级目录，代码如下：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="k">if</span> <span class="p">(</span><span class="nx">level</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="k">if</span> <span class="p">(</span><span class="nx">level</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// 由于子目录是保存在li元素中的，所以向上查找</span>
     <span class="c1">// 第n个父级ul元素的时候，需要遍历2n次</span>
     <span class="nx">level</span> <span class="o">*=</span> <span class="mi">2</span><span class="p">;</span>
@@ -269,7 +269,7 @@
 <span class="p">}</span>
 </code></pre></div>
 <p>ok！通过上述代码，我们能找到存放标题的对应目录，最后我们要做的就是，将标题存进该目录中：</p>
-<div class="highlight"><pre><code class="javascript language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">li</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;li&#39;</span><span class="p">);</span>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">li</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;li&#39;</span><span class="p">);</span>
 <span class="nx">li</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">content</span><span class="p">;</span> <span class="c1">// content中存储了标题内容</span>
 <span class="nx">currentList</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">li</span><span class="p">);</span>
 </code></pre></div>
