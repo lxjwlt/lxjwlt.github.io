@@ -1,8 +1,8 @@
 ﻿---
 layout: post
-title: "译]你所不了解的querySelectorAll"
+title: "[译]你所不了解的querySelectorAll"
 category: front-end
-excerpt: '现代浏览器提供了querySelector和querySelectorAll这两API。它们用来查询匹配CSS选择器的单个或多个元素。这类似CSS选择器：用class或ID选取元素。如果你没有用过它们，MDN上有非常棒的[介绍](https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Getting_started/Selectors)。'
+excerpt: '现代浏览器提供了querySelector和querySelectorAll这两API。它们用来查询匹配CSS选择器的单个或多个元素。这类似CSS选择器：用class或ID选取元素。如果你没有用过它们...'
 ---
 
 [原文链接](https://www.lvh.io/posts/queryselectorall-from-an-element-probably-doesnt-do-what-you-think-it-does.html)
