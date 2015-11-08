@@ -51,7 +51,7 @@ var user = {
     age: 23
 };
 
-template('%this.name% is a %if (this.age > 18) {% man %} else {% child %}%.', user);
+template('%this.name% is a %if (this.age > 18) { % adult % } else { % child % }%.', user);
 // 结果："lxjwlt is a  adult ."
 
 // 模板引擎
