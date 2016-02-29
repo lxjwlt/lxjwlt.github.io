@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<!--[if IE 6]><html class="ie6 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 7]><html class="ie7 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 8]><html class="ie8 lte9 lte8 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 9]><html class="ie9 lte9 no-css3" lang="zh-cn"><![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8) | !(IE 9)  ]><!--><html lang="zh-cn" class='non-ie'><!--<![endif]-->
+    <head>
+        <meta charset="utf-8" />
+
+        
+            <meta name="description" content="NPM在安装的过程中会自动下载安装包的依赖文件，离线环境下由于无法下载安装包必要的依赖文件会导致安装失败。以下提供两种方式获取NPM离线包，以供..." />
+        
+
+        <meta name="keywords" content="css,javascript,html5,前端,web,页面制作" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=0.5,maximum-scale=2,user-scalable=yes" /><!-- 响应式网页设计：initial-scale设定初始缩放比例 maximum-scale设定允许用户缩放到的最大比例 minimum-scale设定允许用户缩放到的最小比例 值范围从0.0到10.0 user-scalable设定是否允许用户进行手动缩放 值为yes或no -->
+        <title>NPM离线包</title>
+
+        <!-- page icon -->
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png" />
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+    </head>
+    <body class="/front-end/2016/03/01/npm-offline-package">
+        <div class="header">
+            <div class="wrap">
+                <h1 class="logo">
+                    <a href="/">lxjwlt's blog</a>
+                </h1>
+            </div>
+        </div>
+
+        <div class="directory" id="directory">
+            <div class="directory__container" id="directory__container"></div>
+            <ul class="directory__button-list">
+                <li><a href="#" class="directory__button directory__button--expand" id='expand-button'>目录</a></li>
+                <li><a href="#" class="directory__button directory__button--top" id='top-button'>top</a></li>
+            </ul>
+        </div>
+        <div class='main wrap'>
+        	<ul class="sidebar">
+        		<li><a class='to-index-page' href="/">ALL</a></li>
+        		
+        			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
+        		
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[26]</a></li>
+        		
+        	</ul>
+        	<div class="content post" id="post">
+        		<h1 class='post-title'>NPM离线包</h1>
+        		<p class='post-date'>2016-03-01</p>
+        		<p><a href="https://www.zybuluo.com/lxjwlt/note/297879">&gt;&gt;更好的阅读体验</a></p>
+
+<p>NPM在安装的过程中会自动下载安装包的依赖文件，离线环境下由于无法下载安装包必要的依赖文件会导致安装失败。以下提供两种方式获取NPM离线包，以供离线环境安装。</p>
+
+<h2>npm打包功能</h2>
+
+<p>使用npm提供打包功能，假设package.json文件如下：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
+    <span class="s2">&quot;dependencies&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;commander&quot;</span><span class="o">:</span> <span class="s2">&quot;^2.8.1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;markdown&quot;</span><span class="o">:</span> <span class="s2">&quot;^0.5.0&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>我们需要新增一个字段<code>bundledDependencies</code>，并将依赖文件名以数组形式列出来：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
+    <span class="s2">&quot;dependencies&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;commander&quot;</span><span class="o">:</span> <span class="s2">&quot;^2.8.1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;markdown&quot;</span><span class="o">:</span> <span class="s2">&quot;^0.5.0&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;bundledDependencies&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;commander&quot;</span><span class="p">,</span> <span class="s2">&quot;markdown&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>最后用命令行工具在根目录下执行：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">npm pack
+</code></pre></div>
+<p>目录下会生成一个后缀为.tar的压缩文件，将该文件拷贝到离线环境上解压，进入解压文件目录执行<code>npm install</code>进行安装。</p>
+
+<p>这种方式需要将依赖文件名一个个复制粘贴一遍，操作起来很不方便。如果需要处理大量的离线安装包，推荐用以下做法。</p>
+
+<h2>npmbox</h2>
+
+<p>npmbox原名叫npmzip，用于压缩npm安装包。npmbox工具会直接在npm服务器上自动查找并下载好我们指定的安装包，并将安装包压缩成一个后缀为.npmbox的压缩文件。</p>
+
+<p>首先在联网环境中全局安装npmbox工具：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">npm install npmbox -g
+</code></pre></div>
+<p>由于npmbox工具压缩的文件也需要由npmbox工具来解压，所以离线环境上也要安装npmbox。我们在联网环境上用npmbox工具对其自身的安装包进行压缩：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">npmbox npmbox
+</code></pre></div>
+<p>目录下生成一个新的文件“npmbox.npmbox”，将该文件拷贝到离线环境中，执行以下命令进行解压安装：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">tar --no-same-owner --no-same-permissions -xvzf npmbox.npmbox
+</code></pre></div>
+<blockquote>
+<p>Windows系统的命令行貌似没有tar命令，建议使用第三方的命令行工具，如<a href="https://git-scm.com/">Git-bash</a></p>
+</blockquote>
+
+<p>解压后得到一个缓存文件夹，不需理会继续执行以下命令全局安装npmbox（windows环境下）：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">npm install --global --cache .\.npmbox.cache --optional --cache-min 99999 --shrinkwrap false npmbox
+</code></pre></div>
+<p>如果没有报错，npmbox工具已经在离线环境中安装成功了。</p>
+
+<p>接下来要获取npm离线安装包就非常简单了，比如我们想获取bootstrap离线包，只需要在联网环境下执行：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">npmbox bootstrap
+</code></pre></div>
+<p>然后将压缩文件bootstrap.npmbox拷贝到离线环境，执行以下命令进行解压：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">npmupbox bootstrap.npmbox
+</code></pre></div>
+<h2>更多阅读</h2>
+
+<ul>
+<li><a href="https://github.com/npm/npm/issues/1349">npm issues#1349: How can I install packages with all dependencies offline?</a></li>
+<li><a href="https://github.com/arei/npmbox#readme">Github: arei/npmbox</a></li>
+</ul>
+
+        		<!-- Duoshuo Comment BEGIN -->
+        		<div class="ds-thread"></div>
+        		<script type="text/javascript">
+        			var duoshuoQuery = {short_name:"lxjwlt"};
+        			(function() {
+        				var ds = document.createElement('script');
+        				ds.type = 'text/javascript';ds.async = true;
+        				ds.src = 'http://static.duoshuo.com/embed.js';
+        				ds.charset = 'UTF-8';
+        				(document.getElementsByTagName('head')[0]
+        				|| document.getElementsByTagName('body')[0]).appendChild(ds);
+        			})();
+        		</script>
+        		<!-- Duoshuo Comment END -->
+        	</div>
+        </div>
+
+        <script src="/scripts/sea.js"></script>
+        <script>
+            seajs.use('post');
+        </script>
+    </body>
+</html>
