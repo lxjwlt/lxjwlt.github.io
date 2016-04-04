@@ -22,7 +22,7 @@ NPM在安装的过程中会自动下载安装包的依赖文件，离线环境�
 }
 ```
 
-我们需要新增一个字段`bundledDependencies`，并将依赖文件名以数组形式列出来：
+我们需要新增一个字段bundledDependencies，并将依赖文件名以数组形式列出来：
 
 ```javascript
 {
