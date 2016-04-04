@@ -67,6 +67,18 @@
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
+<p>我们需要新增一个字段<code>bundledDependencies</code>，并将依赖文件名以数组形式列出来：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
+    <span class="s2">&quot;dependencies&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;commander&quot;</span><span class="o">:</span> <span class="s2">&quot;^2.8.1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;markdown&quot;</span><span class="o">:</span> <span class="s2">&quot;^0.5.0&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;bundledDependencies&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;commander&quot;</span><span class="p">,</span> <span class="s2">&quot;markdown&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>最后用命令行工具在根目录下执行：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">npm pack
+</code></pre></div>
         		<!-- Duoshuo Comment BEGIN -->
         		<div class="ds-thread"></div>
         		<script type="text/javascript">
