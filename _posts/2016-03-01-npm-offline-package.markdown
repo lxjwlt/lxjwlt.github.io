@@ -6,3 +6,18 @@ excerpt: 'NPM在安装的过程中会自动下载安装包的依赖文件，离�
 ---
 
 [更好的阅读体验](https://www.zybuluo.com/lxjwlt/note/297879)
+
+NPM在安装的过程中会自动下载安装包的依赖文件，离线环境下由于无法下载安装包必要的依赖文件会导致安装失败。以下提供两种方式获取NPM离线包，以供离线环境安装。
+
+##npm打包功能
+
+使用npm提供打包功能，假设package.json文件如下：
+
+```javascript
+{
+    "dependencies": {
+        "commander": "^2.8.1",
+        "markdown": "^0.5.0"
+    }
+}
+```
