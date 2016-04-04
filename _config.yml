@@ -1,5 +1,5 @@
 name: lxjwlt's blog
 subname: ''
-markdown: redcarpet
+markdown: kramdown
 pygments: true
 baseurl: ''
