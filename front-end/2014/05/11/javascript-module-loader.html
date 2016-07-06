@@ -1,0 +1,245 @@
+<!DOCTYPE HTML>
+<!--[if IE 6]><html class="ie6 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 7]><html class="ie7 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 8]><html class="ie8 lte9 lte8 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 9]><html class="ie9 lte9 no-css3" lang="zh-cn"><![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8) | !(IE 9)  ]><!--><html lang="zh-cn" class='non-ie'><!--<![endif]-->
+    <head>
+        <meta charset="utf-8" />
+
+        
+            <meta name="description" content="听朋友说，阿里爸爸有一道这样的面试题：有两个模块A和B，要求加载完A才加载B，说说你的想法。我第一个想法" />
+        
+
+        <meta name="keywords" content="css,javascript,html5,前端,web,页面制作" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=0.5,maximum-scale=2,user-scalable=yes" /><!-- 响应式网页设计：initial-scale设定初始缩放比例 maximum-scale设定允许用户缩放到的最大比例 minimum-scale设定允许用户缩放到的最小比例 值范围从0.0到10.0 user-scalable设定是否允许用户进行手动缩放 值为yes或no -->
+        <title>实现javascript模块加载</title>
+
+        <!-- page icon -->
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png" />
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+    </head>
+    <body class="/front-end/2014/05/11/javascript-module-loader">
+        <div class="header">
+            <div class="wrap">
+                <h1 class="logo">
+                    <a href="/">lxjwlt's blog</a>
+                </h1>
+            </div>
+        </div>
+
+        <div class="directory" id="directory">
+            <div class="directory__container" id="directory__container"></div>
+            <ul class="directory__button-list">
+                <li><a href="#" class="directory__button directory__button--expand" id='expand-button'>目录</a></li>
+                <li><a href="#" class="directory__button directory__button--top" id='top-button'>top</a></li>
+            </ul>
+        </div>
+        <div class='main wrap'>
+        	<ul class="sidebar">
+        		<li><a class='to-index-page' href="/">ALL</a></li>
+        		
+        			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
+        		
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[28]</a></li>
+        		
+        	</ul>
+        	<div class="content post" id="post">
+        		<h1 class='post-title'>实现javascript模块加载</h1>
+        		<p class='post-date'>2014-05-11</p>
+        		<blockquote>
+<p>面试官：说说null和undefined的区别</p>
+
+<p>我心想：null即空，额，空即是色，色即是空，皇后大道东又皇后大……吗旦，我在想什么</p>
+</blockquote>
+
+<p>听朋友说，阿里爸爸有一道这样的面试题：有两个模块A和B，要求加载完A才加载B，说说你的想法。</p>
+
+<p>我第一个想法就是：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">moduleA</span><span class="p">();</span>
+<span class="nx">moduleB</span><span class="p">();</span>
+</code></pre></div>
+<p>Bingo！搞定！</p>
+
+<p>屁颠屁颠地去撸一盘lol，撸到一半，感觉不对啊，是不是太简单了？重新打量了打量这个问题，我脑袋一拍想到，其实面试官想问的是：<strong>javascript模块加载的实现方法</strong>。</p>
+
+<p>关于javascript模块加载器，我接触过两种：<a href="http://seajs.org/docs/">seajs</a> 和 <a href="http://www.requirejs.org/">requirejs</a>。我比较熟悉的是requirejs，所以我按照requirejs的API实现了一个简单的模块加载器。</p>
+
+<p>我没看过requirejs源码，下面所说只是我个人的想法。</p>
+
+<h2>如何加载js文件？</h2>
+
+<p>我用的是最简单的方法：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">loadJs</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">script</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">);</span>
+    <span class="nx">script</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;.js&#39;</span><span class="p">;</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">script</span><span class="p">);</span>
+<span class="p">};</span>
+</code></pre></div>
+<h2>模块加载</h2>
+
+<p>模块加载最关键的问题是：如何保证模块执行的顺序。在解决这个问题之前，我们需要注册（记录）模块的相关信息。</p>
+
+<h3>如何注册模块？</h3>
+
+<p>先准备两个函数require和define，这两个函数功能相似，以define为例子，它接受三个参数：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// define接收三个参数：</span>
+<span class="c1">// - 该模块的名字</span>
+<span class="c1">// - 依赖数组，包含该模块依赖的其他模块名</span>
+<span class="c1">// - 回调函数，当模块及其依赖加载完后执行</span>
+<span class="kd">var</span> <span class="nx">define</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">depArr</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{};</span>
+</code></pre></div>
+<p>该函数接收的三个参数就是模块的相关信息，我们将这些信息记录下来：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">mixJS</span> <span class="o">=</span> <span class="p">{</span>
+
+    <span class="c1">// 存放各个模块的相关信息</span>
+    <span class="nx">modules</span><span class="o">:</span> <span class="p">{}</span>
+
+<span class="p">},</span>
+
+<span class="nx">define</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">depArr</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="c1">// 记录 该模块的信息</span>
+    <span class="nx">mixJS</span><span class="p">.</span><span class="nx">modules</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">depArr</span><span class="o">:</span> <span class="nx">depArr</span><span class="p">,</span>
+        <span class="nx">func</span><span class="o">:</span> <span class="nx">callback</span>
+    <span class="p">};</span>
+
+    <span class="c1">// loadJs 加载依赖</span>
+    <span class="c1">// …… ……</span>
+
+<span class="p">};</span>
+</code></pre></div>
+<p>注册完模块，我们还需要继续加载该模块的依赖，依赖继续运行define函数来注册自身模块，再去加载依赖的依赖……</p>
+
+<p>周而复此，我们能注册到所有模块的信息。接下来的问题就是：几时才开始执行模块？</p>
+
+<h3>几时才开始执行模块？</h3>
+
+<p>这个问题太简单了不是吗？答案就是：当<strong>最后一个模块</strong>加载完（注册完）之后，就开始执行模块啊。</p>
+
+<p>好，现在问题变成了：在模块加载过程中，如何知道该模块就是最后一个模块呢？</p>
+
+<p>其实模块加载就像举办宴会。假设每个来宾都可以邀请朋友来参加宴会，而且宴会必须等齐所有来宾才能够开始。如此，宴会主办方无法统计实际会有多少人会到场。于是，主办方派人在入场口记录“待参加人数”，每当有来宾到场，工作人员将“待参加人数”减去此次来宾的人数，并询问他邀请了多少个朋友，将人数增添到“待参加人数”上。再有来宾到场，周而复此……</p>
+
+<p>当主办方发现“待参加人数”为0时，意味着所有来宾都到齐了，此时宴会可以开始了！</p>
+
+<p>根据以上的思路，我们同样可以解决 “模块开始执行时间” 的问题了：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">mixJS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">modules</span><span class="o">:</span> <span class="p">{},</span>
+
+    <span class="c1">// 待加载模块的数量，默认值为1，即必须加载main模块</span>
+    <span class="nx">toLoadCount</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+
+    <span class="c1">// 模块执行函数</span>
+    <span class="nx">run</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{}</span>
+<span class="p">},</span>
+<span class="nx">define</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">depArr</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 记录 该模块的信息</span>
+    <span class="c1">// …… ……</span>
+
+    <span class="c1">// loadJs 加载依赖</span>
+    <span class="c1">// …… ……</span>
+
+    <span class="c1">// 更新 待加载模块的数量</span>
+    <span class="c1">// - 该模块已经执行，减1</span>
+    <span class="c1">// - 加上 依赖的数量</span>
+    <span class="nx">mixJS</span><span class="p">.</span><span class="nx">toLoadCount</span> <span class="o">-=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="nx">mixJS</span><span class="p">.</span><span class="nx">toLoadCount</span> <span class="o">+=</span> <span class="nx">depArr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+
+    <span class="c1">// 如果没有模块等待加载，运行 模块执行函数</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">mixJS</span><span class="p">.</span><span class="nx">toLoadCount</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="nx">mixJS</span><span class="p">.</span><span class="nx">run</span><span class="p">();</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>oh yeah~！接下来到了最关键的问题：“如何按序执行模块呢？”</p>
+
+<h3>如何按序执行模块？</h3>
+
+<p>首先，为何要按序执行模块？这是因为模块之间存在依赖关系，一个模块的执行过程要用到其依赖模块的返回值，所以必须保证被依赖模块在该模块之前被执行。</p>
+
+<p>解决方法就一句话：<strong>在加载模块的过程中，我们将此次模块的依赖压入一个栈中</strong>。由于栈的后进先出，所以我们能保证从该栈中取出来的模块只有两种情况：</p>
+
+<ul>
+<li>该模块没有依赖</li>
+<li>该模块的依赖已经被执行了</li>
+</ul>
+
+<p>依次从该栈中取出模块，依次地执行模块，就能够保证“按序加载模块”了。实现代码大致如下：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">mixJS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">modules</span><span class="o">:</span> <span class="p">{},</span>
+    <span class="nx">toLoadCount</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+
+    <span class="c1">// 依赖栈</span>
+    <span class="nx">depStack</span><span class="o">:</span> <span class="p">[],</span>
+
+    <span class="c1">// 模块执行函数</span>
+    <span class="nx">run</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// 1. 按照后进先出原则，取出depStack中的依赖</span>
+        <span class="c1">// 2. 根据依赖的名字，在modules中查找该依赖的回调函数</span>
+        <span class="c1">// 3. 运行该函数并记录下返回值</span>
+    <span class="p">}</span>
+<span class="p">},</span>
+<span class="nx">define</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">depArr</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 记录 该模块的信息</span>
+    <span class="c1">// …… ……</span>
+
+    <span class="c1">// loadJs 加载依赖</span>
+    <span class="c1">// …… ……</span>
+
+    <span class="c1">// 更新 待加载模块的数量</span>
+    <span class="c1">// …… ……</span>
+
+    <span class="c1">// 更新依赖栈</span>
+    <span class="nx">mixJS</span><span class="p">.</span><span class="nx">depStack</span> <span class="o">=</span> <span class="nx">mixJS</span><span class="p">.</span><span class="nx">depStack</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">depArr</span><span class="p">);</span>
+
+    <span class="c1">// 如果没有模块等待加载，运行 模块执行函数</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">mixJS</span><span class="p">.</span><span class="nx">toLoadCount</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="nx">mixJS</span><span class="p">.</span><span class="nx">run</span><span class="p">();</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>wow！ 所有问题都解决了！</p>
+
+<h2>符合AMD规范</h2>
+
+<p>我们还需要一些修改才能使这个模块加载器更符合AMD规范，这样才能加载其他一些库，比如jQuery：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">define</span><span class="p">.</span><span class="nx">amd</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</code></pre></div>
+<p>AMD的规范可以参考：</p>
+
+<ul>
+<li><a href="https://github.com/amdjs/amdjs-api/wiki/AMD">AMD规范英文文档</a></li>
+<li><a href="http://ued.xinyou.com/2012/07/amd_js.html">AMD规范中文文档</a></li>
+</ul>
+
+<h2>详细代码</h2>
+
+<p>该模块加载器的详细代码可以在这里查看：<a href="https://github.com/lxjwlt/mixjs/blob/master/mix.js">mixjs 详细代码</a></p>
+
+        		<!-- Duoshuo Comment BEGIN -->
+        		<div class="ds-thread"></div>
+        		<script type="text/javascript">
+        			var duoshuoQuery = {short_name:"lxjwlt"};
+        			(function() {
+        				var ds = document.createElement('script');
+        				ds.type = 'text/javascript';ds.async = true;
+        				ds.src = 'http://static.duoshuo.com/embed.js';
+        				ds.charset = 'UTF-8';
+        				(document.getElementsByTagName('head')[0]
+        				|| document.getElementsByTagName('body')[0]).appendChild(ds);
+        			})();
+        		</script>
+        		<!-- Duoshuo Comment END -->
+        	</div>
+        </div>
+
+        <script src="/scripts/sea.js"></script>
+        <script>
+            seajs.use('post');
+        </script>
+    </body>
+</html>

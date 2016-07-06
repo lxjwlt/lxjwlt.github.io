@@ -1,0 +1,169 @@
+<!DOCTYPE HTML>
+<!--[if IE 6]><html class="ie6 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 7]><html class="ie7 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 8]><html class="ie8 lte9 lte8 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 9]><html class="ie9 lte9 no-css3" lang="zh-cn"><![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8) | !(IE 9)  ]><!--><html lang="zh-cn" class='non-ie'><!--<![endif]-->
+    <head>
+        <meta charset="utf-8" />
+
+        
+            <meta name="description" content="前端开发经常会上谷歌、github、stackOverflow等等站点查阅资料，因为GFW（Great Firewall of China）的缘故，这些网站正常途径访问往往会抽风，对我们前端开发效率造成阻碍..." />
+        
+
+        <meta name="keywords" content="css,javascript,html5,前端,web,页面制作" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=0.5,maximum-scale=2,user-scalable=yes" /><!-- 响应式网页设计：initial-scale设定初始缩放比例 maximum-scale设定允许用户缩放到的最大比例 minimum-scale设定允许用户缩放到的最小比例 值范围从0.0到10.0 user-scalable设定是否允许用户进行手动缩放 值为yes或no -->
+        <title>VPS搭建shadowsocks</title>
+
+        <!-- page icon -->
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png" />
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+    </head>
+    <body class="/front-end/2016/04/04/vps-vs-gfw">
+        <div class="header">
+            <div class="wrap">
+                <h1 class="logo">
+                    <a href="/">lxjwlt's blog</a>
+                </h1>
+            </div>
+        </div>
+
+        <div class="directory" id="directory">
+            <div class="directory__container" id="directory__container"></div>
+            <ul class="directory__button-list">
+                <li><a href="#" class="directory__button directory__button--expand" id='expand-button'>目录</a></li>
+                <li><a href="#" class="directory__button directory__button--top" id='top-button'>top</a></li>
+            </ul>
+        </div>
+        <div class='main wrap'>
+        	<ul class="sidebar">
+        		<li><a class='to-index-page' href="/">ALL</a></li>
+        		
+        			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
+        		
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[28]</a></li>
+        		
+        	</ul>
+        	<div class="content post" id="post">
+        		<h1 class='post-title'>VPS搭建shadowsocks</h1>
+        		<p class='post-date'>2016-04-04</p>
+        		<p><a href="https://www.zybuluo.com/lxjwlt/note/330565">更好的阅读体验</a></p>
+
+<p>前端开发经常会上谷歌、github、stackOverflow等等站点查阅资料，因为GFW（Great Firewall of China）的缘故，这些网站正常途径访问往往会抽风，对我们前端开发效率造成阻碍，所以翻墙对前端开发人员来说是很有必要的。</p>
+
+<p>我们都知道使用google agent配合goagent搭建翻墙，但在这方法广泛普及后，GFW封堵很多可用IP，这方法已经不好用了。随后使用lantern和VPN，VPN时常不稳定，而lantern自从服务器转去新加坡之后，国内这边就访问不了了。</p>
+
+<p>从网上查阅资料来看，VPS搭建翻墙是最稳定的，搭建分为三个步骤：</p>
+
+<ol>
+<li>购买VPS服务器</li>
+<li>服务器安装shadowsocks</li>
+<li>客户端安装shadowsocks</li>
+</ol>
+
+<h2>购买VPS服务器</h2>
+
+<p>我们使用的是vultr服务器，首先登陆<a href="http://vultr.com">vultr首页</a>注册账号：</p>
+
+<p><img src="http://7xslv0.com2.z0.glb.clouddn.com/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-04-04%2019.37.06.png" alt=""></p>
+
+<p>注册成功后，在用户面版中进入billing页面进行充值：</p>
+
+<p><img src="http://7xslv0.com2.z0.glb.clouddn.com/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-04-04%2019.39.53.png" alt=""></p>
+
+<p>充值成功后，返回servers页面点击以下按钮创建服务器，要注意的是vultr的服务器是按照小时计费的，你可以任意的切换安装服务器：</p>
+
+<p><img src="http://7xslv0.com2.z0.glb.clouddn.com/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-04-04%2019.38.19.png" alt=""></p>
+
+<p>进入配置服务器页面，东京服务器据说由于线路离国内近，理论上网速会比较快（实测也是），第一步，选择日本东京的服务器：</p>
+
+<p><img src="http://7xslv0.com2.z0.glb.clouddn.com/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-04-04%2019.39.17.png" alt=""></p>
+
+<p>第二步选择系统，建议使用Debian 7 64位系统：</p>
+
+<p><img src="http://7xslv0.com2.z0.glb.clouddn.com/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-04-04%2019.39.26.png" alt=""></p>
+
+<p>其他配置均选默认，配置成功后，在Servers页面就能够看到我们配置的服务器了：</p>
+
+<p><img src="http://7xslv0.com2.z0.glb.clouddn.com/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-04-04%2019.40.34.png" alt=""></p>
+
+<p>点击进入服务器详细页面，其中有服务器的IP和管理员账户密码，后台登陆需要用到：</p>
+
+<p><img src="http://7xslv0.com2.z0.glb.clouddn.com/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-04-04%2019.40.50.png" alt=""></p>
+
+<h2>后台配置shadowsocks</h2>
+
+<p>由于部分线路屏蔽了shadowsocks的使用（比如公司VDI的线路），常规的方法是无法连接shadowsocks，我们要使用协议混淆的方法绕开屏蔽，所以我们使用的客户端是加强版的shadowsocks：</p>
+
+<p>https://github.com/breakwa11/shadowsocks-rss</p>
+
+<p>后台的搭建方法请参考以下，一步步按照其中描述操作，即可配置成功：</p>
+
+<p>https://github.com/breakwa11/shadowsocks-rss/wiki/Server-Setup</p>
+
+<h2>可能遇到的问题</h2>
+
+<p>以下是搭建过程中可能遇到的问题。</p>
+
+<h3>登录后台</h3>
+
+<p>我们可以使用xshell这类提供UI界面的工具登陆后台，也可以直接使用命令行，如果服务器的ip是9.9.9.9，账户密码是root/root，那么在命令行中通过以下命令来登录后台：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">ssh root@9.9.9.9
+</code></pre></div>
+<p>命令行随后会提示输入密码，密码输入过程中是不可见的。</p>
+
+<h3>命令行编辑文本</h3>
+
+<p>安装完shadowsocks后，其配置文件默认存储在<code>/etc/shadowsocks.json</code>下，我们通常要改写其中的参数，命令行中要编辑文件需要用到vi工具：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">vi /etc/shadowscoks.json
+</code></pre></div>
+<p>但vi工具经常抽风（我那台服务器上就是这样的），我们可以重装vi工具，但重装vi还不如直接安装vim工具，在ubuntu和debian系统下使用以下命令安装vim：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">apt-get install vim
+</code></pre></div>
+<p>这样我们就可以编辑shadowsocks配置文件了：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">vim /etc/shadowscoks.json
+</code></pre></div>
+<p>打开文件后是预览模式，点击<code>i按键</code>进入编辑模式，点击esc按键退出编辑模式。</p>
+
+<p>编辑完成后，在预览模式下（按esc键），按<code>:按键</code>进入命令行模式，然后输入wq保存文件并退出vim。</p>
+
+<h2>centos系统</h2>
+
+<p>如果你使用的是centos系统，并且搭建完shadowsocks却无法翻墙，这种情况很可能是因为centos系统防火墙屏蔽了shadowsocks，你可以查看防火墙的配置，删除相应的屏蔽规则。怕麻烦的话，可以直接运行以下命令清空所有防火墙规则：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">iptables -F
+</code></pre></div>
+<h3>速锐</h3>
+
+<p>如果我们对网速有需求，比如youtube，vultr搭好shadowsocks默认的网速只能看YouTube最低分辨率的视频。我们可以在服务端安装速锐，对网速有质的提升，详情参考：</p>
+
+<p>http://www.bandwagong.com/vultrserverspeeder/</p>
+
+        		<!-- Duoshuo Comment BEGIN -->
+        		<div class="ds-thread"></div>
+        		<script type="text/javascript">
+        			var duoshuoQuery = {short_name:"lxjwlt"};
+        			(function() {
+        				var ds = document.createElement('script');
+        				ds.type = 'text/javascript';ds.async = true;
+        				ds.src = 'http://static.duoshuo.com/embed.js';
+        				ds.charset = 'UTF-8';
+        				(document.getElementsByTagName('head')[0]
+        				|| document.getElementsByTagName('body')[0]).appendChild(ds);
+        			})();
+        		</script>
+        		<!-- Duoshuo Comment END -->
+        	</div>
+        </div>
+
+        <script src="/scripts/sea.js"></script>
+        <script>
+            seajs.use('post');
+        </script>
+    </body>
+</html>

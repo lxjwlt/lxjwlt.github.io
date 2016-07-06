@@ -1,0 +1,377 @@
+<!DOCTYPE HTML>
+<!--[if IE 6]><html class="ie6 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 7]><html class="ie7 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 8]><html class="ie8 lte9 lte8 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 9]><html class="ie9 lte9 no-css3" lang="zh-cn"><![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8) | !(IE 9)  ]><!--><html lang="zh-cn" class='non-ie'><!--<![endif]-->
+    <head>
+        <meta charset="utf-8" />
+
+        
+            <meta name="description" content="本文主要介绍如何使用四叉树筛选出屏幕上可能发生碰撞的物体集合，从而优化碰撞检测" />
+        
+
+        <meta name="keywords" content="css,javascript,html5,前端,web,页面制作" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=0.5,maximum-scale=2,user-scalable=yes" /><!-- 响应式网页设计：initial-scale设定初始缩放比例 maximum-scale设定允许用户缩放到的最大比例 minimum-scale设定允许用户缩放到的最小比例 值范围从0.0到10.0 user-scalable设定是否允许用户进行手动缩放 值为yes或no -->
+        <title>四叉树优化碰撞检测</title>
+
+        <!-- page icon -->
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png" />
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+    </head>
+    <body class="/front-end/2014/09/04/quadtree-for-collide-detection">
+        <div class="header">
+            <div class="wrap">
+                <h1 class="logo">
+                    <a href="/">lxjwlt's blog</a>
+                </h1>
+            </div>
+        </div>
+
+        <div class="directory" id="directory">
+            <div class="directory__container" id="directory__container"></div>
+            <ul class="directory__button-list">
+                <li><a href="#" class="directory__button directory__button--expand" id='expand-button'>目录</a></li>
+                <li><a href="#" class="directory__button directory__button--top" id='top-button'>top</a></li>
+            </ul>
+        </div>
+        <div class='main wrap'>
+        	<ul class="sidebar">
+        		<li><a class='to-index-page' href="/">ALL</a></li>
+        		
+        			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
+        		
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[28]</a></li>
+        		
+        	</ul>
+        	<div class="content post" id="post">
+        		<h1 class='post-title'>四叉树优化碰撞检测</h1>
+        		<p class='post-date'>2014-09-04</p>
+        		<p><a href="http://jsfiddle.net/lxjwlt/6zLy7u29/embedded/result,js/">请点击此处观看Demo</a></p>
+
+<p>游戏中碰撞检测分为两个阶段：broad phase 和 narrow phase。接下来要介绍的就是broad phase。在broad phase这个阶段，我们的主要任务是将屏幕上的物体进行筛选，筛选出<strong>最可能发生碰撞</strong>的物体集合。</p>
+
+<p>试想想，屏幕上有N个物体，如果我们对每两个物体都进行碰撞检测，那时间复杂度就有N^2。但实际上，在游戏画面中，并不是每两个物体都需要进行碰撞检测，比如一个在屏幕<strong>右上方</strong>的物体和一个在屏幕<strong>左上方</strong>的物体之间明显是不会发生碰撞的，所以我们不需要对这两个物体进行碰撞检测。那么，现在我们就需要一个这样的算法去将屏幕上可能和不可能发生碰撞的物体区分开来。</p>
+
+<h2>四叉树原理</h2>
+
+<p>正如其名，四叉树就是每个父节点都具有四个子节点的树状数据结构。由于要区分屏幕上的物体，我们要将屏幕划分为<strong>四个区域</strong>，所以四叉树的四个节点正合适表示这四个区域。</p>
+
+<p>屏幕上四个区域分别为：左上区域 + 右上区域 + 右下区域 + 左下区域，方便起见，我们分别命名为：象限1、象限2、象限3、象限4：</p>
+
+<p><img src="http://i1273.photobucket.com/albums/y401/lxjwlt/collide-check/IMG_0095_zps16aa5aa4.jpg" alt="屏幕向量"></p>
+
+<p>我们将<strong>完全处于某一个象限</strong>的物体存储在该象限对应的子节点下，当然，也存在跨越多个象限的物体，我们将它们存在父节点中：</p>
+
+<p><img src="http://i1273.photobucket.com/albums/y401/lxjwlt/collide-check/IMG_0084_zps7dddcd0d.jpg" alt="四叉树结构"></p>
+
+<p>如果某个象限内的物体的数量过多，它会同样会分裂成四个子象限，以此类推：</p>
+
+<p><img src="http://i1273.photobucket.com/albums/y401/lxjwlt/collide-check/IMG_0085_zps7c5f9016.jpg" alt="子象限"></p>
+
+<h2>实现四叉树</h2>
+
+<p>我们先定义四叉树的结构：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="cm">/* </span>
+<span class="cm">  四叉树节点包含：</span>
+<span class="cm">  - objects: 用于存储物体对象</span>
+<span class="cm">  - nodes: 存储四个子节点</span>
+<span class="cm">  - level: 该节点的深度，根节点的默认深度为0</span>
+<span class="cm">  - bounds: 该节点对应的象限在屏幕上的范围，bounds是一个矩形</span>
+<span class="cm">*/</span>
+<span class="kd">var</span> <span class="nx">QuadTree</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">QuadTree</span><span class="p">(</span><span class="nx">bounds</span><span class="p">,</span> <span class="nx">level</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">objects</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">nodes</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">level</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">level</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="nx">level</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">bounds</span> <span class="o">=</span> <span class="nx">bounds</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">  常量：</span>
+<span class="cm">  - MAX_OBJECTS: 每个节点（象限）所能包含物体的最大数量</span>
+<span class="cm">  - MAX_LEVELS: 四叉树的最大深度</span>
+<span class="cm">*/</span>
+<span class="nx">QuadTree</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">MAX_OBJECTS</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+<span class="nx">QuadTree</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">MAX_LEVELS</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+</code></pre></div>
+<p>接下来，我们需要判断屏幕上的物体属于哪个象限：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="cm">/* </span>
+<span class="cm">  获取物体对应的象限序号，以屏幕中心为界限，切割屏幕:</span>
+<span class="cm">  - 右上：象限一</span>
+<span class="cm">  - 左上：象限二</span>
+<span class="cm">  - 左下：象限三</span>
+<span class="cm">  - 右下：象限四</span>
+<span class="cm">*/</span>
+<span class="nx">QuadTree</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getIndex</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">rect</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">bounds</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">bounds</span><span class="p">,</span>
+        <span class="nx">onTop</span> <span class="o">=</span> <span class="nx">rect</span><span class="p">.</span><span class="nx">y</span> <span class="o">+</span> <span class="nx">rect</span><span class="p">.</span><span class="nx">height</span> <span class="o">&lt;=</span>  <span class="nx">bounds</span><span class="p">.</span><span class="nx">centroid</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span>
+        <span class="nx">onBottom</span> <span class="o">=</span> <span class="nx">rect</span><span class="p">.</span><span class="nx">y</span> <span class="o">&gt;=</span> <span class="nx">bounds</span><span class="p">.</span><span class="nx">centroid</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span>
+        <span class="nx">onLeft</span> <span class="o">=</span> <span class="nx">rect</span><span class="p">.</span><span class="nx">x</span> <span class="o">+</span> <span class="nx">rect</span><span class="p">.</span><span class="nx">w</span> <span class="o">&lt;=</span> <span class="nx">bounds</span><span class="p">.</span><span class="nx">centroid</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span>
+        <span class="nx">onRight</span> <span class="o">=</span> <span class="nx">rect</span><span class="p">.</span><span class="nx">x</span> <span class="o">&gt;=</span> <span class="nx">bounds</span><span class="p">.</span><span class="nx">centroid</span><span class="p">.</span><span class="nx">x</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">onTop</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">onRight</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">onLeft</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">onBottom</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">onLeft</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="mi">2</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">onRight</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="mi">3</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 如果物体跨越多个象限，则放回-1</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>我们知道，如果某一个象限（节点）内存储的物体数量超过了<code>MAX_OBJECTS</code>最大数量，则需要对这个节点进行划分，所以我们同样需要一个划分函数，它的工作就是将一个象限看作一个屏幕，将其划分为四个子象限：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 划分</span>
+<span class="nx">QuadTree</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">split</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">level</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">level</span><span class="p">,</span>
+        <span class="nx">bounds</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">bounds</span><span class="p">,</span>
+        <span class="nx">x</span> <span class="o">=</span> <span class="nx">bounds</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span>
+        <span class="nx">y</span> <span class="o">=</span> <span class="nx">bounds</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span>
+        <span class="nx">sWidth</span> <span class="o">=</span> <span class="nx">bounds</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="nx">sHeight</span> <span class="o">=</span> <span class="nx">bounds</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span>
+        <span class="k">new</span> <span class="nx">QuadTree</span><span class="p">(</span><span class="k">new</span> <span class="nx">Rect</span><span class="p">(</span><span class="nx">bounds</span><span class="p">.</span><span class="nx">centroid</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">sWidth</span><span class="p">,</span> <span class="nx">sHeight</span><span class="p">),</span> <span class="nx">level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="k">new</span> <span class="nx">QuadTree</span><span class="p">(</span><span class="k">new</span> <span class="nx">Rect</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">sWidth</span><span class="p">,</span> <span class="nx">sHeight</span><span class="p">),</span> <span class="nx">level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="k">new</span> <span class="nx">QuadTree</span><span class="p">(</span><span class="k">new</span> <span class="nx">Rect</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">bounds</span><span class="p">.</span><span class="nx">centroid</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span> <span class="nx">sWidth</span><span class="p">,</span> <span class="nx">sHeight</span><span class="p">),</span> <span class="nx">level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="k">new</span> <span class="nx">QuadTree</span><span class="p">(</span><span class="k">new</span> <span class="nx">Rect</span><span class="p">(</span><span class="nx">bounds</span><span class="p">.</span><span class="nx">centroid</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">bounds</span><span class="p">.</span><span class="nx">centroid</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span> <span class="nx">sWidth</span><span class="p">,</span> <span class="nx">sHeight</span><span class="p">),</span> <span class="nx">level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">);</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>为了初始化四叉树，我们也需要实现四叉树的插入功能，用于将物体插入到四叉树中：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="cm">/*</span>
+<span class="cm">  插入功能：</span>
+<span class="cm">    - 如果当前节点[ 存在 ]子节点，则检查物体到底属于哪个子节点，如果能匹配到子节点，则将该物体插入到该子节点中</span>
+<span class="cm">    - 如果当前节点[ 不存在 ]子节点，将该物体存储在当前节点。随后，检查当前节点的存储数量，如果超过了最大存储数量，则对当前节点进行划分，划分完成后，将当前节点存储的物体重新分配到四个子节点中。</span>
+<span class="cm">*/</span>
+<span class="nx">QuadTree</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">insert</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">rect</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">objs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">objects</span><span class="p">,</span>
+        <span class="nx">i</span><span class="p">,</span> <span class="nx">index</span><span class="p">;</span>
+
+    <span class="c1">// 如果该节点下存在子节点</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getIndex</span><span class="p">(</span><span class="nx">rect</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">index</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">nodes</span><span class="p">[</span><span class="nx">index</span><span class="p">].</span><span class="nx">insert</span><span class="p">(</span><span class="nx">rect</span><span class="p">);</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 否则存储在当前节点下</span>
+    <span class="nx">objs</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">rect</span><span class="p">);</span>
+
+    <span class="c1">// 如果当前节点存储的数量超过了MAX_OBJECTS</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span> <span class="o">&amp;&amp;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">objects</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">MAX_OBJECTS</span> <span class="o">&amp;&amp;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">level</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">MAX_LEVELS</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">split</span><span class="p">();</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">objs</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getIndex</span><span class="p">(</span><span class="nx">objs</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">index</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">nodes</span><span class="p">[</span><span class="nx">index</span><span class="p">].</span><span class="nx">insert</span><span class="p">(</span><span class="nx">objs</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div>
+<h3>筛选功能</h3>
+
+<p>重头戏来啦！现在我们已经能够初始化一个四叉树了，接下来我们要解决——如何将可能发生碰撞的物体集合选取出来：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="cm">/*</span>
+<span class="cm">  检索功能：</span>
+<span class="cm">    给出一个物体对象，该函数负责将该物体可能发生碰撞的所有物体选取出来。该函数先查找物体所属的象限，该象限下的物体都是有可能发生碰撞的，然后再递归地查找子象限...</span>
+<span class="cm">*/</span>
+<span class="nx">QuadTree</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">retrieve</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">rect</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="p">[],</span>
+        <span class="nx">index</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getIndex</span><span class="p">(</span><span class="nx">rect</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">index</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">resutl</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">nodes</span><span class="p">[</span><span class="nx">index</span><span class="p">].</span><span class="nx">retrieve</span><span class="p">(</span><span class="nx">rect</span><span class="p">));</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">objects</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>咋一看，这个函数貌似没什么问题，但是我们知道，并不是所有物体都<strong>恰好完全</strong>属于某一个象限的，比如有个物体跨越了象限一和象限二：</p>
+
+<p><img src="http://i1273.photobucket.com/albums/y401/lxjwlt/collide-check/IMG_0086_zpsafeb6ea6.jpg" alt="不属于任何象限的矩形"></p>
+
+<p>一眼就能看出来，矩形6可能发生碰撞的物体集合包括：矩形1、矩形2和矩形5。而我们实现的<code>retrive</code>函数筛选出来的集合则是为空，显然是不正确的，我们需要改进这块代码。</p>
+
+<p>为了让跨越多个象限的物体也能<strong>递归地</strong>执行<code>retrive</code>函数，从而找到所有可能碰撞的物体集合，我们需要让这个物体<strong>同时属于</strong>这些象限。</p>
+
+<p>以矩形6为例，我们如何让矩形6同时属于象限二和象限三呢？我们的做法是：<strong>以象限的边界为切割线，将矩形6切割为两个子矩形</strong>。我们能够确定的是：这两个子矩形分别属于象限二和象限三，所以我们能用这两个子矩形递归的调用<code>retrive</code>函数，从而找到所有可能碰撞的物体集合。</p>
+
+<p><img src="http://i1273.photobucket.com/albums/y401/lxjwlt/collide-check/IMG_0087_zps18086e27.jpg" alt="分裂递归"></p>
+
+<p>改进后的<code>retrive</code>函数：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 检索</span>
+<span class="nx">QuadTree</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">retrieve</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">rect</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="p">[],</span>
+        <span class="nx">arr</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">index</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getIndex</span><span class="p">(</span><span class="nx">rect</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">index</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">resutl</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">nodes</span><span class="p">[</span><span class="nx">index</span><span class="p">].</span><span class="nx">retrieve</span><span class="p">(</span><span class="nx">rect</span><span class="p">));</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+
+            <span class="c1">// 切割矩形</span>
+            <span class="nx">arr</span> <span class="o">=</span> <span class="nx">rect</span><span class="p">.</span><span class="nx">carve</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">bounds</span><span class="p">);</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getIndex</span><span class="p">(</span><span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                <span class="nx">resutl</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">nodes</span><span class="p">[</span><span class="nx">index</span><span class="p">].</span><span class="nx">retrieve</span><span class="p">(</span><span class="nx">rect</span><span class="p">));</span>
+
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">objects</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3>动态更新</h3>
+
+<p>我们已经实现了四叉树全部的功能，先介绍一下四叉树的用法。</p>
+
+<p>首先创建一个四叉树：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">tree</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Quadtree</span><span class="p">(</span><span class="k">new</span> <span class="nx">Rect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">500</span><span class="p">));</span>
+</code></pre></div>
+<p>接下来，我们需要初始化四叉树，我们将屏幕上的所有物体都插入到这个四叉树中：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">rectsArr</span> <span class="o">=</span> <span class="p">[</span><span class="cm">/* ... */</span><span class="p">];</span>
+<span class="nx">rectsArr</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">rect</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">tree</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">rect</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div>
+<p>一棵四叉树已经初始化完成，我们调用<code>retrive</code>找出每个物体对应的碰撞物体集合，并进行下一步的narrow phase部分的碰撞检测了：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">rectsArr</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">rect</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">tree</span><span class="p">.</span><span class="nx">retrive</span><span class="p">(</span><span class="nx">rect</span><span class="p">);</span>
+    <span class="nx">result</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// norrow phase部分的碰撞检测...</span>
+    <span class="p">});</span>
+<span class="p">})</span>
+</code></pre></div>
+<p>我们现在知道四叉树的使用方法了，但同时我们也注意到一个问题：由于屏幕的物体是运行的，前一秒在象限一的物体可能下一秒就跑到象限二了，所以<strong>每一帧都需要重新初始化四叉树</strong>。这意味着，每16ms就要初始化一次四叉树，这个代价太大，太得不偿失了：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">run</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">run</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 重新向四叉树中插入所有物体，重新初始化四叉树</span>
+    <span class="c1">// ...</span>
+
+    <span class="c1">// 筛选物体集合并进行碰撞检测</span>
+    <span class="c1">// ...</span>
+
+    <span class="nx">requestAnimationFrame</span><span class="p">(</span><span class="nx">run</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="nx">requestAnimationFrame</span><span class="p">(</span><span class="nx">run</span><span class="p">);</span>
+</code></pre></div>
+<p>我们想想，是不是有这样做的必要？实际上，只是<strong>部分</strong>物体从一个象限跑到另一个象限，而其他物体都是保持在原先象限中，所以我们只需要重新插入这部分物体即可，从而避免了对所有物体进行插入操作。</p>
+
+<p>我们为四叉树增添这部分的功能，其名为动态更新：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 判断矩形是否在象限范围内</span>
+<span class="kd">function</span> <span class="nx">isInner</span><span class="p">(</span><span class="nx">rect</span><span class="p">,</span> <span class="nx">bounds</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">rect</span><span class="p">.</span><span class="nx">x</span> <span class="o">&gt;=</span> <span class="nx">bounds</span><span class="p">.</span><span class="nx">x</span> <span class="o">&amp;&amp;</span>
+        <span class="nx">rect</span><span class="p">.</span><span class="nx">x</span> <span class="o">+</span> <span class="nx">width</span> <span class="o">&lt;=</span> <span class="nx">bounds</span><span class="p">.</span><span class="nx">x</span> <span class="o">+</span> <span class="nx">bounds</span><span class="p">.</span><span class="nx">width</span> <span class="o">&amp;&amp;</span>
+        <span class="nx">rect</span><span class="p">.</span><span class="nx">y</span> <span class="o">&gt;=</span> <span class="nx">bounds</span><span class="p">.</span><span class="nx">y</span> <span class="o">&amp;&amp;</span>
+        <span class="nx">rect</span><span class="p">.</span><span class="nx">y</span> <span class="o">+</span> <span class="nx">rect</span><span class="p">.</span><span class="nx">height</span> <span class="o">&lt;=</span> <span class="nx">bounds</span><span class="p">.</span><span class="nx">y</span> <span class="o">+</span> <span class="nx">bounds</span><span class="p">.</span><span class="nx">height</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">  动态更新：</span>
+<span class="cm">    从根节点深入四叉树，检查四叉树各个节点存储的物体是否依旧属于该节点（象限）的范围之内，如果不属于，则重新插入该物体。</span>
+<span class="cm">*/</span>
+<span class="nx">QuadTree</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">refresh</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">objs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">objects</span><span class="p">,</span>
+        <span class="nx">rect</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">;</span>
+
+    <span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span> <span class="o">||</span> <span class="k">this</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">objs</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">rect</span> <span class="o">=</span> <span class="nx">objs</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+        <span class="nx">index</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getIndex</span><span class="p">(</span><span class="nx">rect</span><span class="p">);</span>
+
+        <span class="c1">// 如果矩形不属于该象限，则将该矩形重新插入</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">isInner</span><span class="p">(</span><span class="nx">rect</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">bounds</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span> <span class="o">!==</span> <span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">root</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">objs</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]);</span>
+            <span class="p">}</span>
+
+        <span class="c1">// 如果矩形属于该象限 且 该象限具有子象限，则</span>
+        <span class="c1">// 将该矩形安插到子象限中</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">nodes</span><span class="p">[</span><span class="nx">index</span><span class="p">].</span><span class="nx">insert</span><span class="p">(</span><span class="nx">objs</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 递归刷新子象限</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">nodes</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">refresh</span><span class="p">(</span><span class="nx">root</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span> 
+</code></pre></div>
+<p>现在有了动态更新功能，每一帧中只需要对该四叉树进行动态更新即可：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">run</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">run</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 动态更新</span>
+    <span class="nx">tree</span><span class="p">.</span><span class="nx">refresh</span><span class="p">();</span>
+
+    <span class="c1">// 筛选物体集合并进行碰撞检测</span>
+    <span class="c1">// ...</span>
+
+    <span class="nx">requestAnimationFrame</span><span class="p">(</span><span class="nx">run</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="nx">requestAnimationFrame</span><span class="p">(</span><span class="nx">run</span><span class="p">);</span>
+</code></pre></div>
+<p>以上。</p>
+
+<h2>参考</h2>
+
+<ul>
+<li><a href="http://gamedevelopment.tutsplus.com/tutorials/quick-tip-use-quadtrees-to-detect-likely-collisions-in-2d-space--gamedev-374">Quick Tip: Use Quadtrees to Detect Likely Collisions in 2D Space</a></li>
+<li><a href="http://bbs.9ria.com/thread-243675-1-1.html">四叉树碰撞优化版，速度飞一样</a></li>
+</ul>
+
+        		<!-- Duoshuo Comment BEGIN -->
+        		<div class="ds-thread"></div>
+        		<script type="text/javascript">
+        			var duoshuoQuery = {short_name:"lxjwlt"};
+        			(function() {
+        				var ds = document.createElement('script');
+        				ds.type = 'text/javascript';ds.async = true;
+        				ds.src = 'http://static.duoshuo.com/embed.js';
+        				ds.charset = 'UTF-8';
+        				(document.getElementsByTagName('head')[0]
+        				|| document.getElementsByTagName('body')[0]).appendChild(ds);
+        			})();
+        		</script>
+        		<!-- Duoshuo Comment END -->
+        	</div>
+        </div>
+
+        <script src="/scripts/sea.js"></script>
+        <script>
+            seajs.use('post');
+        </script>
+    </body>
+</html>

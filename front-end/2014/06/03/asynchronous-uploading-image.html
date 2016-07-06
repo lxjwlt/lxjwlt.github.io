@@ -1,0 +1,228 @@
+<!DOCTYPE HTML>
+<!--[if IE 6]><html class="ie6 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 7]><html class="ie7 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 8]><html class="ie8 lte9 lte8 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 9]><html class="ie9 lte9 no-css3" lang="zh-cn"><![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8) | !(IE 9)  ]><!--><html lang="zh-cn" class='non-ie'><!--<![endif]-->
+    <head>
+        <meta charset="utf-8" />
+
+        
+            <meta name="description" content="用户可能会不断上传头像图片来查看头像呈现出来的效果，而在这过程中，用户的页面不断地被刷新，这是一种极其不友善的交互方式。所以在这种情况下，我们希望不刷新页面的同时能够将图片上传至服务器，即异步上传图片" />
+        
+
+        <meta name="keywords" content="css,javascript,html5,前端,web,页面制作" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=0.5,maximum-scale=2,user-scalable=yes" /><!-- 响应式网页设计：initial-scale设定初始缩放比例 maximum-scale设定允许用户缩放到的最大比例 minimum-scale设定允许用户缩放到的最小比例 值范围从0.0到10.0 user-scalable设定是否允许用户进行手动缩放 值为yes或no -->
+        <title>异步上传图片</title>
+
+        <!-- page icon -->
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png" />
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+    </head>
+    <body class="/front-end/2014/06/03/asynchronous-uploading-image">
+        <div class="header">
+            <div class="wrap">
+                <h1 class="logo">
+                    <a href="/">lxjwlt's blog</a>
+                </h1>
+            </div>
+        </div>
+
+        <div class="directory" id="directory">
+            <div class="directory__container" id="directory__container"></div>
+            <ul class="directory__button-list">
+                <li><a href="#" class="directory__button directory__button--expand" id='expand-button'>目录</a></li>
+                <li><a href="#" class="directory__button directory__button--top" id='top-button'>top</a></li>
+            </ul>
+        </div>
+        <div class='main wrap'>
+        	<ul class="sidebar">
+        		<li><a class='to-index-page' href="/">ALL</a></li>
+        		
+        			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
+        		
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[28]</a></li>
+        		
+        	</ul>
+        	<div class="content post" id="post">
+        		<h1 class='post-title'>异步上传图片</h1>
+        		<p class='post-date'>2014-06-03</p>
+        		<p>首先，我们看看图片上传的一般做法：</p>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="c">&lt;!-- </span>
+<span class="c">    注意 enctype属性和method属性的设置</span>
+<span class="c">--&gt;</span>
+<span class="nt">&lt;form</span> <span class="na">enctype=</span><span class="s">&quot;multipart/form-data&quot;</span> <span class="na">method=</span><span class="s">&quot;post&quot;</span> <span class="na">action=</span><span class="s">&quot;upload.php&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;file&quot;</span> <span class="na">name=</span><span class="s">&quot;file&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">&quot;submit&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+</code></pre></div>
+<p>按照这种方式，每次上传图片都要提交表单，而每次提交表单都要刷新页面。然而在上传用户头像的情况下，这种方式是极其不友善的。</p>
+
+<p>我们试着考虑一下，用户可能会不断上传头像图片来查看头像呈现出来的效果，而在这过程中，用户的页面不断地被刷新，这是一种极其不友善的交互方式。所以在这种情况下，我们希望不刷新页面的同时能够将图片上传至服务器，即异步上传图片。</p>
+
+<p>说到异步上传，我们立马想到Ajax，然而Ajax只能传输纯文本的数据，<del>没法传输图片数据，所以我们需要另寻他径。</del>在HTML5之前，Ajax是无法实现图片上传的，所以下面先介绍兼容性良好的方案。</p>
+
+<h2>iframe模拟异步上传</h2>
+
+<p>我们都听说过iframe，iframe是一种内联框架，在该框架内可以访问（加载）其他页面。</p>
+
+<p>iframe模拟异步上传的关键在于——使用iframe打开表单的action URL：</p>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="c">&lt;!-- </span>
+<span class="c">    注意！此时form的target属性指向 名为theIframe的iframe标签</span>
+<span class="c">--&gt;</span>
+<span class="nt">&lt;form</span> <span class="na">enctype=</span><span class="s">&quot;multipart/form-data&quot;</span> <span class="na">method=</span><span class="s">&quot;post&quot;</span> <span class="na">action=</span><span class="s">&quot;upload.php&quot;</span> <span class="na">target=</span><span class="s">&quot;theIframe&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;file&quot;</span> <span class="na">name=</span><span class="s">&quot;file&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;iframe</span> <span class="na">name=</span><span class="s">&quot;theIframe&quot;</span><span class="nt">&gt;&lt;/iframe&gt;</span> <span class="c">&lt;!-- 添加一个iframe --&gt;</span>
+    <span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">&quot;submit&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+</code></pre></div>
+<p>由于表单的action URL是在iframe里面打开的，所以用户的页面是不会被刷新的。于是我们实现了图片的异步上传。</p>
+
+<p>然而<strong>这是不够的</strong>，关于用户头像上传，不仅仅需要上传头像图片，我们还需要将该图片的展现出来，这才是重点。为了显示该图片，我们需要该图片在服务器上的实际地址。</p>
+
+<p>既然iframe打开了一个页面upload.php，那么就让后台的同学通过这个页面将图片实际地址传递给我们前端吧。关于后台的实现，可以参考笔者写的一个小demo：</p>
+<div class="highlight"><pre><code class="language-php" data-lang="php"><span class="x">&lt;html&gt;</span>
+<span class="x">&lt;head&gt;</span>
+<span class="x">    &lt;meta charset=&quot;UTF-8&quot;&gt;</span>
+<span class="x">    &lt;title&gt;upload&lt;/title&gt;</span>
+<span class="x">&lt;/head&gt;</span>
+<span class="x">&lt;body&gt;</span>
+
+<span class="x">    </span><span class="cp">&lt;?php</span>
+        <span class="c1">// 获取上传文件的文件名</span>
+        <span class="nv">$filename</span> <span class="o">=</span> <span class="nv">$_FILES</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">];</span>
+
+        <span class="c1">// 定义存储地址</span>
+        <span class="nv">$target</span> <span class="o">=</span> <span class="s1">&#39;images/&#39;</span> <span class="o">.</span> <span class="nv">$filename</span><span class="p">;</span>
+
+        <span class="c1">// 将临时图片 拷贝到 存储地址</span>
+        <span class="nb">move_uploaded_file</span><span class="p">(</span><span class="nv">$_FILES</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">][</span><span class="s1">&#39;tmp_name&#39;</span><span class="p">],</span> <span class="nv">$target</span><span class="p">);</span>
+    <span class="cp">?&gt;</span><span class="x"></span>
+
+<span class="x">    &lt;!-- </span>
+<span class="x">        输出一个img标签，用其src属性存储实际地址，方便前端获取</span>
+<span class="x">    --&gt;</span>
+<span class="x">    &lt;img src=</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="s2">&quot;</span><span class="si">$target</span><span class="s2">&quot;</span> <span class="cp">?&gt;</span><span class="x"> /&gt;</span>
+
+<span class="x">&lt;/body&gt;</span>
+<span class="x">&lt;/html&gt;</span>
+</code></pre></div>
+<p>ok！那么我们前端如何从iframe中获取这个地址呢？相信这对于各位来说不难，所以我稍微提一下：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">doc</span><span class="p">,</span> <span class="nx">src</span><span class="p">;</span>
+
+<span class="c1">// 获取 名为theIframe的iframe的 document对象</span>
+<span class="nx">doc</span> <span class="o">=</span> <span class="nx">top</span><span class="p">.</span><span class="nx">frames</span><span class="p">[</span><span class="s1">&#39;theIframe&#39;</span><span class="p">].</span><span class="nb">document</span><span class="p">;</span>
+
+<span class="c1">// 获取iframe中的image标签，该img的src属性上存储了图片实际的地址</span>
+<span class="nx">src</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">images</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">src</span><span class="p">;</span>
+
+<span class="c1">// 更新头像</span>
+<span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.avatar&#39;</span><span class="p">).</span><span class="nx">prop</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">,</span> <span class="nx">src</span><span class="p">);</span>
+</code></pre></div>
+<h2>Ajax实现图片上传</h2>
+
+<p>XMLHttpRequest level 2新增了对FormData对象接口的支持，FormData对象是什么东东？FormData对象能够将上传文件转换为表单数据，如此一来，XMLHttpRequest 的 send 方法便能将这些数据传送到后台，从而实现文件上传。</p>
+
+<p>首先创建FormData对象，并通过<code>append</code>方法将数据以键值对的形式添加到FormData对象中：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">formData</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FormData</span><span class="p">(),</span>
+
+    <span class="c1">// 获取上传文件的File对象</span>
+    <span class="nx">theFile</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;input[type=file]&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">].</span><span class="nx">files</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+
+<span class="c1">// 将上传文件添加到FormData对象中</span>
+<span class="nx">formData</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;file&#39;</span><span class="p">,</span> <span class="nx">theFile</span><span class="p">);</span>
+</code></pre></div>
+<p>然后，将FormData对象作为Ajax的数据传送到后台，以下是原生方法：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">xhr</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">();</span>
+
+<span class="nx">xhr</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s1">&#39;post&#39;</span><span class="p">,</span> <span class="s1">&#39;upload.php&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+<span class="nx">xhr</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">formData</span><span class="p">);</span>
+
+<span class="nx">xhr</span><span class="p">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">===</span> <span class="mi">4</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="mi">200</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="c1">// 获取xhr.responseText 并 更新用户头像</span>
+        <span class="c1">// ...</span>
+
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>当然，我们也能通过jQuery库提供的<code>jQuery.ajax</code>方法来实现，但有几点我们是必须注意的：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+    <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+    <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;upload.php&#39;</span><span class="p">,</span>
+
+    <span class="c1">// contentType必须为false！避免jQuery添加Content-Type头部信息</span>
+    <span class="nx">contentType</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+
+    <span class="c1">// processData必须为false！不然jQuery会将formData转换为字符串</span>
+    <span class="nx">processData</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+
+    <span class="nx">data</span><span class="o">:</span> <span class="nx">formData</span><span class="p">,</span>
+    <span class="nx">dataType</span><span class="o">:</span> <span class="s1">&#39;text&#39;</span><span class="p">,</span>
+    <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// 更新 用户头像</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.avatar&#39;</span><span class="p">).</span><span class="nx">prop</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">,</span> <span class="nx">data</span><span class="p">.</span><span class="nx">trim</span><span class="p">());</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></div>
+<p>由于FormData是HTML5新增的构造方法，所以上述通过FormData来实现Ajax上传文件的方法只适用于IE10+。</p>
+
+<h2>有没有其他方法？</h2>
+
+<p>相信我们都会这么考虑：其实完全没必要上传图片，用户不就是想看看图片的实际效果吗？直接将上次图片显示出来就行了。</p>
+
+<p>然而，由于浏览器的安全策略，浏览器禁止<code>&lt;image&gt;</code>直接引用本地地址。虽然本地地址行不通，但我们可以通过HTML5获取上传文件的临时地址：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript">    <span class="c1">// 获取上传文件的File对象</span>
+<span class="kd">var</span> <span class="nx">theFile</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;input[type=file]&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">].</span><span class="nx">files</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+
+    <span class="c1">// 获取上传文件的临时地址</span>
+    <span class="nx">src</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">URL</span><span class="p">.</span><span class="nx">createObjectURL</span><span class="p">(</span><span class="nx">theFile</span><span class="p">);</span>
+
+<span class="c1">// 通过该临时地址 更新 用户头像</span>
+<span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.avatar&#39;</span><span class="p">).</span><span class="nx">prop</span><span class="p">(</span><span class="s1">&#39;src&#39;</span><span class="p">,</span> <span class="nx">src</span><span class="p">);</span>
+</code></pre></div>
+<p>用<code>createObjectURL</code>生成的URL是会占用内存空间的，所以当我们不再需要图片显示时，我们必须释放它的内存空间：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nb">window</span><span class="p">.</span><span class="nx">URL</span><span class="p">.</span><span class="nx">revokeObjectURL</span><span class="p">(</span><span class="nx">theFile</span><span class="p">);</span>
+</code></pre></div>
+<p>尽管<code>window.URL.createObjectURL</code>方法非常简洁实用，但遗憾的是，该方法只支持IE10+。</p>
+
+<p>另外，异步上传图片也能通过flash来实现，有兴趣的同学可以去了解了解。</p>
+
+<h2>参考</h2>
+
+<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Using_files_from_web_applications#Example.3a_Using_object_URLs_to_display_images">Using files from web applications</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/Guide/Using_FormData_Objects">Using FormData Object</a></li>
+<li><a href="http://stackoverflow.com/questions/5392344/sending-multipart-formdata-with-jquery-ajax">Sending multipart/formdata with jQuery.ajax</a></li>
+</ul>
+
+        		<!-- Duoshuo Comment BEGIN -->
+        		<div class="ds-thread"></div>
+        		<script type="text/javascript">
+        			var duoshuoQuery = {short_name:"lxjwlt"};
+        			(function() {
+        				var ds = document.createElement('script');
+        				ds.type = 'text/javascript';ds.async = true;
+        				ds.src = 'http://static.duoshuo.com/embed.js';
+        				ds.charset = 'UTF-8';
+        				(document.getElementsByTagName('head')[0]
+        				|| document.getElementsByTagName('body')[0]).appendChild(ds);
+        			})();
+        		</script>
+        		<!-- Duoshuo Comment END -->
+        	</div>
+        </div>
+
+        <script src="/scripts/sea.js"></script>
+        <script>
+            seajs.use('post');
+        </script>
+    </body>
+</html>

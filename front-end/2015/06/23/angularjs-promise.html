@@ -1,0 +1,283 @@
+<!DOCTYPE HTML>
+<!--[if IE 6]><html class="ie6 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 7]><html class="ie7 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 8]><html class="ie8 lte9 lte8 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 9]><html class="ie9 lte9 no-css3" lang="zh-cn"><![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8) | !(IE 9)  ]><!--><html lang="zh-cn" class='non-ie'><!--<![endif]-->
+    <head>
+        <meta charset="utf-8" />
+
+        
+            <meta name="description" content="AngularJS通过内置的$q服务提供Promise编程模式。通过将异步函数注册到promise对象，Promise编程模式提供一种链式调用异步函数的方式。Promise模式作为ES6规范之一，取得JavaScript原生支持。AngularJS中$q服务提供的接口，非常近似这一新的规范，所以代码移植到ES6版本将会非常容易。" />
+        
+
+        <meta name="keywords" content="css,javascript,html5,前端,web,页面制作" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=0.5,maximum-scale=2,user-scalable=yes" /><!-- 响应式网页设计：initial-scale设定初始缩放比例 maximum-scale设定允许用户缩放到的最大比例 minimum-scale设定允许用户缩放到的最小比例 值范围从0.0到10.0 user-scalable设定是否允许用户进行手动缩放 值为yes或no -->
+        <title>[译]AngularJS之道 - Promise编程模式</title>
+
+        <!-- page icon -->
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png" />
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+    </head>
+    <body class="/front-end/2015/06/23/angularjs-promise">
+        <div class="header">
+            <div class="wrap">
+                <h1 class="logo">
+                    <a href="/">lxjwlt's blog</a>
+                </h1>
+            </div>
+        </div>
+
+        <div class="directory" id="directory">
+            <div class="directory__container" id="directory__container"></div>
+            <ul class="directory__button-list">
+                <li><a href="#" class="directory__button directory__button--expand" id='expand-button'>目录</a></li>
+                <li><a href="#" class="directory__button directory__button--top" id='top-button'>top</a></li>
+            </ul>
+        </div>
+        <div class='main wrap'>
+        	<ul class="sidebar">
+        		<li><a class='to-index-page' href="/">ALL</a></li>
+        		
+        			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
+        		
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[28]</a></li>
+        		
+        	</ul>
+        	<div class="content post" id="post">
+        		<h1 class='post-title'>[译]AngularJS之道 - Promise编程模式</h1>
+        		<p class='post-date'>2015-06-23</p>
+        		<p>原文链接：<a href="https://thinkster.io/a-better-way-to-learn-angularjs/promises">a better way to learn AngularJS - promises</a></p>
+
+<p>AngularJS通过内置的$q服务提供Promise编程模式。通过将异步函数注册到promise对象，Promise编程模式提供一种链式调用异步函数的方式。</p>
+
+<blockquote>
+<p>Promise模式作为ES6规范之一，取得JavaScript原生支持。AngularJS中$q服务提供的接口，非常近似这一新的规范，所以代码移植到ES6版本将会非常容易。</p>
+</blockquote>
+
+<p>初始化：</p>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;html&gt;</span>
+    <span class="nt">&lt;head&gt;</span>
+        <span class="nt">&lt;title&gt;</span>Promise fun<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.5/angular.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+        <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;app.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;/head&gt;</span>
+    <span class="nt">&lt;body</span> <span class="na">ng-app=</span><span class="s">&quot;app&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div><div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">getData</span><span class="p">(</span><span class="nx">$timeout</span><span class="p">,</span> <span class="nx">$q</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">defer</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">.</span><span class="nx">defer</span><span class="p">()</span>
+
+    <span class="c1">// 模拟异步函数</span>
+    <span class="nx">$timeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="p">},</span> <span class="mi">2000</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nx">defer</span><span class="p">.</span><span class="nx">promise</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">&#39;app&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">&#39;getData&#39;</span><span class="p">,</span> <span class="nx">getData</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">getData</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">promise</span> <span class="o">=</span> <span class="nx">getData</span><span class="p">();</span>
+    <span class="p">})</span>
+</code></pre></div>
+<p>为了简单起见，我们使用<code>$timeout()</code>服务来模拟异步函数。但实际而言，Promose模式最常见的应用场景是运用$http服务的AJAX回调函数。</p>
+
+<h2>defer对象</h2>
+
+<p>defer对象只是一种暴露promise对象和promise对象相关方法的对象。defer对象通过调用<code>$q.deferred()</code>方法构造出来，而且defer对象暴露了三个主要方法：resolve()，reject()，和notify()。对应的promise对象可以通过<code>.promise</code>属性访问。</p>
+
+<p>我们可以使用defer对象发送“异步函数成功完成”的信号：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">getData</span><span class="p">(</span><span class="nx">$timeout</span><span class="p">,</span> <span class="nx">$q</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">defer</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">.</span><span class="nx">defer</span><span class="p">()</span>
+
+    <span class="c1">// 模拟异步函数</span>
+    <span class="nx">$timeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">defer</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="s1">&#39;data received!&#39;</span><span class="p">)</span>
+    <span class="p">},</span> <span class="mi">2000</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nx">defer</span><span class="p">.</span><span class="nx">promise</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>这里，我们先创建了一个新的defer对象，然后返回它的<code>.promise</code>属性。同时，我们执行我们的异步函数，当在该函数完成的时候，我们执行defer对象的<code>resolve()</code>方法。<code>resolve()</code>函数的参数会被传递给接下来的回调函数。</p>
+
+<h2>promise对象</h2>
+
+<p>现在，我们得到了一个promise对象（通过<code>defer.promise</code>得到），接下来，让我们注册一个回调函数，该回调函数会在异步函数执行完成后被调用。</p>
+
+<p>使用<code>then()</code>方法为promise对象绑定一个回调函数，该回调函数将返回的字符串打印出来：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">getData</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">promise</span> <span class="o">=</span> <span class="nx">getData</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span>
+    <span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div>
+<p>现在，当你刷新页面，两秒后你会看到控制台打印出<code>&quot;data recived!&quot;</code>。</p>
+
+<h2>reject一个promise对象</h2>
+
+<blockquote>
+<p>注：简而言之，promise的resolve是发出“执行成功”的信号，而reject则是发出“执行失败”的信号。当信号发出，promise会根据不同的信号，执行不同的回调函数。</p>
+</blockquote>
+
+<p>我们已经知道如何resolve一个promise对象，但如果一个异步函数调用失败了，会怎么样呢？</p>
+
+<p>我们使用<code>Math.random()</code>函数模拟promise对象有50%的机会被reject：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">getData</span><span class="p">(</span><span class="nx">$timeout</span><span class="p">,</span> <span class="nx">$q</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">defer</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">.</span><span class="nx">defer</span><span class="p">()</span>
+
+    <span class="c1">// 模拟异步函数</span>
+    <span class="nx">$timeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">if</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()))</span> <span class="p">{</span>
+        <span class="nx">defer</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="s1">&#39;data received!&#39;</span><span class="p">)</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">defer</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="s1">&#39;oh no an error! try again&#39;</span><span class="p">)</span>
+      <span class="p">}</span>
+    <span class="p">},</span> <span class="mi">2000</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nx">defer</span><span class="p">.</span><span class="nx">promise</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><code>then()</code>方法的第二个参数可以（可选的）接受一个错误处理回调函数，当promise被reject时才会调用该回调函数。</p>
+
+<p>将错误处理函数作为第二参数传给<code>then()</code>：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">getData</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">promise</span> <span class="o">=</span> <span class="nx">getData</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span>
+    <span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span>
+    <span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div>
+<p>现在，如果你再次刷新页面，你有50%的几率能看到错误消息！</p>
+
+<p>通过调用多个不同<code>then()</code>方法，在同一个promise对象上可以注册多个回调函数。这些函数会按照他们注册的顺序一一被调用。</p>
+
+<h2>使用$q构造函数</h2>
+
+<p>$q服务本身也是一个函数，它能够让你快速的将一个异步回调函数转换成一个基于Promise模式的函数。</p>
+
+<p>将这个模拟异步函数重写成一个使用<code>$q()</code>返回promise对象的函数：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">getData</span><span class="p">(</span><span class="nx">$timeout</span><span class="p">,</span> <span class="nx">$q</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="c1">// 模拟异步函数</span>
+    <span class="k">return</span> <span class="nx">$q</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">$timeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()))</span> <span class="p">{</span>
+          <span class="nx">resolve</span><span class="p">(</span><span class="s1">&#39;data received!&#39;</span><span class="p">)</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="nx">reject</span><span class="p">(</span><span class="s1">&#39;oh no an error! try again&#39;</span><span class="p">)</span>
+        <span class="p">}</span>
+      <span class="p">},</span> <span class="mi">2000</span><span class="p">)</span>
+    <span class="p">})</span>
+
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>这个方法实现的效果跟手动创建defer对象的效果是一样的 -- 你采用哪种方式取决于你的偏好和你是否想要在代码中使用<code>notify()</code>。 </p>
+
+<h2>finally方法</h2>
+
+<p>Promise模式保证成功回调函数和错误回调函数中，其中必定有一个会被执行，但两者永远不会同时执行。如果你需要确保不论promise对象的结果如何，都执行某一个特殊的函数，那该怎么办？你可以在promise对象上注册一个<code>finally()</code>方法。对于将代码重置为可知状态下，这方法是非常有帮助的。</p>
+
+<p>使用<code>finally()</code>方法将异步函数完成时的时间戳打印出来：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">getData</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">promise</span> <span class="o">=</span> <span class="nx">getData</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span>
+    <span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span>
+    <span class="p">})</span>
+    <span class="p">.</span><span class="k">finally</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Finished at:&#39;</span><span class="p">,</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">())</span>
+    <span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div>
+<p>不管promise对象是被resolve还是被reject，你都能看到控制台打印出当前时间。</p>
+
+<h2>Promise链式编程</h2>
+
+<p>Promise模式一个非常强大的特性是能够链式编写回调函数。这个特性使数据能够在回调链的每一步上进行传递，处理和改变。虽然这一语法非常容易理解，但有时候这语法也会令人困惑。</p>
+
+<p>让我们先看一个基础例子。</p>
+
+<p>首先，我们对我们的异步函数进行修改，我们给<code>resolve</code>函数传入一个0-9之间的随机数(不再是&quot;data received&quot;字符串):</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">getData</span><span class="p">(</span><span class="nx">$timeout</span><span class="p">,</span> <span class="nx">$q</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 模拟异步函数</span>
+    <span class="k">return</span> <span class="nx">$q</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">$timeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">resolve</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">10</span><span class="p">))</span>
+      <span class="p">},</span> <span class="mi">2000</span><span class="p">)</span>
+    <span class="p">})</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>当页面刷新，你应该能够看到一个0-9之间的整数被打印出来。</p>
+
+<p>为了链式调用，我们需要修改回调函数，使其能够返回一个值。</p>
+
+<p>修改promise回调函数，使其返回上述随机数乘以2的值：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">getData</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">promise</span> <span class="o">=</span> <span class="nx">getData</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span>
+      <span class="k">return</span> <span class="nx">num</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div>
+<p>现在，我们可以使用<code>then()</code>函数将另一个回调函数绑定到我们的promise对象上，该函数会在第一个回调函数返回值时被调用。上述随机数两倍的值会传递到第二个回调函数中：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">getData</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">promise</span> <span class="o">=</span> <span class="nx">getData</span><span class="p">()</span>
+    <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span>
+      <span class="k">return</span> <span class="nx">num</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="p">})</span>
+    <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span> <span class="c1">// = random number * 2</span>
+    <span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div>
+<p>虽然这只是一个简单的例子，但是它阐述了一个非常强大的概念。此外，你不但可以从promise回调函数中返回一个简单的值，你还能够返回一个新的promise对象。那么，promise链会“暂停”直到这个返回的promise对象被resolve。这个特性使你能够链式编写多个异步函数调用（比如多个服务端请求）。</p>
+
+<h2>总结</h2>
+
+<p>在angularJS框架中，Promise模式编程已经发挥起重要的作用，随着ES6的发布，将来Promise模式在JavaScript中的作用也会越来越重要。虽然它一开始看起来难以理解（尤其是链式调用），但promise模式为解决异步代码提供了一套直观且简洁的接口，也正因如此，Promise成为了现代JavaScript中的一个基础构建模块。</p>
+
+        		<!-- Duoshuo Comment BEGIN -->
+        		<div class="ds-thread"></div>
+        		<script type="text/javascript">
+        			var duoshuoQuery = {short_name:"lxjwlt"};
+        			(function() {
+        				var ds = document.createElement('script');
+        				ds.type = 'text/javascript';ds.async = true;
+        				ds.src = 'http://static.duoshuo.com/embed.js';
+        				ds.charset = 'UTF-8';
+        				(document.getElementsByTagName('head')[0]
+        				|| document.getElementsByTagName('body')[0]).appendChild(ds);
+        			})();
+        		</script>
+        		<!-- Duoshuo Comment END -->
+        	</div>
+        </div>
+
+        <script src="/scripts/sea.js"></script>
+        <script>
+            seajs.use('post');
+        </script>
+    </body>
+</html>

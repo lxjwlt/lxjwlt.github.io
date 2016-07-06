@@ -1,0 +1,168 @@
+<!DOCTYPE HTML>
+<!--[if IE 6]><html class="ie6 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 7]><html class="ie7 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 8]><html class="ie8 lte9 lte8 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 9]><html class="ie9 lte9 no-css3" lang="zh-cn"><![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8) | !(IE 9)  ]><!--><html lang="zh-cn" class='non-ie'><!--<![endif]-->
+    <head>
+        <meta charset="utf-8" />
+
+        
+            <meta name="description" content="本文主要介绍Date对象的常用方法和一些在开发过程中会用到的小技巧，比如如何控制时间输入格式，如何获取一个月的总天数。" />
+        
+
+        <meta name="keywords" content="css,javascript,html5,前端,web,页面制作" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=0.5,maximum-scale=2,user-scalable=yes" /><!-- 响应式网页设计：initial-scale设定初始缩放比例 maximum-scale设定允许用户缩放到的最大比例 minimum-scale设定允许用户缩放到的最小比例 值范围从0.0到10.0 user-scalable设定是否允许用户进行手动缩放 值为yes或no -->
+        <title>JavaScript小小技巧——Date篇</title>
+
+        <!-- page icon -->
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png" />
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+    </head>
+    <body class="/front-end/2014/06/14/js-trick-date">
+        <div class="header">
+            <div class="wrap">
+                <h1 class="logo">
+                    <a href="/">lxjwlt's blog</a>
+                </h1>
+            </div>
+        </div>
+
+        <div class="directory" id="directory">
+            <div class="directory__container" id="directory__container"></div>
+            <ul class="directory__button-list">
+                <li><a href="#" class="directory__button directory__button--expand" id='expand-button'>目录</a></li>
+                <li><a href="#" class="directory__button directory__button--top" id='top-button'>top</a></li>
+            </ul>
+        </div>
+        <div class='main wrap'>
+        	<ul class="sidebar">
+        		<li><a class='to-index-page' href="/">ALL</a></li>
+        		
+        			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
+        		
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[28]</a></li>
+        		
+        	</ul>
+        	<div class="content post" id="post">
+        		<h1 class='post-title'>JavaScript小小技巧——Date篇</h1>
+        		<p class='post-date'>2014-06-14</p>
+        		<p>首先我们回顾一下Date的基本用法。</p>
+
+<h2>创建Date对象</h2>
+
+<p>Date构造函数可以创建当前时间的Date对象，也可以根据任意指定时间创建相应的Date对象：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript">    <span class="c1">// 当前时间的Date对象</span>
+<span class="kd">var</span> <span class="nx">today</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(),</span>
+
+    <span class="c1">// 2014年1月1日 的Date对象</span>
+    <span class="nx">time1</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+
+    <span class="c1">// 通过getTime，将time1对象转化为数值</span>
+    <span class="c1">// 将该数值传入Date构造函数中，同样能创建 2014年1月1日 的Date对象</span>
+    <span class="c1">// 所以getTime方法可用于数据传输</span>
+    <span class="nx">time2</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">time1</span><span class="p">.</span><span class="nx">getTime</span><span class="p">());</span>
+</code></pre></div>
+<h2>常用方法</h2>
+
+<p>以下是Date对象常用方法，注意返回值的<strong>范围</strong>（特别要注意月份，月份的取值为[0 - 11]）：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
+
+<span class="nx">time</span><span class="p">.</span><span class="nx">getTime</span><span class="p">();</span> <span class="c1">// 将时间转换成数值形式，一般用于数据传输</span>
+
+<span class="nx">time</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">();</span>  <span class="c1">// 获取年份</span>
+<span class="nx">time</span><span class="p">.</span><span class="nx">getMonth</span><span class="p">();</span>     <span class="c1">// 获取月份 [0 - 11]</span>
+<span class="nx">time</span><span class="p">.</span><span class="nx">getDate</span><span class="p">();</span>      <span class="c1">// 获取月份中的日子 [1 - ?]</span>
+<span class="nx">time</span><span class="p">.</span><span class="nx">getDay</span><span class="p">();</span>       <span class="c1">// 获取一周中的日子 [0 - 6]，0表示星期天</span>
+<span class="nx">time</span><span class="p">.</span><span class="nx">getHours</span><span class="p">();</span>     <span class="c1">// 获取时 [0 - 23]</span>
+<span class="nx">time</span><span class="p">.</span><span class="nx">getMinutes</span><span class="p">();</span>   <span class="c1">// 获取分 [0 - 59]</span>
+<span class="nx">time</span><span class="p">.</span><span class="nx">getSeconds</span><span class="p">();</span>   <span class="c1">// 获取秒 [0 - 59]</span>
+</code></pre></div>
+<h2>如何‘计算’某年某月的总天数？</h2>
+
+<p>首先我们知道，月份的总天数可以通过一些闰年神马的法则计算出来，但这无疑将问题复杂化了。实际上，计算机本身就是一个万年历，想想看，如果我们手中有一个万年历，我们会怎么做呢？还会去做那些繁琐的计算？不，我们会<strong>先找到那个月份，接着找到该月的最后一天，这一天的日期就是该月的总天数</strong>。很好，现在问题是：如何找到某个月的最后一天？</p>
+
+<p>还记得上面介绍“创建Date对象”吗？如果我们想创建 2014年1月1日 的Date对象，可以这样写：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="k">new</span>  <span class="nb">Date</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</code></pre></div>
+<p>我们知道，Date构造函数中传入了三个参数，分别是年、月、日。但是，如果“日”的参数为0会怎么样呢？由于0在1之前，所以意味着2014年1月1日的<strong>前一天</strong>，即2013年12月的<strong>最后一天</strong>：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 2013年12月的最后一天</span>
+<span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+<span class="c1">// 通过getDate方法获得日期</span>
+<span class="c1">// 2013年12月的最后一天是31日，说明2013年12月份有31天</span>
+<span class="nx">time</span><span class="p">.</span><span class="nx">getDate</span><span class="p">();</span>
+</code></pre></div>
+<p>oh~yeah！现在我们知道，2013年12月有31天。同理，通过这个小小的trick，我们能够获取任意月份的总天数了！</p>
+
+<h2>格式化</h2>
+
+<p>关于时间输出格式，Date对象没有对应方法，非常遗憾！但是我们可以自己封装一个方法来实现这一点，下面是简易代码，这真的是一个非常实用的方法：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nb">Date</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">format</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">monthName</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;January&#39;</span><span class="p">,</span> <span class="s1">&#39;February&#39;</span><span class="p">,</span> <span class="s1">&#39;March&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;April&#39;</span><span class="p">,</span> <span class="s1">&#39;May&#39;</span><span class="p">,</span> <span class="s1">&#39;June&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;July&#39;</span><span class="p">,</span> <span class="s1">&#39;Aguest&#39;</span><span class="p">,</span> <span class="s1">&#39;September&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;October&#39;</span><span class="p">,</span> <span class="s1">&#39;November&#39;</span><span class="p">,</span> <span class="s1">&#39;December&#39;</span>
+      <span class="p">],</span>
+      <span class="nx">year</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">(),</span>
+      <span class="nx">month</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getMonth</span><span class="p">(),</span>
+      <span class="nx">day</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getDate</span><span class="p">();</span>
+
+  <span class="c1">// 替换字符串中的&#39;y&#39; &#39;m&#39; &#39;d&#39;字符</span>
+  <span class="k">return</span> <span class="nx">str</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/(y+)/g</span><span class="p">,</span> <span class="nx">year</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/m+(\s+)/g</span><span class="p">,</span> <span class="nx">monthName</span><span class="p">[</span><span class="nx">month</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;$1&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/m+(\S+)/g</span><span class="p">,</span> <span class="p">(</span><span class="nx">month</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;$1&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/d+/g</span><span class="p">,</span> <span class="nx">day</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+
+<span class="nx">time</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s1">&#39;y年m月d日&#39;</span><span class="p">);</span> <span class="c1">// &quot;2014年7月3日&quot;</span>
+<span class="nx">time</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s1">&#39;y-m-d&#39;</span><span class="p">);</span>    <span class="c1">// &quot;2014-7-3 &quot;</span>
+<span class="nx">time</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s1">&#39;m y&#39;</span><span class="p">);</span>      <span class="c1">// &quot;July 2014&quot;</span>
+</code></pre></div>
+<h2>那又如何？</h2>
+
+<p>了解了这些Date的常见用法，我们可以制作出类似Windows系统日历的效果：</p>
+
+<iframe width="100%" height="300" src="http://jsfiddle.net/lxjwlt/drS62/embedded/result,js/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+<p>上述代码主要的工作就是：向<strong>6行乘7列</strong>的格子中填入日期。这过程中，我们需要知道上个月的最后一天的日期和这个月的总天数。前面提到的小技巧正好能派上用场。</p>
+
+<h2>参考</h2>
+
+<ul>
+<li><a href="http://developer.mozilla.org/">mozilla developer network</a></li>
+<li><a href="http://blog.csdn.net/vbangle/article/details/5643091"> javascript Date format</a></li>
+</ul>
+
+        		<!-- Duoshuo Comment BEGIN -->
+        		<div class="ds-thread"></div>
+        		<script type="text/javascript">
+        			var duoshuoQuery = {short_name:"lxjwlt"};
+        			(function() {
+        				var ds = document.createElement('script');
+        				ds.type = 'text/javascript';ds.async = true;
+        				ds.src = 'http://static.duoshuo.com/embed.js';
+        				ds.charset = 'UTF-8';
+        				(document.getElementsByTagName('head')[0]
+        				|| document.getElementsByTagName('body')[0]).appendChild(ds);
+        			})();
+        		</script>
+        		<!-- Duoshuo Comment END -->
+        	</div>
+        </div>
+
+        <script src="/scripts/sea.js"></script>
+        <script>
+            seajs.use('post');
+        </script>
+    </body>
+</html>

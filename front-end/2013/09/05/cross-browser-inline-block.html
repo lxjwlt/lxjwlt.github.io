@@ -1,0 +1,224 @@
+<!DOCTYPE HTML>
+<!--[if IE 6]><html class="ie6 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 7]><html class="ie7 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 8]><html class="ie8 lte9 lte8 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 9]><html class="ie9 lte9 no-css3" lang="zh-cn"><![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8) | !(IE 9)  ]><!--><html lang="zh-cn" class='non-ie'><!--<![endif]-->
+    <head>
+        <meta charset="utf-8" />
+
+        
+            <meta name="description" content="<blockquote>
+<p>原文地址：<a href="https://blog.mozilla.org/webdev/2009/02/20/cross-browser-inline-block/">Cross-Browser Inline-Block</a></p>
+</blockquote>
+" />
+        
+
+        <meta name="keywords" content="css,javascript,html5,前端,web,页面制作" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=0.5,maximum-scale=2,user-scalable=yes" /><!-- 响应式网页设计：initial-scale设定初始缩放比例 maximum-scale设定允许用户缩放到的最大比例 minimum-scale设定允许用户缩放到的最小比例 值范围从0.0到10.0 user-scalable设定是否允许用户进行手动缩放 值为yes或no -->
+        <title>[译文]跨浏览器的inline-Block属性</title>
+
+        <!-- page icon -->
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png" />
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+    </head>
+    <body class="/front-end/2013/09/05/cross-browser-inline-block">
+        <div class="header">
+            <div class="wrap">
+                <h1 class="logo">
+                    <a href="/">lxjwlt's blog</a>
+                </h1>
+            </div>
+        </div>
+
+        <div class="directory" id="directory">
+            <div class="directory__container" id="directory__container"></div>
+            <ul class="directory__button-list">
+                <li><a href="#" class="directory__button directory__button--expand" id='expand-button'>目录</a></li>
+                <li><a href="#" class="directory__button directory__button--top" id='top-button'>top</a></li>
+            </ul>
+        </div>
+        <div class='main wrap'>
+        	<ul class="sidebar">
+        		<li><a class='to-index-page' href="/">ALL</a></li>
+        		
+        			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
+        		
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[28]</a></li>
+        		
+        	</ul>
+        	<div class="content post" id="post">
+        		<h1 class='post-title'>[译文]跨浏览器的inline-Block属性</h1>
+        		<p class='post-date'>2013-09-05</p>
+        		<blockquote>
+<p>原文地址：<a href="https://blog.mozilla.org/webdev/2009/02/20/cross-browser-inline-block/">Cross-Browser Inline-Block</a></p>
+</blockquote>
+
+<p>啊，<code>inline-block</code>这一<code>display</code>的属性值，既难以抓摸又那么吸引人，它那么的有用，却又极少人知道。我已经很多次接收到像这样的PSD文件了：</p>
+
+<p><img src="http://blog.mozilla.org/webdev/files/2009/02/gallery-view.jpg" alt="PSD"></p>
+
+<p>然后我哭了。</p>
+
+<p>一般来说，这种布局是很容易实现的。固定的宽度，固定的高度，加上向左浮动<code>float:left</code>，然后就完成了。但但但但但是，这种设计是需要适用于不定量的内容，这意味着，如果其中一个块包含了比其余块要更多的内容，那它将破坏整个布局：</p>
+
+<p><img src="http://blog.mozilla.org/webdev/files/2009/02/float-broken.jpg" alt="breakable layout"></p>
+
+<p>因为第一个块比其余的都要高，于是第五个块向左浮动时就顶住了它，而不是在它的下面。其实我们主要是想实现这样一个布局——它既有表格<code>table</code>的灵活性又有合适的语义化的标签。</p>
+
+<p>我们以一个设定为<code>display:inline-block;</code>的无序列表来创建一个简单的页面：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">&lt;ul&gt;
+    &lt;li&gt;
+        &lt;h4&gt;This is awesome&lt;/h4&gt;
+        &lt;img src=&quot;http://farm4.static.flickr.com/3623/3279671785_d1f2e665b6_s.jpg&quot;
+        alt=&quot;lobster&quot; width=&quot;75&quot; height=&quot;75&quot;/&gt;
+    &lt;/li&gt;
+...
+&lt;ul&gt;
+
+&lt;style&gt;
+    li {
+        width: 200px;
+        min-height: 250px;
+        border: 1px solid #000;
+        display: inline-block;
+        margin: 5px;
+    }
+&lt;/style&gt;
+</code></pre></div>
+<p>这页面在Firefox 3, Safari 3 和 Opera上看起来没问题：</p>
+
+<p><img src="http://blog.mozilla.org/webdev/files/2009/02/step1.jpg" alt="step1"></p>
+
+<p>显然，某个块在垂直对齐方面看起来出错了。好吧，这并不是真正的出错，这是正确的表现形式，只是这不并是我们所想要的。</p>
+
+<p>导致这种现象的原因在于——每一个<code>li</code>元素的<a href="http://dev.w3.org/csswg/css3-linebox/#baseline">基线</a><code>baseline</code>都要对齐父元素<code>ul</code>的基线。你问，什么是基线<code>baseline</code>？一图胜千言：</p>
+
+<p><img src="http://blog.mozilla.org/webdev/files/2009/02/baseline.gif" alt="baseline"></p>
+
+<p>基线就是那条穿过以上文字的黑线。简单来说，<code>inline</code> 或 <code>inline-block</code> 元素的 <a href="http://www.w3.org/TR/CSS21/visudet.html#propdef-vertical-align"><code>vertical-align</code> 默认值</a>都是 <code>baseline</code>，这意味着这些元素的基线都将向它们的父元素的基线对齐：</p>
+
+<p><img src="http://blog.mozilla.org/webdev/files/2009/02/baseline-inline-block.jpg" alt="baseline illustrate"></p>
+
+<p>正如你看到的，每个元素的基线都与文本&#39;This is the baseline&#39;对齐。这段文本并不包含在<code>li</code>元素中，而只是父元素<code>ul</code>中单纯的一段文本而已，这样做是为了说明父元素的基线在哪里。</p>
+
+<p>无论如何，要修复这看似出错的现象是非常简单的——<code>vertical-align:top</code>，这样得到一个看起来很不错的布局：</p>
+
+<p><img src="http://blog.mozilla.org/webdev/files/2009/02/inline-block-2.jpg" alt="inline block 2"></p>
+
+<p>然而这种方法在Firefox 2, IE 6 和 IE 7中不起作用：</p>
+
+<p><img src="http://blog.mozilla.org/webdev/files/2009/02/inline-block-ff2.jpg" alt="inline-block-ff2"></p>
+
+<p>让我们先解决Firefox 2。</p>
+
+<p>Firefox 2虽然不支持<code>inline-block</code>属性值，但它却支持Mozilla独有的<code>display</code>属性值 —— <code>-moz-inline-stack</code>，这个属性的表现就如同<code>inline-block</code>。而且当我们将它添加在<code>display:inline-block</code>的前面，Firefox 2会忽略掉规范的声明而留下<code>-moz-inline-stack</code>，因为它不支持<code>inline-block</code>，而那些支持<code>inline-block</code>的浏览器则会使用<code>inline-block</code>而忽略掉<strong>前面定义的</strong><code>diaplay</code>属性值。</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">&lt;style&gt;
+    li {
+        width: 200px;
+        min-height: 250px;
+        border: 1px solid #000;
+        display: -moz-inline-stack;
+        display: inline-block;
+        vertical-align: top;
+        margin: 5px;
+    }
+&lt;/style&gt;
+</code></pre></div>
+<p>非常不幸，这里还是有个小小的bug：</p>
+
+<p><img src="http://blog.mozilla.org/webdev/files/2009/02/inline-block-3.jpg" alt="inline-block in ff2"></p>
+
+<p>老实说，我不知道是什么造成这个bug。但这里有个快速修复的方法——只需要将<code>&lt;li&gt;</code>中的所有元素都包含进一个<code>&lt;div&gt;</code>：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">&lt;li&gt;
+    &lt;div&gt;
+        &lt;h4&gt;This is awesome&lt;/h4&gt;
+        &lt;img src=&quot;http://farm4.static.flickr.com/3623/3279671785_d1f2e665b6_s.jpg&quot;
+        alt=&quot;lobster&quot; width=&quot;75&quot; height=&quot;75&quot;/&gt;
+    &lt;/div&gt;
+&lt;/li&gt;
+</code></pre></div>
+<p>这种方法看起来像是&#39;重置&#39;了<code>&lt;li&gt;</code>里所有的元素，然后让它们表现正常了：</p>
+
+<p><img src="http://blog.mozilla.org/webdev/files/2009/02/inline-block-2.jpg" alt="inlin-block 2"></p>
+
+<p>现在，轮到IE 7了。IE 7不支持<code>inline-block</code>，但我们可以骗它去将<code>li</code>渲染成<code>inline-block</code>。怎么做？用<a href="http://haslayout.net/haslayout">hasLayout</a>——一种神奇的IE属性。虽然你不能通过一些类似<code>hasLayout:true;</code>的方式来为一个元素明确地设置hasLayout，但是你可以用其他类似<code>zoom:1;</code>的声明来开启这一IE属性。</p>
+
+<p>总之，hasLayout有点像小仙女的魔方粉末，你可以将它洒在那些渲染问题上，然后让他们消失不见。</p>
+
+<p>当我们将<code>zoom:1</code>和<code>*display:inline</code>(针对IE6 &amp; 7的hack方法)添加在<code>&lt;li&gt;</code>上，我们可以让IE 7 将这些元素渲染得如同<code>inline-block</code>一样：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">&lt;style&gt;
+    li {
+        width: 200px;
+        min-height: 250px;
+        border: 1px solid #000;
+        display: -moz-inline-stack;
+        display: inline-block;
+        vertical-align: top;
+        margin: 5px;
+        zoom: 1;
+        *display: inline;
+    }
+&lt;/style&gt;
+</code></pre></div>
+<p><img src="http://blog.mozilla.org/webdev/files/2009/02/inline-block-ie7.jpg" alt="inline-block in IE 7"></p>
+
+<p>呼！快完成了，就只剩 IE6 了：</p>
+
+<p><img src="http://blog.mozilla.org/webdev/files/2009/02/inline-block-ie6.jpg" alt="inline-block IE6"></p>
+
+<p>虽然IE6 并不支持<code>min-height</code>属性，但感谢它对<code>height</code>属性不规范地处理，我们可以利用这一点来达到同样的效果。将<code>_height</code>属性(<a href="http://www.ejeliot.com/blog/63"> IE6 下划线hack</a>)设置为<code>250px</code>，这样会使所有的<code>&lt;li&gt;</code>的高度设为250px，而且如果它们的内容超过这一高度，它们会自动扩大来适应这一高度。其他的浏览器则会忽略掉<code>_height</code>属性。</p>
+
+<p>于是，经过了以上所有的工作后，以下是最终的 CSS 和 HTML：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">&lt;style&gt;
+    li {
+        width: 200px;
+        min-height: 250px;
+        border: 1px solid #000;
+        display: -moz-inline-stack;
+        display: inline-block;
+        vertical-align: top;
+        margin: 5px;
+        zoom: 1;
+        *display: inline;
+        _height: 250px;
+    }
+&lt;/style&gt;
+
+&lt;li&gt;
+    &lt;div&gt;
+        &lt;h4&gt;This is awesome&lt;/h4&gt;
+        &lt;img src=&quot;http://farm4.static.flickr.com/3623/3279671785_d1f2e665b6_s.jpg&quot;
+        alt=&quot;lobster&quot; width=&quot;75&quot; height=&quot;75&quot;/&gt;
+    &lt;/div&gt;
+&lt;/li&gt;
+</code></pre></div>
+        		<!-- Duoshuo Comment BEGIN -->
+        		<div class="ds-thread"></div>
+        		<script type="text/javascript">
+        			var duoshuoQuery = {short_name:"lxjwlt"};
+        			(function() {
+        				var ds = document.createElement('script');
+        				ds.type = 'text/javascript';ds.async = true;
+        				ds.src = 'http://static.duoshuo.com/embed.js';
+        				ds.charset = 'UTF-8';
+        				(document.getElementsByTagName('head')[0]
+        				|| document.getElementsByTagName('body')[0]).appendChild(ds);
+        			})();
+        		</script>
+        		<!-- Duoshuo Comment END -->
+        	</div>
+        </div>
+
+        <script src="/scripts/sea.js"></script>
+        <script>
+            seajs.use('post');
+        </script>
+    </body>
+</html>

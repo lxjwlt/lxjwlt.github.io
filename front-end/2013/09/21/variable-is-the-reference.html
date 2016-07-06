@@ -1,0 +1,125 @@
+<!DOCTYPE HTML>
+<!--[if IE 6]><html class="ie6 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 7]><html class="ie7 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 8]><html class="ie8 lte9 lte8 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 9]><html class="ie9 lte9 no-css3" lang="zh-cn"><![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8) | !(IE 9)  ]><!--><html lang="zh-cn" class='non-ie'><!--<![endif]-->
+    <head>
+        <meta charset="utf-8" />
+
+        
+            <meta name="description" content="其实Javascript 中变量即是引用，有点像C++中的指针，它们不是直接存储数据，而是存储指向数据的地址。" />
+        
+
+        <meta name="keywords" content="css,javascript,html5,前端,web,页面制作" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=0.5,maximum-scale=2,user-scalable=yes" /><!-- 响应式网页设计：initial-scale设定初始缩放比例 maximum-scale设定允许用户缩放到的最大比例 minimum-scale设定允许用户缩放到的最小比例 值范围从0.0到10.0 user-scalable设定是否允许用户进行手动缩放 值为yes或no -->
+        <title>论变量即是引用</title>
+
+        <!-- page icon -->
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png" />
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+    </head>
+    <body class="/front-end/2013/09/21/variable-is-the-reference">
+        <div class="header">
+            <div class="wrap">
+                <h1 class="logo">
+                    <a href="/">lxjwlt's blog</a>
+                </h1>
+            </div>
+        </div>
+
+        <div class="directory" id="directory">
+            <div class="directory__container" id="directory__container"></div>
+            <ul class="directory__button-list">
+                <li><a href="#" class="directory__button directory__button--expand" id='expand-button'>目录</a></li>
+                <li><a href="#" class="directory__button directory__button--top" id='top-button'>top</a></li>
+            </ul>
+        </div>
+        <div class='main wrap'>
+        	<ul class="sidebar">
+        		<li><a class='to-index-page' href="/">ALL</a></li>
+        		
+        			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
+        		
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[28]</a></li>
+        		
+        	</ul>
+        	<div class="content post" id="post">
+        		<h1 class='post-title'>论变量即是引用</h1>
+        		<p class='post-date'>2013-09-21</p>
+        		<p>其实Javascript 中<strong>变量即是引用</strong>，有点像C++中的指针，它们不是直接存储数据，而是存储<strong>指向数据的地址</strong>。</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">b</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+</code></pre></div>
+<p>以上语句在语法书中是这么解释的：将4赋值于b，再将b的值赋予a。</p>
+
+<p>这样的解释看似没什么问题，但仔细想来，会有疑问——“改变a的值是否会同时改变b的值呢？”</p>
+
+<p>答案是不会的：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">b</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+<span class="nx">a</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">);</span> <span class="c1">// 5</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">b</span><span class="p">);</span> <span class="c1">// 4</span>
+</code></pre></div>
+<p>原因在于——在解析时，电脑一开始先创建一个数据为4的内存，接着将 a 和 b 指向该内存，之后将5赋值于a，这实际上是将 a 指向另一个数据为5的内存，所以 a 的赋值不会影响到 b 。</p>
+
+<p>但是，也可以这样解释啊——变量是直接存储数据的，a 和 b 分别存储了数据4，所以 a 的改变就不会影响 b 啦。</p>
+
+<p>这样的解释<strong>貌似</strong>是对的，但如果你是这么看待变量的话，那么你一定会认为javascript中的等号是传送数据用的，这样，当你在做<strong>对象的克隆(clone)</strong>时，将会遇到严重的问题。</p>
+
+<p>所谓对象克隆，也就是将一个对象复制成两份，这样就可以实现——修改“新的对象”的同时，又不会改变“原有对象”的值。</p>
+
+<p>如果你认为变量是直接存储数据的话，那么你实现对象克隆的方法可能会是：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span><span class="nx">a</span> <span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="nx">newObj</span><span class="p">;</span>
+<span class="nx">newObj</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">;</span>
+</code></pre></div>
+<p>这样其实并没有真正的实现对象克隆，因为，当修改新对象newObj的同时，也会修改原有对象obj:</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">newObj</span><span class="p">.</span><span class="nx">a</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">obj</span><span class="p">);</span> <span class="c1">// {a:2}</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">newObj</span><span class="p">);</span> <span class="c1">// {a:2}</span>
+</code></pre></div>
+<p>所以“变量直接存储数据”的解释是不合理的！而且这种理解在编写js的时候也是非常危险的。</p>
+
+<p>正确的解释是：<strong>变量不是直接存储数据，而是存储数据的引用地址</strong>。所以js中<strong>等号</strong>只是传送了数据的引用地址，而不是数据。</p>
+
+<p>下面再给出一个佐证：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">b</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">];</span>
+<span class="c1">// 在数组第二个数后面插入3和4</span>
+<span class="nx">a</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">);</span> <span class="c1">// [1,2,3,4,5]</span>
+<span class="nx">consoleo</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">b</span><span class="p">);</span> <span class="c1">// [1,2,3,4,5]</span>
+</code></pre></div>
+<h2>参考资料</h2>
+
+<ul>
+<li><a href="http://www.baidu.com/link?url=8u_NI1zPxquBrtAfCkNzcCRgBVjddAjcWeYhXRXqRvqRWUzBGIYhSSsZeCwvvSdniarAzOHKi4cwFXuzhm3TTK">《javascript模式》</a></li>
+</ul>
+
+        		<!-- Duoshuo Comment BEGIN -->
+        		<div class="ds-thread"></div>
+        		<script type="text/javascript">
+        			var duoshuoQuery = {short_name:"lxjwlt"};
+        			(function() {
+        				var ds = document.createElement('script');
+        				ds.type = 'text/javascript';ds.async = true;
+        				ds.src = 'http://static.duoshuo.com/embed.js';
+        				ds.charset = 'UTF-8';
+        				(document.getElementsByTagName('head')[0]
+        				|| document.getElementsByTagName('body')[0]).appendChild(ds);
+        			})();
+        		</script>
+        		<!-- Duoshuo Comment END -->
+        	</div>
+        </div>
+
+        <script src="/scripts/sea.js"></script>
+        <script>
+            seajs.use('post');
+        </script>
+    </body>
+</html>

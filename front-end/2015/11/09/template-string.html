@@ -1,0 +1,257 @@
+<!DOCTYPE HTML>
+<!--[if IE 6]><html class="ie6 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 7]><html class="ie7 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 8]><html class="ie8 lte9 lte8 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 9]><html class="ie9 lte9 no-css3" lang="zh-cn"><![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8) | !(IE 9)  ]><!--><html lang="zh-cn" class='non-ie'><!--<![endif]-->
+    <head>
+        <meta charset="utf-8" />
+
+        
+            <meta name="description" content="ES6提供了一种新的字符串格式化的语法功能：模板字符串(template string)，该语法允许字符串内嵌代码表达式。本文简要介绍其中的使用..." />
+        
+
+        <meta name="keywords" content="css,javascript,html5,前端,web,页面制作" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=0.5,maximum-scale=2,user-scalable=yes" /><!-- 响应式网页设计：initial-scale设定初始缩放比例 maximum-scale设定允许用户缩放到的最大比例 minimum-scale设定允许用户缩放到的最小比例 值范围从0.0到10.0 user-scalable设定是否允许用户进行手动缩放 值为yes或no -->
+        <title>字符串结合和ES6模板字符串</title>
+
+        <!-- page icon -->
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png" />
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+    </head>
+    <body class="/front-end/2015/11/09/template-string">
+        <div class="header">
+            <div class="wrap">
+                <h1 class="logo">
+                    <a href="/">lxjwlt's blog</a>
+                </h1>
+            </div>
+        </div>
+
+        <div class="directory" id="directory">
+            <div class="directory__container" id="directory__container"></div>
+            <ul class="directory__button-list">
+                <li><a href="#" class="directory__button directory__button--expand" id='expand-button'>目录</a></li>
+                <li><a href="#" class="directory__button directory__button--top" id='top-button'>top</a></li>
+            </ul>
+        </div>
+        <div class='main wrap'>
+        	<ul class="sidebar">
+        		<li><a class='to-index-page' href="/">ALL</a></li>
+        		
+        			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
+        		
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[28]</a></li>
+        		
+        	</ul>
+        	<div class="content post" id="post">
+        		<h1 class='post-title'>字符串结合和ES6模板字符串</h1>
+        		<p class='post-date'>2015-11-09</p>
+        		<p><a href="https://www.zybuluo.com/lxjwlt/note/213462">&gt;&gt;更好的阅读体验</a></p>
+
+<p>ES6提供了一种新的字符串格式化的语法功能：模板字符串(template string)，该语法允许字符串内嵌代码表达式。本文简要介绍其中的使用。</p>
+
+<blockquote>
+<p>注：下面临时写的几个字符串结合函数只起到说明的作用，容错率低，不可用于实际开发，开发中应使用长期维护的代码库，比如<a href="http://www.embeddedjs.com/">ESJ模板引擎</a>、<a href="http://mustache.github.io/">mustache</a>、<a href="http://jade-lang.com/">jade</a>...</p>
+</blockquote>
+
+<h2>传统的字符串结合</h2>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;lxjwlt&#39;</span><span class="p">,</span>
+    <span class="nx">age</span><span class="err">：</span><span class="mi">23</span>
+<span class="p">};</span>
+
+<span class="nx">user</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; who is in age &#39;</span> <span class="o">+</span> <span class="nx">user</span><span class="p">.</span><span class="nx">age</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">;</span> 
+<span class="c1">// 结果：&quot;lxjwlt who is in age 23.&quot;</span>
+</code></pre></div>
+<p>项目开发中，这类代码很常见，但遇到更复杂的场景时，比如构建html，这类代码会变得难以书写，可读性差，而且维护难度大。</p>
+
+<p>这时，我们可以使用字符串格式化函数来处理，简要例子：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">format</span><span class="p">(</span><span class="s1">&#39;{0} who is in age {1}&#39;</span><span class="p">,</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="nx">user</span><span class="p">.</span><span class="nx">age</span><span class="p">);</span> 
+<span class="c1">// 结果：&quot;lxjwlt who is in age 23.&quot;</span>
+
+<span class="kd">function</span> <span class="nx">format</span> <span class="p">(</span><span class="nx">template</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">reg</span> <span class="o">=</span> <span class="sr">/\{(\d)\}/g</span><span class="p">,</span>
+        <span class="nx">dataList</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">template</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">reg</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">match</span><span class="p">,</span> <span class="nx">$1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">dataList</span><span class="p">[</span><span class="nx">$1</span><span class="p">];</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>这是最简单的字符串格式化，但是这种方式下，字符串中无法嵌入表达式，也就是说控制字符串生成的逻辑代码必须写到JS代码中。</p>
+
+<p>所以再进一步，再复杂一点，我们希望模板内可以使用表达式，下面我们来实现一个最简单的模板引擎，只实现表达式和条件语句：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;lxjwlt&#39;</span><span class="p">,</span>
+    <span class="nx">age</span><span class="o">:</span> <span class="mi">23</span>
+<span class="p">};</span>
+
+<span class="nx">template</span><span class="p">(</span><span class="s1">&#39;%this.name% is a %if (this.age &gt; 18) { % adult % } else { % child % }%.&#39;</span><span class="p">,</span> <span class="nx">user</span><span class="p">);</span>
+<span class="c1">// 结果：&quot;lxjwlt is a  adult .&quot;</span>
+
+<span class="c1">// 模板引擎</span>
+<span class="kd">function</span> <span class="nx">template</span> <span class="p">(</span><span class="nx">template</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">templateCode</span> <span class="o">=</span> <span class="nx">templateToCode</span><span class="p">(</span><span class="nx">template</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Function</span><span class="p">(</span><span class="nx">templateCode</span><span class="p">)).</span><span class="nx">apply</span><span class="p">(</span><span class="nx">context</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// 模板转换为可执行代码</span>
+<span class="kd">function</span> <span class="nx">templateToCode</span> <span class="p">(</span><span class="nx">template</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">reg</span> <span class="o">=</span> <span class="sr">/%([^%]+)%/g</span><span class="p">,</span>
+        <span class="nx">conditionReg</span> <span class="o">=</span> <span class="sr">/if \(.+\) \{|\} else \{|\}/</span><span class="p">,</span>
+        <span class="nx">code</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;var str = &quot;&quot;;&#39;</span><span class="p">],</span>
+        <span class="nx">lastIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nx">matchs</span><span class="p">;</span>
+
+        <span class="k">while</span> <span class="p">(</span><span class="nx">matchs</span> <span class="o">=</span> <span class="nx">reg</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">template</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">code</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span>
+                <span class="s1">&#39;str = str + &quot;&#39;</span> <span class="o">+</span> 
+                    <span class="nx">template</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="nx">lastIndex</span><span class="p">,</span> <span class="nx">reg</span><span class="p">.</span><span class="nx">lastIndex</span> <span class="o">-</span> <span class="nx">matchs</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">length</span><span class="p">)</span> <span class="o">+</span> 
+                <span class="s1">&#39;&quot;;&#39;</span>
+            <span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">conditionReg</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">matchs</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span> <span class="p">{</span>
+                <span class="nx">code</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">matchs</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">code</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s1">&#39;str = str + (&#39;</span> <span class="o">+</span> <span class="nx">matchs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;);&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="nx">lastIndex</span> <span class="o">=</span> <span class="nx">reg</span><span class="p">.</span><span class="nx">lastIndex</span><span class="p">;</span>
+        <span class="p">}</span>
+
+    <span class="nx">code</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s1">&#39;str = str + &quot;&#39;</span> <span class="o">+</span> <span class="nx">template</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="nx">lastIndex</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot;;&#39;</span><span class="p">);</span>
+
+    <span class="nx">code</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s1">&#39;return str;&#39;</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">code</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>模板引擎使得模板与代码分离开来，同时，模板中也保留了逻辑处理。javascript框架中通常都会带有模板引擎功能。</p>
+
+<p>上面列举了字符串三种方式，从字符串相加，到字符串格式化处理函数，再到模板引擎，三种方式各不同，使用场景也不一样，对应着不同的需求。那么，ES6引入的模板字符串语法实现了什么功能？能代替上述三种方式么？</p>
+
+<h2>模板字符串</h2>
+
+<p>首先，我们来看看最基本使用:</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">username</span> <span class="o">=</span> <span class="s1">&#39;lxjwlt&#39;</span><span class="p">;</span>
+
+<span class="err">`</span><span class="nx">hi</span><span class="o">!</span> <span class="nx">$</span><span class="p">{</span><span class="nx">username</span><span class="p">}.</span><span class="err">`</span><span class="p">;</span> <span class="c1">// &quot;hi! lxjwlt.&quot;</span>
+</code></pre></div>
+<p>注意！上面用的是<strong>反引号</strong>来包裹住字符串的，而不是单引号。反引号在键盘tab键的正上方。下面列出引号和反引号，我们可以仔细分辨一下其中的区别：</p>
+
+<ul>
+<li><code>&quot;&quot;</code> 双引号</li>
+<li><code>&#39;&#39;</code> 单引号</li>
+<li><code>``</code> 反引号</li>
+</ul>
+
+<p>我们能发现，用反引号括住文本内容，文本内容中使用<code>${}</code>字面量插入逻辑表达式，这样就构成了一个模板字符串了。</p>
+
+<p>ES6模板字符串的兼容性如下：</p>
+
+<ul>
+<li>服务器端， io.js 支持</li>
+<li>浏览器端， FF34+ , chrome 41+</li>
+<li>移动端 IOS 8, Android 4.4</li>
+<li>IE Tech Preview</li>
+</ul>
+
+<p>如果我们的chrome版本不太旧的话，现在完全可以打开控制台，我们马上来一发：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">`</span><span class="nx">$</span><span class="p">{</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="p">}</span><span class="err">`</span><span class="p">;</span> <span class="c1">// &quot;2&quot;</span>
+</code></pre></div>
+<h2>模板字符串预处理</h2>
+
+<p>有些情况下，我们需要对字符串中插入的值进行预处理，比如后台返回的值要进行htmlEncode处理，模板字符串支持使用函数来进行处理，该函数接收的参数形式如下：</p>
+
+<p>strings, [value1, [value2, [value3 ...]]]</p>
+
+<p>字符串会被<code>${}</code>分隔成一个个字符串片段保存在一个数组中，在函数的第一个参数中传入，对应上面的strings，而<code>${}</code>中表达式的返回值则从函数的其他参数中依次传入。我们现在可以实现“安全的”模板字符串了：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">username</span> <span class="o">=</span> <span class="s1">&#39;&lt;span&gt;click me!&lt;/span&gt;&#39;</span>
+<span class="nx">safeTemplate</span><span class="err">`</span><span class="nx">hi</span><span class="o">!</span> <span class="nx">$</span><span class="p">{</span><span class="nx">username</span><span class="p">}.</span><span class="err">`</span><span class="p">;</span>
+<span class="c1">// 结果：&quot;hi! &amp;lt;span&amp;gt;click me!&amp;lt;/span&amp;gt;&quot;</span>
+
+<span class="kd">function</span> <span class="nx">safeTemplate</span> <span class="p">(</span><span class="nx">strings</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">str</span> <span class="o">=</span> <span class="p">[],</span>
+        <span class="nx">values</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="nx">i</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">str</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">strings</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+        <span class="nx">str</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">htmlEncode</span><span class="p">(</span><span class="nx">values</span><span class="p">[</span><span class="nx">i</span><span class="p">]));</span> <span class="c1">// 对插入值进行htmlEncode</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">str</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">htmlEncode</span> <span class="p">()</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+</code></pre></div>
+<h2>字符串转换模板字符串</h2>
+
+<p>实际开发中，我们的模板可能会以字符串的形式从别的地方请求回来，这时候要把字符串转换为模板字符串，然而js中没有提供任何转换的方法。下面我们自己来实现一个：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;hi! ${name}&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;lxjwlt&quot;</span><span class="p">});</span> <span class="c1">// &quot;hi! lxjwlt&quot;</span>
+
+<span class="kd">function</span> <span class="nx">format</span> <span class="p">(</span><span class="nx">template</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">keys</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">data</span><span class="p">),</span>
+        <span class="nx">dataList</span><span class="p">;</span>
+
+    <span class="nx">dataList</span> <span class="o">=</span> <span class="nx">keys</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">data</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+    <span class="p">});</span>
+
+    <span class="c1">// 这里使用反引号来构建模板引擎</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nb">Function</span><span class="p">(</span><span class="nx">keys</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">),</span> <span class="s1">&#39;return `&#39;</span> <span class="o">+</span> <span class="nx">template</span> <span class="o">+</span> <span class="s1">&#39;`;&#39;</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">dataList</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2>模板字符串的不足</h2>
+
+<ul>
+<li>兼容性差</li>
+<li><p>有局限性</p>
+
+<p>ES6模板字符串其实更准确的叫法是格式化字符串，它不是模板引擎，其中可插入的表达式不支持这种写法：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="err">`</span><span class="nx">$</span><span class="p">{</span><span class="k">if</span> <span class="p">(</span><span class="kc">true</span><span class="p">)}</span><span class="err">`</span><span class="p">;</span> <span class="c1">// Uncaught SyntaxError: Unexpected token if</span>
+<span class="err">`</span><span class="nx">$</span><span class="p">{</span><span class="kc">true</span> <span class="o">?</span> <span class="mi">1</span> <span class="err">：</span><span class="mi">2</span><span class="p">}</span><span class="err">`</span><span class="p">;</span> <span class="c1">// Uncaught SyntaxError: Unexpected token ILLEGAL</span>
+</code></pre></div>
+<p>所以ES6模板字符串不能代替模板引擎，只能在字符串结合逻辑不复杂的场景下使用。</p></li>
+</ul>
+
+<h2>更多阅读</h2>
+
+<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/raw">MDN - String.raw</a></li>
+<li><a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/template_strings">MDN - Template String</a></li>
+<li><a href="http://segmentfault.com/a/1190000003092875?hmsr=toutiao.io&amp;utm_campaign=socialShare&amp;utm_medium=toutiao.io&amp;utm_source=toutiao.io">触摸ES6 - 模板字符串</a></li>
+</ul>
+
+        		<!-- Duoshuo Comment BEGIN -->
+        		<div class="ds-thread"></div>
+        		<script type="text/javascript">
+        			var duoshuoQuery = {short_name:"lxjwlt"};
+        			(function() {
+        				var ds = document.createElement('script');
+        				ds.type = 'text/javascript';ds.async = true;
+        				ds.src = 'http://static.duoshuo.com/embed.js';
+        				ds.charset = 'UTF-8';
+        				(document.getElementsByTagName('head')[0]
+        				|| document.getElementsByTagName('body')[0]).appendChild(ds);
+        			})();
+        		</script>
+        		<!-- Duoshuo Comment END -->
+        	</div>
+        </div>
+
+        <script src="/scripts/sea.js"></script>
+        <script>
+            seajs.use('post');
+        </script>
+    </body>
+</html>

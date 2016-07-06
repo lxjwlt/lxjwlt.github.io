@@ -1,0 +1,304 @@
+<!DOCTYPE HTML>
+<!--[if IE 6]><html class="ie6 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 7]><html class="ie7 lte9 lte8 lte7 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 8]><html class="ie8 lte9 lte8 no-css3" lang="zh-cn"><![endif]-->
+<!--[if IE 9]><html class="ie9 lte9 no-css3" lang="zh-cn"><![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8) | !(IE 9)  ]><!--><html lang="zh-cn" class='non-ie'><!--<![endif]-->
+    <head>
+        <meta charset="utf-8" />
+
+        
+            <meta name="description" content="在angularJS项目开发中遇到使用表格的场景，于是引入了号称angularJS中扩展性最好的表格smart-table组件，代码只有四五百行，功能只提供了渲染、数据项选择、排序等等简单的功能。而我的任务是给表格加入加载状态监控、全选、更多按钮等等功能..." />
+        
+
+        <meta name="keywords" content="css,javascript,html5,前端,web,页面制作" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=0.5,maximum-scale=2,user-scalable=yes" /><!-- 响应式网页设计：initial-scale设定初始缩放比例 maximum-scale设定允许用户缩放到的最大比例 minimum-scale设定允许用户缩放到的最小比例 值范围从0.0到10.0 user-scalable设定是否允许用户进行手动缩放 值为yes或no -->
+        <title>angularJS中组件复用和封装</title>
+
+        <!-- page icon -->
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png" />
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/syntax.css" />
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+    </head>
+    <body class="/front-end/2016/04/04/anuglarjs-component-reuse">
+        <div class="header">
+            <div class="wrap">
+                <h1 class="logo">
+                    <a href="/">lxjwlt's blog</a>
+                </h1>
+            </div>
+        </div>
+
+        <div class="directory" id="directory">
+            <div class="directory__container" id="directory__container"></div>
+            <ul class="directory__button-list">
+                <li><a href="#" class="directory__button directory__button--expand" id='expand-button'>目录</a></li>
+                <li><a href="#" class="directory__button directory__button--top" id='top-button'>top</a></li>
+            </ul>
+        </div>
+        <div class='main wrap'>
+        	<ul class="sidebar">
+        		<li><a class='to-index-page' href="/">ALL</a></li>
+        		
+        			<li><a class='to-others-page' href="/others.html">OTHERS[4]</a></li>
+        		
+        			<li><a class='to-front-end-page' href="/front-end.html">FRONT-END[28]</a></li>
+        		
+        	</ul>
+        	<div class="content post" id="post">
+        		<h1 class='post-title'>angularJS中组件复用和封装</h1>
+        		<p class='post-date'>2016-04-04</p>
+        		<p><a href="https://www.zybuluo.com/lxjwlt/note/331587">更好的阅读体验</a></p>
+
+<p>在angularJS项目开发中遇到使用表格的场景，于是引入了号称angularJS中扩展性最好的表格smart-table组件，代码只有四五百行，功能只提供了渲染、数据项选择、排序等等简单的功能。而我的任务是给表格加入加载状态监控、全选、更多按钮等等功能，这过程涉及到angularJS组件的复用。</p>
+
+<p>我们都熟悉jQuery组件开发模式，定义组件类，在该组件类的原型链上添加方法，然后在jQuery上绑定相应的入口函数，大致如下：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">$</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">Dropdown</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+
+    <span class="nx">Dropdown</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">close</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
+    <span class="nx">Dropdown</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">open</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
+
+    <span class="nx">$</span><span class="p">.</span><span class="nx">fn</span><span class="p">.</span><span class="nx">dropdown</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="c1">// 触发行为</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">options</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="s1">&#39;dropdown&#39;</span><span class="p">)[</span><span class="nx">options</span><span class="p">]();</span>
+
+        <span class="c1">// 实例化</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="s1">&#39;dropdown&#39;</span><span class="p">,</span> <span class="k">new</span> <span class="nx">Dropdown</span><span class="p">(</span><span class="nx">options</span><span class="p">));</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+    <span class="nx">$</span><span class="p">.</span><span class="nx">fn</span><span class="p">.</span><span class="nx">dropdown</span><span class="p">.</span><span class="nx">Constructor</span> <span class="o">=</span> <span class="nx">Dropdown</span><span class="p">;</span>
+<span class="p">})(</span><span class="nx">jQuery</span><span class="p">);</span>
+</code></pre></div>
+<p>我们定义了一个下拉框组件，匿名函数中定义组件类Dropdown，而组件的方法都添加到Dropdown类原型链中，接着我们通过jQuery的原型链<code>$.fn.dropdown</code>将入口函数暴露出去，入口函数用于处理组件的创建和动作分发，最后通过Constructor属性将构造函数暴露出去。</p>
+
+<p>jQuery插件的复写很简单，直接对类方法进行改写：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">proto</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">fn</span><span class="p">.</span><span class="nx">dropdown</span><span class="p">.</span><span class="nx">Constructor</span><span class="p">.</span><span class="nx">prototype</span><span class="p">;</span>
+
+<span class="nx">proto</span><span class="p">.</span><span class="nx">close</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
+</code></pre></div>
+<p>然而angularJS不像jQuery简单的暴露，angularJS层层封装使得在外部进行复写变得困难。下面通过标签页组件和弹窗组件的例子，分别从控制器，指令和作用域三个层面介绍，如何在<strong>尽可能</strong>不改动源码的前提下进行angularJS组件的复用。</p>
+
+<h2>控制器继承</h2>
+
+<p>我们常用控制器来写具体页面的业务逻辑，很少涉及到其中this的使用，这往往让我们忘记，angularJS控制器是一个类。而在angularJS组件开发中，控制器中定义的是了整个组件的核心代码，比如一个简单的标签页组件：</p>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;tab-box&gt;</span>
+    <span class="nt">&lt;tab</span> <span class="na">name=</span><span class="s">&quot;tabA&quot;</span><span class="nt">&gt;</span>标签页A<span class="nt">&lt;/tab&gt;</span>
+    <span class="nt">&lt;pane</span> <span class="na">name=</span><span class="s">tabA</span><span class="nt">&gt;</span>
+        标签页A内容
+    <span class="nt">&lt;/pane&gt;</span>
+<span class="nt">&lt;/tab-box&gt;</span>
+</code></pre></div>
+<p>标签页组件包含了tab-box、tab、pane三个指令，分别是标签页容器，标签，标签页内容块，其定义如下：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">&#39;tabBox&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nx">controllerAs</span><span class="o">:</span> <span class="s1">&#39;tabBoxCtrl&#39;</span><span class="p">,</span>
+        <span class="nx">controller</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$scope</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">$scope</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="nx">page</span><span class="o">:</span> <span class="kc">null</span>
+            <span class="p">};</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">setPage</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">page</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">$scope</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="nx">page</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+<span class="p">});</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">&#39;tab&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nx">require</span><span class="o">:</span> <span class="s1">&#39;tabBox&#39;</span><span class="p">,</span>
+        <span class="nx">link</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">scope</span><span class="p">,</span> <span class="nx">$elem</span><span class="p">,</span> <span class="nx">attr</span><span class="p">,</span> <span class="nx">ctrl</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">$elem</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                <span class="nx">ctrl</span><span class="p">.</span><span class="nx">setPage</span><span class="p">(</span><span class="nx">attr</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+<span class="p">});</span>
+</code></pre></div>
+<p>上面的代码所做的事情是：父指令的控制器tabBoxCtrl明确的定义作用域结构，并暴露出一个setPage方法，用于标签页的切换，而tab指令中则使用require指明和父指令之间的依赖关系，link函数的第四个参数中可以拿到tabBoxCtrl的实例，从而在tab指令后续的点击事件中，便可以调用到父指令控制器中的方法setPage</p>
+
+<p>tab-box是标签页的最顶层指令，即父指令，其中定义的控制器tabBoxCtrl统一负责作用域和暴露方法，而tab子指令中则使用父指令暴露出来的方法，而不是直接操作作用域。</p>
+
+<p>以上是angularJS组件开发的简单流程。当我们引入第三方组件，我们希望在原组件的基础上构建一个新的组件，我们只需要保留原组件的核心逻辑。我们可以采用控制器继承的方法，通过$controller服务将指定控制器进行实例化，该指定控制器的行为和状态就能够完美的拷贝下来。</p>
+
+<p>比如我们要修改tab-box组件的行为，我们希望标签页在鼠标悬浮的时候进行标签页切换。我们可以新建另一个指令my-tab-box，直接复用tab-box控制器的主逻辑：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">&#39;myTabBox&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nx">controller</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$scope</span><span class="p">,</span> <span class="nx">$controller</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="c1">// 实例化控制器</span>
+            <span class="kd">var</span> <span class="nx">parent</span> <span class="o">=</span> <span class="nx">$controller</span><span class="p">(</span><span class="s1">&#39;tabBoxCtrl&#39;</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">$scope</span><span class="o">:</span> <span class="nx">$scope</span>
+            <span class="p">});</span>
+
+            <span class="nx">angular</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">parent</span><span class="p">);</span>
+
+            <span class="c1">// 新增方法</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">myMethod</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+<span class="p">});</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">&#39;myTab&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nx">require</span><span class="o">:</span> <span class="s1">&#39;myTabBox&#39;</span><span class="p">,</span>
+        <span class="nx">link</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">scope</span><span class="p">,</span> <span class="nx">$elem</span><span class="p">,</span> <span class="nx">attr</span><span class="p">,</span> <span class="nx">ctrl</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">$elem</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;hover&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+
+                <span class="c1">// 依旧可以调用setPage方法</span>
+                <span class="nx">ctrl</span><span class="p">.</span><span class="nx">setPage</span><span class="p">(</span><span class="nx">attr</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+
+            <span class="p">});</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+<span class="p">});</span>
+</code></pre></div>
+<p>以上代码我们创建了一个新的组件my-tab-box，在控制器中通过$controller实例化父控制器，并通过angular.extend将父控制器的方法绑定到了当前控制器的上下文中。这过程中，my-tab-box的状态和行为就完全拷贝了tab-box了。正是如此，之后的myTab子指令中，我们可以调用到setPage方法。</p>
+
+<p>这种方式适用于仅复用原组件的主逻辑和方法。除此之外，我们很可能需要直接复用原组件，只修改其中少量功能。</p>
+
+<h2>指令复写</h2>
+
+<p>angularJS中，同名指令是可以多次定义，按照定义的先后顺序依次执行。</p>
+
+<p>上述tab-box的复用中，如果仅仅是标签页的点击事件改成了鼠标悬浮事件，我们可以通过指令二次定义的方式，对指令行为进行修改：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// 在外部再次定义tab指令</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">&#39;tab&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nx">require</span><span class="o">:</span> <span class="s1">&#39;tabBox&#39;</span><span class="p">,</span>
+        <span class="nx">link</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">scope</span><span class="p">,</span> <span class="nx">$elem</span><span class="p">,</span> <span class="nx">attr</span><span class="p">,</span> <span class="nx">ctrl</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">$elem</span>
+            <span class="p">.</span><span class="nx">off</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;hover&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                <span class="nx">ctrl</span><span class="p">.</span><span class="nx">setPage</span><span class="p">(</span><span class="nx">attr</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+<span class="p">});</span>
+</code></pre></div>
+<p>在angularJS解析tab指令时，会按照源码中的第一次定义为标签绑定点击事件，接着执行外部复写代码中第二次定义，为标签解除点击事件绑定，并绑定鼠标悬浮事件。</p>
+
+<p>多次定义指令的方式还可以直接改写控制器。</p>
+
+<p>在控制器继承的介绍中，我们提到了使用$controller对tab-box标签页组件的逻辑进行复用，重新开发一个新的组件，但如果我们希望直接修改tab-box的行为，而不是重新开发一个新的组件，那么我们可以通过指令来对控制器进行修改。比如tab-box指令新增一个方法：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">directive</span><span class="p">(</span><span class="s1">&#39;tabBox&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nx">require</span><span class="o">:</span> <span class="s1">&#39;^tabBox&#39;</span><span class="p">,</span>
+        <span class="nx">link</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">scope</span><span class="p">,</span> <span class="nx">$elem</span><span class="p">,</span> <span class="nx">attr</span><span class="p">,</span> <span class="nx">ctrl</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="c1">// 新增方法</span>
+            <span class="nx">ctrl</span><span class="p">.</span><span class="nx">newMethod</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
+
+        <span class="p">}</span>
+    <span class="p">};</span>
+<span class="p">});</span>
+</code></pre></div>
+<p>以上，我们在外部代码中对tabBox进行再次声明，通过<code>require:&#39;^tabBox&#39;</code>，让tabBox依赖于其本身，从而我们就可以拿到tabBox本身的控制器实例（link函数的第四个参数），之后，我们就可以在这个实例上进行功能扩展或者功能改写了。</p>
+
+<h2>封装</h2>
+
+<p>组件开发还有种情况是，我们只需要对组件进行封装，而不需要改写组件的行为，比如我们页面使用统一界面的趋势图，我们只需对highcharts提供统一的参数，这些代码封装成一个trendChart组件，每次调用只需要传入相应的数据<code>trendChart.update(data)</code>，而不需要在业务代码中重复编写相关公共的配置项。</p>
+
+<p>在angularJS项目开发中，引入了angular-bootstrap库提供的弹窗组件，其调用方式是：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">&#39;myCtrl&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$scope</span><span class="p">,</span> <span class="nx">$uibModal</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">$uibModal</span><span class="p">.</span><span class="nx">open</span><span class="p">({</span>
+        <span class="nx">templateUrl</span><span class="o">:</span> <span class="s1">&#39;myWindow.html&#39;</span><span class="p">,</span>
+        <span class="nx">scope</span><span class="o">:</span> <span class="nx">$scope</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div>
+<p>由于项目中弹窗分成头部、主体、底部三个部分，弹窗的模版需要进行统一的改写，我们可以新建一个服务myModal对$uibModal进一步封装：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">&#39;myModal&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$uibModal</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nx">open</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">scope</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">scope</span><span class="p">;</span>
+
+            <span class="c1">// 错误的将自定义数据绑定到了原作用域上</span>
+            <span class="nx">scope</span><span class="p">.</span><span class="nx">newData</span> <span class="o">=</span> <span class="p">{};</span>
+
+            <span class="c1">// 错误的将自定义操作绑定到了原作用域上</span>
+            <span class="nx">scope</span><span class="p">.</span><span class="nx">newMethod</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
+
+            <span class="nx">$uibModal</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+<span class="p">});</span>
+</code></pre></div>
+<p>由于我们需要改动模版，其中又有新增的逻辑代码，这处理过程中自定义操作和自定义数据都需要保存到作用域下，就想上述代码中，自定义数据和操作都绑定到了<code>options.scope</code>中，然而<code>options.scope</code>是外层的作用域（控制器中存放业务逻辑的作用域），组件的数据就污染了当前存放业务逻辑的作用域，特别是触发多层弹窗组件时，数据就会互相污染。所以我们希望每个弹窗都有自己的作用域，而且弹窗的作用域继承于原作用域。所以我们应该使用原作用域创建一个子作用域：</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">&#39;myModal&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$uibModal</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nx">open</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="c1">// 创建子作用域</span>
+            <span class="kd">var</span> <span class="nx">scope</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">$new</span><span class="p">();</span>
+
+            <span class="c1">// 在子作用域中存储数据和操作</span>
+            <span class="nx">scope</span><span class="p">.</span><span class="nx">newData</span> <span class="o">=</span> <span class="p">{};</span>
+
+            <span class="nx">scope</span><span class="p">.</span><span class="nx">newMethod</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{};</span>
+
+            <span class="nx">options</span><span class="p">.</span><span class="nx">scope</span> <span class="o">=</span> <span class="nx">scope</span><span class="p">;</span>
+
+            <span class="nx">$uibModal</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+<span class="p">});</span>
+</code></pre></div>
+<p>通过<code>$new</code>方法，我们能创建一个继承原作用域的子作用域，现在我们自定义的数据和方法都存储到了子作用域中，而没有污染到原作用域。</p>
+
+<p>梳理一下封装的过程：控制器在调用弹窗时，控制器的作用域传给了myModal中，myModal服务使用该作用域生成了一个子作用域，而子作用域会传给<code>$uibModal</code>组件，<code>$uibModal</code>拿到子作用域后，再生成一个子作用域，所以这里面一共有三个作用域，他们的关系是：控制台作用域-&gt;myModal存储数据作用域-&gt;<code>$uibModal</code>作用域。</p>
+
+<p>在angularJS中，作用域的继承是通过原型链来实现的，我们要注意到的是，myModal自定义作用域是作为中间层出现的，如果其中某些数据项覆盖了顶层作用域，那么作为最底层作用域的<code>$uibModal</code>弹窗，其内部对应的数据就无法访问到顶层作用域。所以我们在涉及到作用域继承的封装时，用来存储中间操作和状态的作用域，其名下开辟的存储空间一定是越少越好，而且名称也是越特殊越好，下面是相应的改写:</p>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">app</span><span class="p">.</span><span class="nx">factory</span><span class="p">(</span><span class="s1">&#39;myModal&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$uibModal</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nx">open</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">scope</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">scope</span><span class="p">.</span><span class="nx">$new</span><span class="p">();</span>
+
+            <span class="c1">// 取用特殊名称，避免覆盖父作用域</span>
+            <span class="nx">scope</span><span class="p">.</span><span class="nx">_modalData_</span> <span class="o">=</span> <span class="p">{};</span>
+
+            <span class="c1">// 不要开辟太多存储空间，通常方法、状态、数据各一个足矣</span>
+            <span class="nx">scope</span><span class="p">.</span><span class="nx">_modalMethod_</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="nx">newMethod</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{}</span>
+            <span class="p">};</span>
+
+            <span class="nx">options</span><span class="p">.</span><span class="nx">scope</span> <span class="o">=</span> <span class="nx">scope</span><span class="p">;</span>
+
+            <span class="nx">$uibModal</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">options</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+<span class="p">});</span>
+</code></pre></div>
+        		<!-- Duoshuo Comment BEGIN -->
+        		<div class="ds-thread"></div>
+        		<script type="text/javascript">
+        			var duoshuoQuery = {short_name:"lxjwlt"};
+        			(function() {
+        				var ds = document.createElement('script');
+        				ds.type = 'text/javascript';ds.async = true;
+        				ds.src = 'http://static.duoshuo.com/embed.js';
+        				ds.charset = 'UTF-8';
+        				(document.getElementsByTagName('head')[0]
+        				|| document.getElementsByTagName('body')[0]).appendChild(ds);
+        			})();
+        		</script>
+        		<!-- Duoshuo Comment END -->
+        	</div>
+        </div>
+
+        <script src="/scripts/sea.js"></script>
+        <script>
+            seajs.use('post');
+        </script>
+    </body>
+</html>
