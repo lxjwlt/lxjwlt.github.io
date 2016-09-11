@@ -1,5 +1,78 @@
 ---
 title: " 编辑器JSDoc插件体验"
-date: '2016-09-11 09:24:32'
+date: '2016-09-11 09:24:00'
 layout: post
 ---
+
+##[webstorm](https://www.jetbrains.com/webstorm/)
+
+在任意代码前输入`/**`并回车，能生成JSDoc的注释。自动生成的注释包括了参数名和返回值，webstorm甚至识别出了返回值类型为string：
+
+![](http://7xslv0.com1.z0.glb.clouddn.com/jsdoc-editor/w1.gif)
+
+在模板基础上补充完整JSDoc注释，明确标明各个参数的类型，编写代码的时候，webstorm能够提供传参的类型提示：
+
+![](http://7xslv0.com1.z0.glb.clouddn.com/jsdoc-editor/w2.png)
+
+如果无视类型提示，传入错误类型的参数，webstorm会提示错误：
+
+![](http://7xslv0.com1.z0.glb.clouddn.com/jsdoc-editor/w3.png)
+
+webstorm提供JSDoc文档预览功能，一方面我们可以随时查看JSDoc注释是否语法正确，是否能够生产正确的文档。另一方面，在编写代码时可以随时查看接口的文档说明，大大提高编写效率：
+
+![](http://7xslv0.com1.z0.glb.clouddn.com/jsdoc-editor/w4.gif)
+
+> 快速文档功能，windows系统快捷键为`ctrl + q`，mac系统快捷键是`F1`
+
+##[VSCode](https://marketplace.visualstudio.com/)
+
+在右侧打开扩展栏，搜索我们想要的JSDoc插件：
+
+![](http://7xslv0.com1.z0.glb.clouddn.com/jsdoc-editor/v0.gif)
+
+[document this](https://marketplace.visualstudio.com/items?itemName=joelday.docthis)插件能够自动生成JSDoc注释，但VSCode对类型判断不够智能：
+
+![](http://7xslv0.com1.z0.glb.clouddn.com/jsdoc-editor/v1.gif)
+
+补充好注释，鼠标指向函数名会显示函数用法说明：
+
+![](http://7xslv0.com1.z0.glb.clouddn.com/jsdoc-editor/v3.gif)
+
+VSCode对JSDoc支持不是很到位，即使我们已经明确标明了参数的类型为string和number，但传递一个布尔值，VSCode却没有给出任何错误提示：
+
+![](http://7xslv0.com1.z0.glb.clouddn.com/jsdoc-editor/v2.png)
+
+##[sublime text](https://www.sublimetext.com/)
+
+[sublime-jsdoc](https://github.com/spadgos/sublime-jsdocs)插件提供生成JSDoc注释功能：
+
+![](http://7xslv0.com1.z0.glb.clouddn.com/jsdoc-editor/s1.png)
+
+很遗憾，sublime text也不支持类型检测：
+
+![](http://7xslv0.com1.z0.glb.clouddn.com/jsdoc-editor/s2.png)
+
+sublime text的插件安装都通过[package-control](https://packagecontrol.io/)来完成，安装插件需要翻墙，整个体验下来非常不友好。
+
+> 更准确的说法是“气急败坏”！即使手头拿着的是还在分期还款的macbook，我还是有种摔电脑的冲动，关于编辑器我要说两句。
+
+> 大学那会儿项目复杂度不高，当时很喜欢sublime text，我的第一篇博文就是介绍[《sublime快捷键及常用插件——工欲善其事，必先利其器》](http://blog.lxjwlt.com/others/2013/05/02/sublime-plugins-and-shortcut.html)，但现在我非常不建议大家用轻量级的文本编辑器来作为主开发工具使用，首先这类编辑器号称轻量级正因为本身功能精简，不能涵盖平日开发工作的方方面面，其次更不建议大家花时间去摆弄各种插件，想达到IDE的效果是不可能的，有时间还不如多熟悉IDE的使用。
+
+> 轻量级编辑器功能精简，意味着需要花大量的时间去配置和搭建，精简从而带来繁琐而又不必要的工作。我们使用工具就为了从繁琐的工作中抽身出来，从而集中精力和时间应对更复杂的工作。判断一个编辑器是否足够的好，那就看看这个工具是否对我们的技术有增益，能够让我们的能力最大化。
+
+> 至于Dreamweaver，phpstorm等等IDE编辑器来写前端代码，本人是强烈反对。前端技术日新月异，成熟的技术不断沉淀下来，如果一个编辑器不能够持续改进并引入新功能对这些技术进行支持，那它不是一个合格的前端编辑器。
+
+##[atom](https://atom.io/)
+atom内置插件安装器，搜索JSDoc插件：
+
+![](http://7xslv0.com1.z0.glb.clouddn.com/jsdoc-editor/a1.png)
+
+docblockr和上面sublime text上的一样的，同样是提供文档生成功能。
+
+##总结
+
+使用JSDoc的原因：
+
+1. 统一注释规范，统一团队的代码风格
+2. 编辑器能够根据JSDoc的信息，提供自动提醒，自动检错功能
+3. 方便生成API文档
